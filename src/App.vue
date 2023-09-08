@@ -1,14 +1,14 @@
 <script>
-import HomeView from "./views/HomeView.vue";
+import RegisterPage from "./views/RegisterPage.vue";
 export default {
   components: {
-    HomeView,
+    RegisterPage,
   },
 };
 </script>
 
 <template>
-  <HomeView />
+  <RegisterPage />
 </template>
 
 <style scoped></style>
