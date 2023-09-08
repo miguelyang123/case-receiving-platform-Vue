@@ -1,14 +1,19 @@
 <script>
-import HomeView from "./views/HomeView.vue";
+import HeaderView from "./components/Header.vue"
+import { RouterLink, RouterView } from 'vue-router';
+
 export default {
   components: {
-    HomeView,
+    HeaderView,RouterView
   },
 };
 </script>
 
 <template>
-  <HomeView />
+  <HeaderView />
+  <div>
+    <RouterView />
+  </div>
 </template>
 
 <style scoped></style>
