@@ -8,6 +8,7 @@ export default {
 </script>
 
 <template>
+  <header class="h-32"></header>
   <HomeView />
 </template>
 
