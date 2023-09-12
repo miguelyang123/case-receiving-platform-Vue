@@ -18,7 +18,7 @@ export default {
         <div class="flex px-16 py-3 bg-[#FF6E6E] justify-between">
             <div class="flex">
                 <RouterLink class="navBtn" to="/">首頁</RouterLink>
-                <RouterLink class="navBtn" to="/">我要接案</RouterLink>
+                <RouterLink class="navBtn" to="/tackcasepage">我要接案</RouterLink>
             </div>
             <RouterLink class="navBtn" to="/personal_info">我的帳號</RouterLink>
         </div>

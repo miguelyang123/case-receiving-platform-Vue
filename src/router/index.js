@@ -21,6 +21,11 @@ const router = createRouter({
       name: "personalInfoUpload",
       component: PersonalInfoUpload,
     },
+    {
+      path: "/tackcasepage",
+      name: "TackCasePage",
+      component: () => import("../views/TackCasePage.vue"),
+    },
   ],
 });
 
