@@ -1,10 +1,11 @@
 <script>
-import HeaderView from "./components/Header.vue"
-import { RouterLink, RouterView } from 'vue-router';
+import HeaderView from "./components/Header.vue";
+import { RouterLink, RouterView } from "vue-router";
 
 export default {
   components: {
-    HeaderView,RouterView
+    HeaderView,
+    RouterView,
   },
 };
 </script>
