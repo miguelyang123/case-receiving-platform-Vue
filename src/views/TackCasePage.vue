@@ -7,6 +7,9 @@ export default {
 
     data() {
         return {
+
+            thisType:["red",""],
+
             mapShow:false,
             map:["地區不限",
                 "臺北","新北","基隆","桃園","新竹","宜蘭",
@@ -86,7 +89,7 @@ export default {
         <h1 class="text-3xl font-bold">找案件</h1>
         <div class="flex my-6">
             <RouterLink class="findCaseType" to="/tackcasepage">
-                <img src="../assets/img/TackCaseImg/onlineCase.png" width="65" class=" block" alt="">
+                <iconify-icon icon="fluent-mdl2:join-online-meeting" class="text-red-600 hover:text-blue-600" width="65"></iconify-icon>
                 <p>遠端</p>
             </RouterLink>
             <RouterLink class="findCaseType" to="/tackcasepage">
