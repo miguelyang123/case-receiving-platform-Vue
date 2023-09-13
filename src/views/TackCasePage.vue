@@ -88,14 +88,14 @@ export default {
     <div class="w-[85%] mx-auto py-6 mb-[10rem]">
         <h1 class="text-3xl font-bold">找案件</h1>
         <div class="flex my-6">
-            <RouterLink class="findCaseType" to="/tackcasepage">
-                <iconify-icon icon="fluent-mdl2:join-online-meeting" class="text-red-600 hover:text-blue-600" width="65"></iconify-icon>
-                <p>遠端</p>
-            </RouterLink>
-            <RouterLink class="findCaseType" to="/tackcasepage">
-                <img src="../assets/img/TackCaseImg/offlineCase.png" width="65" class=" block" alt="">
-                <p>線場</p>
-            </RouterLink>
+            <button class="findCaseType"  @click="thisType[1]='線上'">
+                <iconify-icon icon="fluent-mdl2:join-online-meeting" :class="{ 'hover:text-red-600':true,'text-red-600' :thisType[1]==='線上' }" width="65"></iconify-icon>
+                <p :class="{ 'hover:text-red-600':true,'text-red-600' :thisType[1]==='線上' }">遠端</p>
+            </button>
+            <button class="findCaseType" @click="thisType[1]='線下'">
+                <iconify-icon icon="healthicons:domestic-worker" :class="{ 'hover:text-red-600':true,'text-red-600' :thisType[1]==='線下' }" width="65"></iconify-icon>
+                <p :class="{ 'hover:text-red-600':true,'text-red-600' :thisType[1]==='線下' }">線場</p>
+            </button>
         </div>
         <div class="flex">
             <div class=" relative" @mouseover="mapShow=true" @mouseleave="mapShow=false">
