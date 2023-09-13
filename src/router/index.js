@@ -9,6 +9,16 @@ const router = createRouter({
       name: "RegisterPage",
       component: RegisterPage,
     },
+    {
+      path: "/personal_info",
+      name: "personalInfo",
+      component: PersonalInfo,
+    },
+    {
+      path: "/personal_info_upload",
+      name: "personalInfoUpload",
+      component: PersonalInfoUpload,
+    },
   ],
 });
 

@@ -20,7 +20,7 @@ export default {
                 <RouterLink class="navBtn" to="/">首頁</RouterLink>
                 <RouterLink class="navBtn" to="/">我要接案</RouterLink>
             </div>
-            <RouterLink class="navBtn" to="/">我的帳號</RouterLink>
+            <RouterLink class="navBtn" to="/personal_info">我的帳號</RouterLink>
         </div>
         
     </header>
