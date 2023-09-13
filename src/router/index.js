@@ -26,6 +26,12 @@ const router = createRouter({
       name: "TackCasePage",
       component: () => import("../views/TackCasePage.vue"),
     },
+    {
+      path: "/tackcasedetailspage/:thisList",
+      name: "TackCaseDetailsPage",
+      component: () => import("../views/TackCaseDetailsPage.vue"),
+      props:true,
+    },
   ],
 });
 

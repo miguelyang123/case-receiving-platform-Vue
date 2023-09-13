@@ -21,6 +21,8 @@ export default {
             price:["案件金額不限","5千以下","5001 ~ 1萬","1萬 ~ 5萬"],
             thisPrice:"案件金額",
 
+            thisKeyWord:"",
+
             page:1,      // 當前頁數
             allPage:15,  // 總頁數
             pageNum:5    // 分頁數量
@@ -120,14 +122,14 @@ export default {
             </div>
 
             <div class=" flex ">
-                <input type="text" placeholder="請輸入關鍵字" class="searchKeyWords">
+                <input type="text" placeholder="請輸入關鍵字" v-model="thisKeyWord" class="searchKeyWords">
                 <img src="../assets/img/TackCaseImg/search.png" width="50" alt="">
             </div>
         </div>
 
         <hr class="mt-6 mb-12 border-[#aaa9a9]">
 
-        <RouterLink to="/" class=" relative" v-for="index in 5">
+        <RouterLink :to="{name:'TackCaseDetailsPage',params:{thisList:'abc'}}" class=" relative" v-for="index in 5">
             <h1 class=" font-bold text-xl">照片修改後製</h1>
             <div class="flex">
                 <p class="text-red-600 font-bold text-lg">1萬 ~ 5萬</p>
