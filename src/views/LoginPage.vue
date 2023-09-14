@@ -1,9 +1,11 @@
 <script >
+import router from '../router';
 export default {
     data() {
         return {
             pwdFlag: false, //密碼明碼
-            password: "",
+            email:"",//email
+            password: "",//密碼
         }
     },
     methods: {
@@ -12,6 +14,9 @@ export default {
         },
         pwdflagFalse() {
             this.pwdFlag = false;
+        },
+        registerRouterPush(){
+           router.push("/register_page")
         },
     },
 }
@@ -30,7 +35,7 @@ export default {
             </div>
             <div class="h-[220px] ">
                 <div class="relative">
-                    <input type="text" placeholder="輸入Email"
+                    <input type="text" placeholder="輸入Email" v-model="email"
                         class="border-2 border-black ml-[50px] mt-[40px] w-[400px] h-[55px] text-[24px] rounded-lg pl-[60px]">
                     <div
                         class="absolute w-[35px] h-[35px] bg-[url('../../public/Account_icon.png')] bg-cover bottom-[9px] left-[60px]">
@@ -49,7 +54,7 @@ export default {
                 </div>
             </div>
             <div class="h-[50px]  flex  justify-between px-[60px]">
-                <button type="button" class="text-[22px] font-bold hover:scale-105 active:scale-95 ">會員註冊</button>
+                <button type="button" class="text-[22px] font-bold hover:scale-105 active:scale-95 " @click="registerRouterPush">會員註冊</button>
                 <button type="button" class="text-[22px] font-bold hover:scale-105 active:scale-95 ">忘記密碼</button>
             </div>
             <div class="flex  h-[120px] justify-center items-center ">
