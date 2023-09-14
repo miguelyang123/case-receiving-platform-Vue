@@ -180,9 +180,9 @@ export default {
             <p class=" text-xl font-bold py-6 pl-6 pr-12 whitespace-nowrap truncate">{{ item.content }}</p>
 
             <div class=" text-end py-3">
-                <RouterLink to="/"
-                    class=" text-white rounded-lg bg-[#FF6E6E] py-3 px-6 mr-12 text-2xl font-bold hover:scale-105 active:scale-95">
-                    我要接案</RouterLink>
+                <RouterLink to="/">
+                    <button type="button" class=" text-white rounded-lg bg-[#FF6E6E] py-3 px-6 mr-12 text-2xl font-bold hover:scale-105 active:scale-95"> 我要接案</button>
+                </RouterLink>
             </div>
             <hr class="my-6 border-[#cecece]">
         </RouterLink>

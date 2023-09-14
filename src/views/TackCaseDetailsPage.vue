@@ -49,9 +49,8 @@ export default {
                 {{ arrList.content }}
             </div>
             <div class=" text-center py-3">
-                <RouterLink to="/"
-                    id="tackCase" class=" tackCase">
-                    我要接案
+                <RouterLink to="/">
+                    <button type="button" class=" text-white rounded-lg bg-[#FF6E6E] py-3 px-6 text-2xl font-bold hover:scale-105 active:scale-95"> 我要接案</button>
                 </RouterLink>
             </div>
         </div>
@@ -59,22 +58,5 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-    .tackCase{
-        color: white;
-        border-radius: 0.5rem;
-        background: #FF6E6E;
-        padding: 0.75rem 1.5rem;
-        font-size: 1.5rem; line-height: 2rem;
-        font-weight: 700;
-
-        
-    }
-    #tackCase{
-        &:hover{
-            scale: 1.05;
-        }
-        &:active{
-            scale: 0.95;
-        }
-    }
+    
 </style>
