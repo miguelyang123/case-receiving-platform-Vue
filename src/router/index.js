@@ -32,6 +32,11 @@ const router = createRouter({
       component: () => import("../views/TackCaseDetailsPage.vue"),
       props:true,
     },
+    {
+      path: "/personalinfoedit",
+      name: "PersonalInfoEdit",
+      component: () => import("../views/PersonalInfoEdit.vue"),
+    },
   ],
 });
 

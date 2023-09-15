@@ -1,7 +1,14 @@
 <script>
+import { RouterLink, RouterView} from 'vue-router';
 export default {
-  setup() {
-    return {};
+  components:{
+    RouterLink,
+  },
+
+  data() {
+    return {
+      
+    }
   },
 };
 
@@ -14,7 +21,7 @@ export default {
   
   <h1>Personal Info</h1>
   <div class="frame">
-    <button class="custom-btn btn-5"><span>編輯個人資料</span></button><br/>
+    <RouterLink class="custom-btn btn-5" to="/personalinfoedit"><span>編輯個人資料</span></RouterLink><br/>
     <button class="custom-btn btn-5"><a href="/personal_info_upload"><span>上傳履歷</span></a></button><br/>
     <button class="custom-btn btn-5"><span>編輯發出的案子</span></button><br/>
     <button class="custom-btn btn-5"><span>編輯已接的案子</span></button><br/>
