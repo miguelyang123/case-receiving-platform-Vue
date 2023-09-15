@@ -1,4 +1,6 @@
 <script>
+import { mapActions } from 'pinia';
+import  defineStore  from '../store/dataStore'
 import { RouterLink, RouterView } from 'vue-router';
 export default {
     comments: {
@@ -26,10 +28,15 @@ export default {
 
             thisKeyWord: "",  // 關鍵字
 
+            // 找到的資訊
             arrList: [{
-                'title': '照片編輯', 'price': 50000, 'location': '台南', 'caseDate': '2023/09/30', 'content': 'Lorem ipsum dolor sit amet consectetur adipisicing elit.             Totam tempora aut soluta dolor nisi recusandae   \n   \n  dolorum aperiam, repellat doloremque placeat, sunt dignissimos quasi quos pariatur impedit itaque. Praesentium quod cumque ratione nobis iusto aliquam repudiandae dolor sapiente enim doloremque minima ad officiis placeat aspernatur illum reiciendis modi, itaque quo? Nemo?'
+                'title': '照片編輯', 'price': 50000, 'location': '台南', 'caseDate': '2023/09/30', 'case_class':'線上' ,
+                'content': 'Lorem ipsum dolor sit amet consectetur adipisicing elit.             Totam tempora aut soluta dolor nisi recusandae   \n   \n  dolorum aperiam, repellat',
+                'uuid':'AA123','user_name':'寺井','email':'dfgh@gmail.com','phone':'0912345678','評價':0
             }, {
-                'title': '影片編輯', 'price': 30000, 'location': '新北', 'caseDate': '2023/10/20', 'content': 'Lorem ipsum dolor sit amet consectetur adipisicing elit.             Totam tempora aut soluta dolor nisi recusandae   \n   \n   doloremque placeat, sunt dignissimos quasi quos pariatur impedit itaque. Praesentium quod cumque ratione nobis iusto aliquam repudiandae dolor sapiente enim doloremque minima ad officiis placeat aspernatur illum reiciendis modi, itaque quo? Nemo?'
+                'title': '影片編輯', 'price': 30000, 'location': '新北', 'caseDate': '2023/10/20', 'case_class':'線下' , 
+                'content': 'Lorem ipsum dolor sit amet consectetur adipisicing elit.             Totam tempora aut soluta dolor nisi recusandae   \n   \n   doloremque placeat',
+                'uuid':'BB456','user_name':'皈依','email':'bhjk@gmail.com','phone':'0987654321','評價':3
             }],
 
             page: 1,      // 當前頁數
@@ -38,6 +45,20 @@ export default {
         }
     },
     methods: {
+
+        ...mapActions(defineStore,["setCaseThisData"]),
+
+        thisCase(item){
+            
+            this.$router.push({
+                path:'tackcasedetailspage',
+                query:{
+                    thisList:JSON.stringify(item)
+                }
+            })
+
+            // this.setCaseThisData(JSON.stringify(item));
+        },
 
         // 顯示點選哪個類別
         thisType1(index) {
@@ -97,7 +118,7 @@ export default {
 
             return arr;
         },
-    }
+    },
 }
 </script>
 <template>
@@ -156,7 +177,8 @@ export default {
 
         <hr class="mt-6 mb-12 border-[#aaa9a9]">
 
-        <RouterLink :to="{ name: 'TackCaseDetailsPage', params: { thisList: JSON.stringify(item) } }" class=" relative"
+        <!-- <RouterLink :to="{ name: 'TackCaseDetailsPage', params: { thisList: JSON.stringify(item) } }" class=" relative" -->
+        <div class=" relative" @click="thisCase(item)"
             v-for="(item, index) in arrList">
             <h1 class=" font-bold text-xl">{{ item.title }}</h1>
             <div class="flex">
@@ -185,7 +207,7 @@ export default {
                 </RouterLink>
             </div>
             <hr class="my-6 border-[#cecece]">
-        </RouterLink>
+        </div>
 
         <div v-if="page === 0" class="text-center">
             <h1 class="text-2xl font-bold my-6">未搜尋到你想找的案子</h1>

@@ -27,7 +27,7 @@ const router = createRouter({
       component: () => import("../views/TackCasePage.vue"),
     },
     {
-      path: "/tackcasedetailspage/:thisList",
+      path: "/tackcasedetailspage",
       name: "TackCaseDetailsPage",
       component: () => import("../views/TackCaseDetailsPage.vue"),
       props:true,
