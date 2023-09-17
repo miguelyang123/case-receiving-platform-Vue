@@ -1,51 +1,126 @@
 <script>
+import { RouterLink, RouterView } from 'vue-router';
 export default {
-    
+    components:{
+        RouterLink,
+    },
+    data() {
+        return {
+            user:{
+                email:"asdf@gmail.com",
+                pwd:"123456",
+                user_name:"",
+                phone:"0123456789"
+            },    
+
+           trueEmail: new RegExp("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"),
+           truePhone: new RegExp("^0[\\d]{1}[\\d]{4}[\\d]{4}$"),
+        }
+    },
+    methods:{
+        editPersomInfo(){
+            if(!this.trueEmail.test(this.user.email) || !this.truePhone.test(this.user.phone)){
+                return false;
+            }
+
+            // fetch("...",{
+            //     method:"post",
+            //     mode:"no-cors",
+            //     headers:{
+            //         "Accect":"application/json, text/plain, */*",
+            //         "Content-Type": "application/x-www-form-urlencoded"
+            //     },
+            //     body: "email" + this.user.email+
+            //         "pwd" + this.user.pwd+
+            //         "user_name" + this.user.user_name+
+            //         "phone" + this.user.phone
+            // })
+            // .then(respone => respone.json())
+            // .then(data =>{
+            //     console.log(data);
+            // })
+
+            return false;
+        },
+    }
 }
 </script>
 <template >
-    <div class="w-[70%] mx-auto my-6">
-        <form action="/personalinfoedit" method="post" target="_self">
-            <h1 class="bg-[#f56666] text-[white] text-2xl font-bold p-6 rounded-lg">修改個人資料</h1>
-            <div class="my-6">
-                <table class="w-full rounded-lg" style="border: 0.15vw #f4f2ff solid;border: 1;" rules="rows">
-                    <thead class="text-xl font-bold bg-slate-300 ">
+    <div class="w-[500px] mx-auto my-6">
+        <form action="#" method="post" @submit.prevent="editPersomInfo">
+            <div>
+                <table class="w-full rounded-lg" style="border: 1px #d6d6d6 solid;" rules="rows">
+                    <thead class="text-lg font-bold bg-slate-300 ">
                         <tr>
-                            <th colspan="2" class="p-6 text-start py-3">基本資料</th>
+                            <th colspan="2" class="bg-[#a7a7a7] text-[white] text-xl font-bold px-6 py-3 rounded-lg">修改個人資料</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <th>E-mail</th>
+                            <th class="w-[30%]">E-mail</th>
                             <td>
-                                <input type="text" placeholder="E-mail">
+                                <input type="email" class="bg-[#f0eeee]" placeholder="E-mail" v-model="user.email" required>
+                                <p v-if="!trueEmail.test(user.email)" class="text-[red]">請輸入正確的電子郵件格式</p>
                             </td>
                         </tr>
                         <tr>
                             <th>密碼</th>
                             <td>
-                                <input type="text" disabled>
+                                <input type="password" class="bg-[#cfcfcf]" v-model="user.pwd" disabled>
+                                <RouterLink class="editPwd" to="#"> 修改</RouterLink>
                             </td>
                         </tr>
                         <tr>
                             <th>姓名</th>
                             <td>
-                                <input type="text" placeholder="姓名">
-                                <p>請填入您的中文姓名，勿使用假名或暱稱</p>
+                                <input type="text" class="bg-[#f0eeee]" placeholder="姓名" v-model="user.user_name" required>
                             </td>
                         </tr>
                         <tr>
-                            <th></th>
-                            <td></td>
+                            <th>手機</th>
+                            <td>
+                                <input type="tel" class="bg-[#f0eeee]" placeholder="手機號碼" v-model="user.phone" required>
+                                <p v-if="!truePhone.test(user.phone)" class="text-[red]">請輸入符合格式的手機號碼 (0xxxxxxxxx)</p>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <input type="submit" class=" text-white rounded-lg bg-[#FF6E6E] py-3 px-6 text-2xl font-bold hover:scale-105 active:scale-95" value="修改">
+            <input type="submit" class=" flex text-white rounded-lg bg-[#FF6E6E] py-3 px-12 mx-auto my-3 text-2xl font-bold hover:scale-105 active:scale-95" value="修改">
         </form>
     </div>
 </template>
 
 <style lang="scss" scoped>
-    
+
+    tbody{
+        tr{
+            border-bottom: 0.01rem rgb(209, 209, 209) solid;
+            td{
+                padding: 0.5rem 0;
+                input{
+                    padding: 0.25rem 0.75rem;
+                    outline: none;
+                    border-radius: 0.25rem;
+                }
+            }
+        }
+    }
+
+    .editPwd{
+        color: blue;
+        border-bottom: 1px blue solid;
+        margin-left: 0.5rem;
+
+        &:hover{
+            scale: 1.1;
+            color: red;
+            border-bottom: 1px red solid;
+        }
+        &:active{
+            scale: 0.9;
+            color: blue;
+            border-bottom: 1px blue solid;
+        }
+    }
 </style>
