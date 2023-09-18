@@ -1,9 +1,52 @@
 <script>
+import { RouterLink, RouterView } from 'vue-router';
 export default {
-  setup() {
-    return {};
-  },
-};
+    components:{
+        RouterLink,
+    },
+    data() {
+        return {
+            // user:{
+            //     email:"asdf@gmail.com",
+            //     pwd:"123456",
+            //     user_name:"",
+            //     phone:"0123456789"
+            // },    
+
+          //  trueEmail: new RegExp("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"),
+          //  truePhone: new RegExp("^0[\\d]{1}[\\d]{4}[\\d]{4}$"),
+        
+           pdfPath: ""
+        
+        }
+    },
+    methods:{
+        editPersomInfo(){
+            // if(!this.trueEmail.test(this.user.email)){
+            //     return false;
+            // }
+
+            // fetch("...",{
+            //     method:"post",
+            //     mode:"no-cors",
+            //     headers:{
+            //         "Accect":"application/json, text/plain, */*",
+            //         "Content-Type": "application/x-www-form-urlencoded"
+            //     },
+            //     body: "email" + this.user.email+
+            //         "pwd" + this.user.pwd+
+            //         "user_name" + this.user.user_name+
+            //         "phone" + this.user.phone
+            // })
+            // .then(respone => respone.json())
+            // .then(data =>{
+            //     console.log(data);
+            // })
+
+            return false;
+        },
+    }
+}
 
 </script>
 
@@ -14,8 +57,14 @@ export default {
   
   <h1>上傳履歷</h1>
   <div class="frame">
-    <input type="file" />
+    
+    <form name = "frm" method = "post" action = "localhost:8080/user_page_upload">
+      <!-- <input type="file" v-model="pdfPath"/> -->
+      <input type="file" />
+      <button type="submit" class="custom-btn btn-5"></button><br/>
+    </form>     
     <button class="custom-btn btn-5"><a href="/personal_info"><span>上傳</span></a></button><br/>
+    
     <!-- <button class="custom-btn btn-5"><span>上傳履歷</span></button><br/>
     <button class="custom-btn btn-5"><span>編輯發出的案子</span></button><br/>
     <button class="custom-btn btn-5"><span>編輯已接的案子</span></button><br/>
