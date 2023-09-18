@@ -37,6 +37,11 @@ const router = createRouter({
       name: "PersonalInfoEdit",
       component: () => import("../views/PersonalInfoEdit.vue"),
     },
+    {
+      path: "/managerpage",
+      name: "ManagerPage",
+      component: () => import("../views/ManagerPage.vue"),
+    },
   ],
 });
 
