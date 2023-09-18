@@ -2,9 +2,10 @@
 import { mapActions } from 'pinia';
 import  defineStore  from '../store/dataStore'
 import { RouterLink, RouterView } from 'vue-router';
+import { Icon } from '@iconify/vue';
 export default {
-    comments: {
-        RouterLink
+    components: {
+        RouterLink,Icon,
     },
 
     data() {
@@ -126,13 +127,13 @@ export default {
         <h1 class="text-3xl font-bold">找案件</h1>
         <div class="flex my-6">
             <button class="findCaseType" @click="thisType1(0)">
-                <iconify-icon icon="fluent-mdl2:join-online-meeting" :class="{ 'text-red-600': thisType[1] === '線上' }"
-                    width="65"></iconify-icon>
+                <Icon icon="fluent-mdl2:join-online-meeting" :class="{ 'text-red-600': thisType[1] === '線上' }"
+                    width="65"></Icon>
                 <p :class="{ 'text-red-600': thisType[1] === '線上' }">遠端</p>
             </button>
             <button class="findCaseType" @click="thisType1(1)">
-                <iconify-icon icon="healthicons:domestic-worker" :class="{ 'text-red-600': thisType[1] === '線下' }"
-                    width="65"></iconify-icon>
+                <Icon icon="healthicons:domestic-worker" :class="{ 'text-red-600': thisType[1] === '線下' }"
+                    width="65"></Icon>
                 <p :class="{ 'text-red-600': thisType[1] === '線下' }">線場</p>
             </button>
         </div>
@@ -178,7 +179,7 @@ export default {
         <hr class="mt-6 mb-12 border-[#aaa9a9]">
 
         <!-- <RouterLink :to="{ name: 'TackCaseDetailsPage', params: { thisList: JSON.stringify(item) } }" class=" relative" -->
-        <div class=" relative" @click="thisCase(item)"
+        <div class=" relative cursor-pointer" @click="thisCase(item)"
             v-for="(item, index) in arrList">
             <h1 class=" font-bold text-xl">{{ item.title }}</h1>
             <div class="flex">

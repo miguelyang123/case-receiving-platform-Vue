@@ -2,9 +2,10 @@
 import { mapActions } from 'pinia';
 import  defineStore  from '../store/dataStore';
 import { RouterLink, RouterView } from 'vue-router';
+import { Icon } from '@iconify/vue';
 export default {
-    comments: {
-        RouterLink
+    components: {
+        RouterLink,Icon
     },
     props:["thisList"],
     data() {
@@ -68,7 +69,7 @@ export default {
         <div class=" min-w-fit w-[30%] p-6 ml-12 border border-[#d7d7d7] border-t-8 border-t-[#FF6E6E] shadow-lg rounded-xl">
             <h1 class="text-center text-2xl font-bold pb-6 border-b-4 border-b-black">案主資訊</h1>
             <div class="flex mt-6 items-center">
-                <iconify-icon icon="bi:person-circle" width="30"></iconify-icon>
+                <Icon icon="bi:person-circle" width="30"></Icon>
                 <p class="text-xl ml-3">{{ arrList.user_name }}</p>
             </div>
             <div v-for="(item,index) in {'手機':arrList.phone, 'E-mail':arrList.email}" class="text-xl my-6">
