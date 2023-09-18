@@ -1,29 +1,62 @@
 <script>
+import PageVue from "../components/Page.vue"
 export default {
+    components:{
+        PageVue,
+    },
     data() {
         return {
-            allUsers:{
-                user1:{
-                    email:"asdf@gmail.com",
-                    // pwd:"123456",
-                    user_name:"凱薩",
-                    phone:"0123456789",
-                    rating:4,
-                    is_administrator:'否',
-                    locked_status:'否'
-                },   
-                user2:{
-                    email:"dasdsdeasx@gmail.com",
-                    // pwd:"123456",
-                    user_name:"凱蒂",
-                    phone:"0987654321",
-                    rating:3,
-                    is_administrator:'否',
-                    locked_status:'否'
-                },   
-            }  
+            // allUsers:{
+            //     user1:{
+            //         email:"asdf@gmail.com",
+            //         // pwd:"123456",
+            //         user_name:"凱薩",
+            //         phone:"0123456789",
+            //         rating:4,
+            //         is_administrator:'否',
+            //         locked_status:'否'
+            //     },   
+            //     user2:{
+            //         email:"dasdsdeasx@gmail.com",
+            //         // pwd:"123456",
+            //         user_name:"凱蒂",
+            //         phone:"0987654321",
+            //         rating:3,
+            //         is_administrator:'否',
+            //         locked_status:'否'
+            //     },   
+            // },
+
+            allUsers:[{}],
+
+            page: 1,      // 當前頁數
+            allPage: 15,  // 總頁數
+            pageNum: 5    // 分頁數量
         }
     },
+    methods:{
+        selectCase(){
+            fetch("http://localhost:8080/api/get_all_user")
+            .then(response => response.json())
+            .then( data => {
+                console.log(data);
+                //this.allUsers=data.userInfoList;
+
+                for(let i=0;i<data.userInfoList.length;i++){
+                    Object.entries(data.userInfoList[i]).forEach((key,value) =>{
+                        this.allUsers.push();
+                    })
+                }
+                
+            })
+            .catch(errorTest => {
+                console.log(errorTest);
+            })
+        }
+    },
+    mounted(){
+        this.selectCase();
+    }
 }
 </script>
 <template>
@@ -42,7 +75,13 @@ export default {
                 <td class="border-2 border-black text-center text-lg" v-for="(item2,index2) in item1">{{ item2 }}</td>
             </tr>
         </tbody>
-        <tfoot></tfoot>
+        <tfoot>
+            <tr>
+                <td colspan="7" class="py-3 pr-3">
+                    <PageVue :data_list="JSON.stringify(allUsers)" :data_page="page" :data_allPage="allPage" :data_pageNum="pageNum"></PageVue>
+                </td>
+            </tr>
+        </tfoot>
        </table>
     </div>
 </template>
