@@ -59,7 +59,11 @@ export default {
                         <tr>
                             <th class="w-[30%]">E-mail</th>
                             <td>
-                                <input type="email" class="bg-[#f0eeee]" placeholder="E-mail" v-model="user.email" required>
+                                <div class="flex items-center">
+                                    <input type="email" class="bg-[#f0eeee]" placeholder="E-mail" v-model="user.email" required>
+                                    <iconify-icon v-if="trueEmail.test(user.email)" icon="ri:checkbox-circle-fill" class="text-[#0fa958] ml-3 text-2xl"></iconify-icon>
+                                    <iconify-icon v-if="!trueEmail.test(user.email)" icon="fluent-mdl2:status-error-full" class="text-[red] ml-3 text-xl"></iconify-icon>
+                                </div>
                                 <p v-if="!trueEmail.test(user.email)" class="text-[red]">請輸入正確的電子郵件格式</p>
                             </td>
                         </tr>
@@ -79,7 +83,11 @@ export default {
                         <tr>
                             <th>手機</th>
                             <td>
-                                <input type="tel" class="bg-[#f0eeee]" placeholder="手機號碼" v-model="user.phone" required>
+                                <div class="flex items-center">
+                                    <input type="tel" class="bg-[#f0eeee]" placeholder="手機號碼" v-model="user.phone" required>
+                                    <iconify-icon v-if="truePhone.test(user.phone)" icon="ri:checkbox-circle-fill" class="text-[#0fa958] ml-3 text-2xl"></iconify-icon>
+                                    <iconify-icon v-if="!truePhone.test(user.phone)" icon="fluent-mdl2:status-error-full" class="text-[red] ml-3 text-xl"></iconify-icon>
+                                </div>
                                 <p v-if="!truePhone.test(user.phone)" class="text-[red]">請輸入符合格式的手機號碼 (0xxxxxxxxx)</p>
                             </td>
                         </tr>
