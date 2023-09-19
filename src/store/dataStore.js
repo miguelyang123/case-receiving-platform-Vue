@@ -6,6 +6,8 @@ export default defineStore("dataStore", {
   //state 類似 vue data
   state: () => ({
     numTest: 1,
+
+    allPage1:1,
   }),
   //getters 類似 computed
   //沒有this
@@ -24,5 +26,12 @@ export default defineStore("dataStore", {
     // setLocation(num) {
     //   this.location = num;
     // },
+
+    getAllPage(){
+      return this.allPage1;
+    },
+    setAllPage(page){
+      this.allPage1 = page;
+    }
   },
 });

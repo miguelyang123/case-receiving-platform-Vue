@@ -1,52 +1,51 @@
 <script>
-import PageVue from "../components/Page.vue"
+import PageVue from "../components/Page.vue";
+import { mapActions } from 'pinia';
+import  defineStore  from '../store/dataStore';
 export default {
     components:{
         PageVue,
     },
     data() {
         return {
-            // allUsers:{
-            //     user1:{
-            //         email:"asdf@gmail.com",
-            //         // pwd:"123456",
-            //         user_name:"凱薩",
-            //         phone:"0123456789",
-            //         rating:4,
-            //         is_administrator:'否',
-            //         locked_status:'否'
-            //     },   
-            //     user2:{
-            //         email:"dasdsdeasx@gmail.com",
-            //         // pwd:"123456",
-            //         user_name:"凱蒂",
-            //         phone:"0987654321",
-            //         rating:3,
-            //         is_administrator:'否',
-            //         locked_status:'否'
-            //     },   
-            // },
 
-            allUsers:[{}],
+            allUsers:[],
 
             page: 1,      // 當前頁數
-            allPage: 15,  // 總頁數
+            allPage: 5,  // 總頁數
             pageNum: 5    // 分頁數量
         }
     },
     methods:{
+
+        ...mapActions(defineStore,["setAllPage","getAllPage"]),
+
         selectCase(){
             fetch("http://localhost:8080/api/get_all_user")
-            .then(response => response.json())
+            .then(response => {
+                if(response.status === 200){
+                    return response.json();
+                }else{
+                    console.log(response.json());
+                }
+            })
             .then( data => {
                 console.log(data);
-                //this.allUsers=data.userInfoList;
+                this.allUsers=[];
+                
+                data.userInfoList.forEach((item,index) => {
+                    this.allUsers.push({
+                        "email":item.email,
+                        "姓名":item.user_name,
+                        "手機":item.phone,
+                        "評價":item.rating,
+                        "身分權限":item.administrator,
+                        "鎖定狀態":item.lockedStatus
+                    });
+                });
 
-                for(let i=0;i<data.userInfoList.length;i++){
-                    Object.entries(data.userInfoList[i]).forEach((key,value) =>{
-                        this.allUsers.push();
-                    })
-                }
+                this.allPage = this.allUsers.length; 
+                this.setAllPage(this.allPage);        
                 
             })
             .catch(errorTest => {
@@ -56,7 +55,7 @@ export default {
     },
     mounted(){
         this.selectCase();
-    }
+    },
 }
 </script>
 <template>
@@ -78,7 +77,8 @@ export default {
         <tfoot>
             <tr>
                 <td colspan="7" class="py-3 pr-3">
-                    <PageVue :data_list="JSON.stringify(allUsers)" :data_page="page" :data_allPage="allPage" :data_pageNum="pageNum"></PageVue>
+                    <PageVue :data_list="JSON.stringify(allUsers)" :data_page="page" :data_pageNum="pageNum"></PageVue>
+
                 </td>
             </tr>
         </tfoot>

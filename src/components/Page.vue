@@ -1,18 +1,23 @@
 <script>
+import { mapActions } from 'pinia';
+import  defineStore  from '../store/dataStore';
 export default {
-    props:["data_list","data_page","data_allPage","data_pageNum"],
+    props:["data_list","data_page","data_pageNum"],
     data() {
         return {
             // 找到的資訊
             arrList: JSON.parse(this.data_list),
 
             page: this.data_page,      // 當前頁數
-            allPage: this.data_allPage,  // 總頁數
+            allPage: 4,  // 總頁數
             pageNum: this.data_pageNum,   // 分頁數量
             // agrijrgae:this.,
         }
     },
     methods:{
+
+        ...mapActions(defineStore,["setAllPage","getAllPage"]),
+
         // 上一頁
         pageBlank() {
             if (this.page !== 1) {
@@ -25,6 +30,10 @@ export default {
                 this.page += 1;
             }
         },
+    },
+    created(){
+        this.allPage = this.getAllPage();
+        
     },
     computed: {
         pageNumCheck() {
