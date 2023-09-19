@@ -40,6 +40,9 @@ export default {
                 .catch(error => {
                     alert(error);
                 });
+        },
+        forgottenPassword(){
+            router.push("/identity_authentication");
         }
     },
 }
@@ -79,7 +82,7 @@ export default {
             <div class="h-[50px]  flex  justify-between px-[60px]">
                 <button type="button" class="text-[22px] font-bold hover:scale-105 active:scale-95 "
                     @click="registerRouterPush">會員註冊</button>
-                <button type="button" class="text-[22px] font-bold hover:scale-105 active:scale-95 ">忘記密碼</button>
+                <button type="button" class="text-[22px] font-bold hover:scale-105 active:scale-95 " @click="forgottenPassword">忘記密碼</button>
             </div>
             <div class="flex  h-[120px] justify-center items-center ">
                 <button type="button"
