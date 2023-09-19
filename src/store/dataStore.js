@@ -7,15 +7,14 @@ export default defineStore("dataStore", {
   state: () => ({
     numTest: 1,
 
-    // 分頁處理
-    pageContent:{
-      arrList:"",  // 所有資料
-
-      showPage:5,
-      page:1, // 當前頁面
-      allPage:1,  // 總數
-      pageNum:5, // 分頁數
-    }
+    // 分頁處理(暫時停用)
+    // pageContent:{
+    //   arrList:"",  // 所有資料
+    //   showPage:5,
+    //   page:1, // 當前頁面
+    //   allPage:1,  // 總數
+    //   pageNum:5, // 分頁數
+    // }
   }),
   //getters 類似 computed
   //沒有this
@@ -35,21 +34,29 @@ export default defineStore("dataStore", {
     //   this.location = num;
     // },
 
-    getThisPage(){
-      return this.pageContent.thisPage;
-    },
-    setThisPage(thisPage1){
-      this.pageContent.thisPage = thisPage1;
-    },
-    getAllPageContent(){
-      return this.pageContent;
-    },
-    setAllPageContent(thisallData){
-      this.pageContent.arrList = thisallData.allUsers;
-      this.pageContent.showPage = thisallData.showPage;
-      this.pageContent.page = thisallData.page;
-      this.pageContent.allPage = thisallData.allPage;
-      this.pageContent.pageNum = thisallData.pageNum;
-    }
+    // 分頁處理 (暫時停用)
+    // getThisPage(){
+    //   return this.pageContent.thisPage;
+    // },
+    // setThisPage(thisPage1){
+    //   this.pageContent.thisPage = thisPage1;
+    // },
+    // getAllPageContent(){
+    //   return this.pageContent;
+    // },
+    // setAllPageContent(thisallData){
+    //   this.pageContent.arrList = thisallData.allUsers;
+    //   this.pageContent.showPage = thisallData.showPage;
+    //   this.pageContent.page = thisallData.page;
+    //   this.pageContent.allPage = thisallData.allPage;
+    //   this.pageContent.pageNum = thisallData.pageNum;
+    // }
   },
+  persist:[
+    // persist:true, // 默認全部持久化配置
+    {
+      paths:["numTest"],  // 要持久化的值(可多個)
+      storage:localStorage  // 用 localStorage 儲存
+    },
+  ]
 });
