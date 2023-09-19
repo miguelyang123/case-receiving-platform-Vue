@@ -2,38 +2,62 @@
 import { mapActions } from 'pinia';
 import  defineStore  from '../store/dataStore';
 export default {
-    props:["data_list","data_page","data_pageNum"],
+    // props:["data_list","data_page","data_pageNum"],
     data() {
         return {
             // 找到的資訊
-            arrList: JSON.parse(this.data_list),
+            arrList: "",
 
-            page: this.data_page,      // 當前頁數
-            allPage: 4,  // 總頁數
+            showPage:5,
+            page: 1,      // 當前頁數
+            allPage: 0,  // 總頁數
             pageNum: this.data_pageNum,   // 分頁數量
             // agrijrgae:this.,
         }
     },
     methods:{
 
-        ...mapActions(defineStore,["setAllPage","getAllPage"]),
+        ...mapActions(defineStore,["setThisPage","getAllPageContent"]),
 
         // 上一頁
         pageBlank() {
             if (this.page !== 1) {
                 this.page -= 1;
+                this.content();
             }
         },
         //下一頁
         pageNext() {
             if (this.page !== this.allPage) {
                 this.page += 1;
+                this.content();
             }
+        },
+
+        // 製作分頁內容
+        content(){
+            let pageArrList = [];
+
+            for(let i=(this.page-1)*10;i<this.arrList.length;i++){
+                if (pageArrList.length>=this.showPage) {
+                    break;
+                }
+                pageArrList.push(arrList[i]);
+            }
+            this.$emit("pageArr",pageArrList);
         },
     },
     created(){
-        this.allPage = this.getAllPage();
-        
+        const arr1 = this.getAllPageContent();
+
+        this.arrList = arr1.arrList;
+        this.showPage = arr1.showPage;
+        this.page = arr1.page;
+        this.allPage = arr1.allPage;
+        this.pageNum = arr1.pageNum;
+    },
+    mounted(){
+        this.content();
     },
     computed: {
         pageNumCheck() {
@@ -58,7 +82,6 @@ export default {
             for (let i = fistPage; i <= endPage; i++) {
                 arr.push(i);
             }
-
             return arr;
         },
     },

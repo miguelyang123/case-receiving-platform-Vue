@@ -3,17 +3,15 @@ import { mapActions } from 'pinia';
 import  defineStore  from '../store/dataStore'
 import { RouterLink, RouterView } from 'vue-router';
 import { Icon } from '@iconify/vue';
-import PageVue from "../components/Page.vue"
+// import PageVue from "../components/Page.vue";
 export default {
     components: {
-        RouterLink,Icon,PageVue,
+        RouterLink,Icon,
     },
 
     data() {
         return {
-
             thisType: ["text-red-600", ""],
-
             mapShow: false,
             map: ["地區不限",
                 "臺北", "新北", "基隆", "桃園", "新竹", "宜蘭",
@@ -31,7 +29,7 @@ export default {
             thisKeyWord: "",  // 關鍵字
 
             // 找到的資訊
-            arrList: [{
+            allUsers: [{
                 'title': '照片編輯', 'price': 50000, 'location': '台南', 'caseDate': '2023/09/30', 'case_class':'線上' ,
                 'content': 'Lorem ipsum dolor sit amet consectetur adipisicing elit.             Totam tempora aut soluta dolor nisi recusandae   \n   \n  dolorum aperiam, repellat',
                 'uuid':'AA123','user_name':'寺井','email':'dfgh@gmail.com','phone':'0912345678','評價':0
@@ -40,9 +38,11 @@ export default {
                 'content': 'Lorem ipsum dolor sit amet consectetur adipisicing elit.             Totam tempora aut soluta dolor nisi recusandae   \n   \n   doloremque placeat',
                 'uuid':'BB456','user_name':'皈依','email':'bhjk@gmail.com','phone':'0987654321','評價':3
             }],
+            pageAllUsers:[],
 
+            showPage:5,  // 顯示幾筆
             page: 1,      // 當前頁數
-            allPage: 15,  // 總頁數
+            allPage: 2,  // 總頁數
             pageNum: 5    // 分頁數量
         }
     },
@@ -80,6 +80,65 @@ export default {
             this.priceShow = false;
         },
 
+        // 上一頁
+        pageBlank() {
+            if (this.page !== 1) {
+                this.page -= 1;
+                this.content();
+            }
+        },
+        //下一頁
+        pageNext() {
+            if (this.page !== this.allPage) {
+                this.page += 1;
+                this.content();
+            }
+        },
+
+        // 製作分頁內容
+        content(){
+            let pageArrList = [];
+            
+            for(let i=(this.page-1)*this.showPage;i<this.allUsers.length;i++){
+                if (pageArrList.length>=this.showPage) {
+                    break;
+                }
+                pageArrList.push(this.allUsers[i]);
+            }
+            // this.$emit("pageArr",pageArrList);
+            this.pageAllUsers = pageArrList;
+        },
+
+    },
+
+    computed: {
+        pageNumCheck() {
+
+            let fistPage, endPage;  // 分頁開始, 分頁結束
+            let arr = [];
+
+            if (this.allPage <= this.pageNum) {  // 當總頁數小於設定頁數
+                fistPage = 1;
+                endPage = this.allPage;
+            } else if (this.page <= Math.floor(this.pageNum / 2) + 1) {   // 當前頁數 <= 設定頁數/2 +1
+                fistPage = 1;
+                endPage = this.pageNum;
+            } else if (this.page + Math.floor(this.pageNum / 2) >= this.allPage) {  // 當前頁數 + 設定頁數/2 >= 總頁數
+                endPage = this.allPage;
+                fistPage = this.allPage - this.pageNum + 1;
+            } else {
+                fistPage = this.page - Math.floor(this.pageNum / 2);
+                endPage = this.page + Math.floor(this.pageNum / 2);
+            }
+
+            for (let i = fistPage; i <= endPage; i++) {
+                arr.push(i);
+            }
+
+            this.content();
+
+            return arr;
+        },
     },
 }
 </script>
@@ -141,7 +200,7 @@ export default {
 
         <!-- <RouterLink :to="{ name: 'TackCaseDetailsPage', params: { thisList: JSON.stringify(item) } }" class=" relative" -->
         <div class=" relative cursor-pointer" @click="thisCase(item)"
-            v-for="(item, index) in arrList">
+            v-for="(item, index) in allUsers">
             <h1 class=" font-bold text-xl">{{ item.title }}</h1>
             <div class="flex">
                 <p class="text-red-600 font-bold text-lg">{{ item.price }}</p>
@@ -176,7 +235,22 @@ export default {
             <p class="text-xl">你可以嘗試更換你的篩選條件或關鍵字</p>
         </div>
 
-        <PageVue :data_list="JSON.stringify(arrList)" :data_page="page" :data_allPage="allPage" :data_pageNum="pageNum"></PageVue>
+        <div v-if="page !== 0" class="flex justify-end items-end">
+            <button v-if="page !== 1" type="button" class="pageBtn" @click="pageBlank()">上一頁</button>
+
+            <button v-if="page > Math.floor(this.pageNum / 2) + 1" type="button" class="pageBtn" @click="page = 1">1</button>
+            <div v-if="page > Math.floor(this.pageNum / 2) + 2" type="button" class="mx-3 text-lg font-bold">...</div>
+
+            <button type="button" :class="{ 'pageBtn': true, 'bg-[#ffc8d1] text-[#E12D4A]': index === page }"
+                v-for="(index) in pageNumCheck" @click="page = index">{{ index }}</button>
+
+            <div v-if="page + Math.floor(this.pageNum / 2) + 1 < allPage" type="button" class="mx-3 text-[1.125rem] font-bold">
+                ...</div>
+            <button v-if="page + Math.floor(this.pageNum / 2) < allPage" type="button" class="pageBtn"
+                @click="page = allPage">{{ allPage }}</button>
+
+            <button v-if="page !== allPage" type="button" class="pageBtn" @click="pageNext()">下一頁</button>
+        </div>
     </div>
 </template>
 
@@ -269,5 +343,19 @@ export default {
         width: 10px;
     }
 }
+
+// 分頁
+.pageBtn {
+        border: gray 2px solid;
+        padding: 0.75rem;
+        margin: 0 0.25rem;
+        font-size: 1.125rem;
+        line-height: 1.125rem;
+        font-weight: bold;
+
+        &:hover {
+            background: #ffc8d1;
+        }
+    }
 
 </style>
