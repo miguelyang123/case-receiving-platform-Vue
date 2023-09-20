@@ -21,53 +21,70 @@ export default {
             //     allPage: 5,  // 總頁數
             //     pageNum: 5    // 分頁數量
             // },  
-            
+
+            dataUser:[],
             allUsers:[],
             pageAllUsers:[],
 
             showPage:10,  // 顯示幾筆
             page: 1,      // 當前頁數
             allPage: 5,  // 總頁數
-            pageNum: 5    // 分頁數量
+            pageNum: 5,    // 分頁數量
+            // 當 allPage = pageNum -1 || allPage = pageNum +1 會顯示異常，但功能正常運作
+
+            search:{
+                name:"",
+                rating:"全部",
+                administrator:false,
+                lockedStatus:false
+            },
+
+            edit:{
+                email:"",
+                name:"",
+                phone:"",
+                rating:0,
+                administrator:false,
+                lockedStatus:false
+            },
         }
     },
     methods:{
 
         ...mapActions(defineStore,["setAllPageContent","getThisPage"]),
 
-        selectCase(){
-            fetch("http://localhost:8080/api/get_all_user")
-            .then(response => {
-                if(response.status === 200){
-                    return response.json();
-                }else{
-                    console.log(response.json());
+        searchAll(){
+            
+            if(this.search.rating === "全部"){
+                this.search.rating = "";
+            }else{
+                this.search.rating = parseInt(this.search.rating);
+            }
+
+            fetch("http://localhost:8080/search_user/with_Input?name=" + this.search.name + "&rating=" + this.search.rating + "&admin=" + this.search.administrator + "&locked=" + this.search.lockedStatus )
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if(data.code==="200"){
+                    this.allUsers = [];
+
+                    data.userInfoList.forEach((item,index) => {
+                        this.allUsers.push({
+                            "email":item.email,
+                            "姓名":item.user_name,
+                            "手機":item.phone,
+                            "評價":item.rating,
+                            "身分權限": (item.administrator ? "管理者":"使用者"),
+                            "鎖定狀態":(item.lockedStatus ? "是":"否")
+                        });
+                    });
+
+                    this.allPage = Math.ceil((this.allUsers.length)/this.showPage); 
+                    this.content();
                 }
             })
-            .then( data => {
-                console.log(data);
-                this.allUsers=[];
-                
-                data.userInfoList.forEach((item,index) => {
-                    this.allUsers.push({
-                        "email":item.email,
-                        "姓名":item.user_name,
-                        "手機":item.phone,
-                        "評價":item.rating,
-                        "身分權限":item.administrator,
-                        "鎖定狀態":item.lockedStatus
-                    });
-                });
-
-                this.allPage = Math.floor((this.allUsers.length)/this.showPage+1); 
-                this.content();
-                // this.setAllPageContent(this.allUsers,this.showPage,this.page,this.allPage,this.pageNum); 
-                // this.setAllPageContent(this.contentPage);
-            })
-            .catch(errorTest => {
-                console.log(errorTest);
-            })
         },
+
 
         // 上一頁
         pageBlank() {
@@ -100,7 +117,41 @@ export default {
         
     },
     mounted(){
-        this.selectCase();
+        
+    },
+    created(){
+        fetch("http://localhost:8080/search_user/get_all")
+        .then(response => {
+            if(response.status === 200){
+                return response.json();
+            }else{
+                console.log(response.json());
+            }
+        })
+        .then( data => {
+            console.log(data);
+            this.dataUser = data.userInfoList;
+            this.allUsers=[];
+            
+            data.userInfoList.forEach((item,index) => {
+                this.allUsers.push({
+                    "email":item.email,
+                    "姓名":item.user_name,
+                    "手機":item.phone,
+                    "評價":item.rating,
+                    "身分權限": (item.administrator ? "管理者":"使用者"),
+                    "鎖定狀態":(item.lockedStatus ? "是":"否")
+                });
+            });
+
+            this.allPage = Math.ceil((this.allUsers.length)/this.showPage); 
+            this.content();
+            // this.setAllPageContent(this.allUsers,this.showPage,this.page,this.allPage,this.pageNum); 
+            // this.setAllPageContent(this.contentPage);
+        })
+        .catch(errorTest => {
+            console.log(errorTest);
+        })     
     },
 
     computed: {
@@ -112,7 +163,7 @@ export default {
             if (this.allPage <= this.pageNum) {  // 當總頁數小於設定頁數
                 fistPage = 1;
                 endPage = this.allPage;
-            } else if (this.page <= Math.floor(this.pageNum / 2) + 1) {   // 當前頁數 <= 設定頁數/2 +1
+            } else if (this.page <= Math.floor(this.pageNum / 2)+1) {   // 當前頁數 <= 設定頁數/2 +1
                 fistPage = 1;
                 endPage = this.pageNum;
             } else if (this.page + Math.floor(this.pageNum / 2) >= this.allPage) {  // 當前頁數 + 設定頁數/2 >= 總頁數
@@ -140,10 +191,32 @@ export default {
         <thead>
             <tr>
                 <th colspan="7">
-                    <div class="flex my-3">
-                        <input type="text" class="py-3 px-6  border border-[#e2e2e2] bg-[#d7d7d7] outline-none rounded-lg placeholder:text-[#494949]" placeholder="請輸入姓名或評價">
-                        <Icon icon="mingcute:search-2-fill" />
-                    </div>
+                    <div class="flex items-center justify-evenly">
+                        <div class="flex my-3">
+                            <input type="text" class="py-3 px-6  border border-[#e2e2e2] bg-[#d7d7d7] outline-none rounded-l-lg placeholder:text-[#494949]" placeholder="搜尋姓名" v-model="search.name" @change="searchAll">
+                            <div class="bg-[#9f9f9f] p-3 rounded-r-lg cursor-pointer hover:scale-105 active:scale-95">
+                                <Icon icon="mingcute:search-2-fill" width="25" />
+                            </div>                  
+                        </div>
+                        <div>
+                            <label class="text-xl">評價: </label>
+                            <select name="" id="" class="border border-[#dbdbdb] py-2 w-[5rem] rounded-lg bg-[#cccccc]" v-model="search.rating" @change="searchAll">
+                                <option v-for="(item,index) in Object.keys({'全部':'','5':'5','4':'4','3':'3','2':'2','1':'1'}).reverse() " :key="item" :value="item" class="bg-[#FFFFFF] text-center" @change="searchAll">{{ item }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xl">身分: </label>
+                            <select name="" id="" class="border border-[#dbdbdb] py-2 w-[5rem] rounded-lg bg-[#cccccc]" v-model="search.administrator" @change="searchAll">
+                                <option v-for="(item,index) in {'全部':'', '使用者':'true', '管理者':'false'}" :value="item" class="bg-[#FFFFFF] text-center">{{ index }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xl">鎖定狀態: </label>
+                            <select name="" id="" class="border border-[#dbdbdb] py-2 w-[5rem] rounded-lg bg-[#cccccc]" v-model="search.lockedStatus" @change="searchAll">
+                                <option v-for="(item,index) in {'全部':'', 'T':'true', 'F':'false'}" :value="item" class="bg-[#FFFFFF] text-center">{{ index }}</option>
+                            </select>
+                        </div>
+                    </div> 
                 </th>
             </tr>
             <tr>
