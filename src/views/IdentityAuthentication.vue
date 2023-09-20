@@ -4,12 +4,63 @@ import axios from 'axios';
 export default {
     data() {
         return {
-
+            //取得email認證碼 後端回傳的資料
+            geteMailTokenResponseData: null,
+            geteMailTokenCode: "",
+            geteMailTokenMessage: "",
+            //確認驗證碼 後端回傳的資料
+            checkEmailTokenResponseData:null,
+            checkEmailTokenCode: "",
+            checkEmailTokenMessage: "",
+            postEmail: {
+                email: "",
+            },
+            postToken: {
+                resetPwdToken: "",
+            },
         }
     },
     methods: {
-        resetPassword(){
-            router.push("/reset_password");
+        checkEmailToken() {
+            //確認驗證碼 
+            axios.post('http://localhost:8080/api/check_reset_pwd_token', this.postToken)
+                .then(response => {
+                    this.checkEmailTokenResponseData = response;
+                    this.checkEmailTokenCode = this.checkEmailTokenResponseData.data.code;
+                    this.checkEmailTokenMessage = this.checkEmailTokenResponseData.data.message;
+                    if (this.checkEmailTokenCode === "200") {
+                        alert(this.checkEmailTokenMessage);
+                        router.push("/reset_password");
+                    } else {
+                        alert(this.checkEmailTokenMessage);
+                    }
+                })
+                .catch(error => {
+                    alert(error);
+                });
+
+        },
+        geteMailToken() {
+            //取得email認證碼
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(this.postEmail.email)) {
+                alert("請輸入有效的email!");
+                return;
+            }
+            axios.post('http://localhost:8080/api/forgot_pwd', this.postEmail)
+                .then(response => {
+                    this.geteMailTokenResponseData = response;
+                    this.geteMailTokenCode = this.geteMailTokenResponseData.data.code;
+                    this.geteMailTokenMessage = this.geteMailTokenResponseData.data.message;
+                    if (this.geteMailTokenCode === "200") {
+                        alert(this.geteMailTokenMessage);
+                    } else {
+                        alert(this.geteMailTokenMessage);
+                    }
+                })
+                .catch(error => {
+                    alert(error);
+                });
         }
     }
 }
@@ -22,7 +73,7 @@ export default {
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <div class="flex justify-center mt-[50px]  h-screen w-screen">
-        <div class="border-2 border-black  rounded-xl w-[700px] h-[400px]">
+        <div class="border-2 border-black  rounded-xl w-[900px] h-[400px]">
             <div class=" h-[100px] justify-center items-center flex ">
                 <div>
                     <p class="text-[32px] ">身分驗證</p>
@@ -31,24 +82,26 @@ export default {
             <div class=" h-[200px]   justify-center flex">
                 <div>
                     <div class="relative">
-                        <input type="text" placeholder="輸入Email"
-                            class="border-2 border-black w-[450px] h-[50px] block mt-[30px] text-[24px] rounded-lg pl-[50px]">
+                        <input type="text" placeholder="輸入Email" v-model="postEmail.email"
+                            class="border-2 border-black w-[550px] h-[50px] block mt-[30px] text-[24px] rounded-lg pl-[50px]">
                         <div
                             class="absolute w-[35px] h-[35px] bg-[url('../../public/Account_icon.png')] bg-cover bottom-[8px] left-[8px]">
                         </div>
                     </div>
                     <div class="relative">
-                        <input type="text" placeholder="輸入Email驗證碼"
-                            class="border-2 border-black w-[450px] h-[50px] block mt-[40px] text-[24px] rounded-lg pl-[50px]">
+                        <input type="text" placeholder="輸入Email驗證碼" v-model="postToken.resetPwdToken"
+                            class="border-2 border-black w-[550px] h-[50px] block mt-[40px] text-[24px] rounded-lg pl-[50px]">
                         <i class="fa-solid fa-envelope fa-2xl relative bottom-[37px] left-[10px]"></i>
                         <button type="button"
-                            class="relative bottom-[37px] left-[280px] hover:scale-105 active:scale-95 bg-[#D9D9D9] rounded">取得Email驗證碼</button>
+                            class="relative bottom-[37px] left-[380px] hover:scale-105 active:scale-95 bg-[#D9D9D9] rounded"
+                            @click="geteMailToken">取得Email驗證碼</button>
                     </div>
                 </div>
             </div>
             <div class="  h-[100px] flex justify-center items-center">
                 <button type="button"
-                    class="w-[100px] h-[40px]  text-[20px] rounded-lg bg-[#2B4BF0] text-white hover:scale-105 active:scale-95 mr-[30px]" @click="resetPassword">下一步</button>
+                    class="w-[100px] h-[40px]  text-[20px] rounded-lg bg-[#2B4BF0] text-white hover:scale-105 active:scale-95 mr-[30px]"
+                    @click="checkEmailToken">下一步</button>
                 <button type="button"
                     class="w-[100px] h-[40px]  text-[20px] rounded-lg border-2 border-black text-black hover:scale-105 active:scale-95">重置</button>
             </div>
