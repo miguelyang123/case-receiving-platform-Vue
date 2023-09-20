@@ -57,15 +57,11 @@ export default defineStore("dataStore", {
       this.userInfo = userInfo;
     },
   },
-  persist:[
-    // persist:true, // 默認全部持久化配置
-    {
-      paths:["numTest"],  // 要持久化的值(可多個)
-      storage:localStorage  // 用 localStorage 儲存
-    },
-    {
-      paths:["userInfo"],  // 要持久化的值(可多個)
-      storage:localStorage  // 用 localStorage 儲存
-    },
-  ]
+     persist: [
+      {
+        key: 'userInfo',
+        paths: ['userInfo'],
+        storage: localStorage,
+      },
+    ]
 });

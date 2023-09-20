@@ -1,6 +1,10 @@
 <script>
 import router from '../router';
 import axios from 'axios';
+// Pinia方法
+import { mapState, mapActions } from 'pinia';
+// 自己的資料庫(預設匯入)
+import dataStore from '../store/dataStore';
 export default {
     data() {
         return {
@@ -12,6 +16,7 @@ export default {
             checkEmailTokenResponseData:null,
             checkEmailTokenCode: "",
             checkEmailTokenMessage: "",
+            isAble:false, //按鈕disable
             postEmail: {
                 email: "",
             },
@@ -19,6 +24,9 @@ export default {
                 resetPwdToken: "",
             },
         }
+    },
+    computed: {
+        ...mapState(dataStore, ["userInfo"])
     },
     methods: {
         checkEmailToken() {
@@ -54,6 +62,7 @@ export default {
                     this.geteMailTokenMessage = this.geteMailTokenResponseData.data.message;
                     if (this.geteMailTokenCode === "200") {
                         alert(this.geteMailTokenMessage);
+                        this.isAble = true; 
                     } else {
                         alert(this.geteMailTokenMessage);
                     }
@@ -93,7 +102,7 @@ export default {
                             class="border-2 border-black w-[550px] h-[50px] block mt-[40px] text-[24px] rounded-lg pl-[50px]">
                         <i class="fa-solid fa-envelope fa-2xl relative bottom-[37px] left-[10px]"></i>
                         <button type="button"
-                            class="relative bottom-[37px] left-[380px] hover:scale-105 active:scale-95 bg-[#D9D9D9] rounded"
+                            class="relative bottom-[37px] left-[380px]   bg-[#D9D9D9] rounded" :disabled="isAble"
                             @click="geteMailToken">取得Email驗證碼</button>
                     </div>
                 </div>
