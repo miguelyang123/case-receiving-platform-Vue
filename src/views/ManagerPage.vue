@@ -142,7 +142,7 @@ export default {
                 <th colspan="7">
                     <div class="flex my-3">
                         <input type="text" class="py-3 px-6  border border-[#e2e2e2] bg-[#d7d7d7] outline-none rounded-lg placeholder:text-[#494949]" placeholder="請輸入姓名或評價">
-                        <Icon icon="mingcute:search-2-fill" />
+                        <Icon icon="mingcute:search-2-fill" width="25" />
                     </div>
                 </th>
             </tr>
