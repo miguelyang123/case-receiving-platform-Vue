@@ -29,7 +29,6 @@ export default {
             page: 1,      // 當前頁數
             allPage: 5,  // 總頁數
             pageNum: 5    // 分頁數量
-
         }
     },
     methods:{
