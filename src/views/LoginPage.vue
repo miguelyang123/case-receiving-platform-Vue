@@ -1,12 +1,17 @@
 <script >
 import router from '../router';
 import axios from 'axios';
+// Pinia方法
+import { mapState, mapActions } from 'pinia';
+// 自己的資料庫(預設匯入)
+import dataStore from '../store/dataStore';
 export default {
     data() {
         return {
             pwdFlag: false, //密碼明碼
             code: "",
             message: "",
+            responseData:"",
             //json
             postData: {
                 email: "",//email
@@ -14,7 +19,11 @@ export default {
             }
         }
     },
+    computed: {
+        ...mapState(dataStore, ["userInfo"])
+    },
     methods: {
+        ...mapActions(dataStore, ["setUserInfo"]),
         pwdflagTrue() {
             this.pwdFlag = true;
         },
@@ -30,8 +39,10 @@ export default {
                     this.responseData = response;
                     this.code = this.responseData.data.code;
                     this.message = this.responseData.data.message;
+                    const userInfo =this.responseData.data.userInfo;
                     if (this.code === "200") {
                         alert(this.message);
+                        this.setUserInfo(userInfo);  //設置 userInfo
                         router.push("/personal_info");
                     } else {
                         alert(this.message);
