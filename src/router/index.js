@@ -2,14 +2,44 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import PersonalInfo from "../views/PersonalInfo.vue";
 import PersonalInfoUpload from "../views/PersonalInfoUpload.vue";
+import RegisterPage from "../views/RegisterPage.vue";
+import LoginPage from "../views/LoginPage.vue";
+import IdentityAuthentication from "../views/IdentityAuthentication.vue";
+import ResetPassword from "../views/ResetPassword.vue";
+import FinishResetPassword from "../views/FinishResetPassword.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
-      name: "home",
+      name: "HomeView",
       component: HomeView,
+    },
+    {
+      path: "/register_page",
+      name: "RegisterPage",
+      component: RegisterPage,
+    },
+    {
+      path: "/login_page",
+      name: "LoginPage",
+      component: LoginPage,
+    },
+    {
+      path: "/identity_authentication",
+      name: "IdentityAuthentication",
+      component: IdentityAuthentication,
+    },
+    {
+      path: "/reset_password",
+      name: "ResetPassword",
+      component: ResetPassword,
+    },
+    {
+      path: "/finish_reset_password",
+      name: "FinishResetPassword",
+      component: FinishResetPassword,
     },
     {
       path: "/personal_info",
