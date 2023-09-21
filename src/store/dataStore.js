@@ -6,7 +6,7 @@ export default defineStore("dataStore", {
   //state 類似 vue data
   state: () => ({
     numTest: 1,
-
+    
     // 分頁處理(暫時停用)
     // pageContent:{
     //   arrList:"",  // 所有資料
@@ -15,6 +15,7 @@ export default defineStore("dataStore", {
     //   allPage:1,  // 總數
     //   pageNum:5, // 分頁數
     // }
+    userInfo:null, //登入畫面後端回傳的userInfo(object)
   }),
   //getters 類似 computed
   //沒有this
@@ -51,12 +52,16 @@ export default defineStore("dataStore", {
     //   this.pageContent.allPage = thisallData.allPage;
     //   this.pageContent.pageNum = thisallData.pageNum;
     // }
-  },
-  persist:[
-    // persist:true, // 默認全部持久化配置
-    {
-      paths:["numTest"],  // 要持久化的值(可多個)
-      storage:localStorage  // 用 localStorage 儲存
+    setUserInfo(userInfo) {
+      //設置 userInfo
+      this.userInfo = userInfo;
     },
-  ]
+  },
+     persist: [
+      {
+        key: 'userInfo',
+        paths: ['userInfo'],
+        storage: localStorage,
+      },
+    ]
 });

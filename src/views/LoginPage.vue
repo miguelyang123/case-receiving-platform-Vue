@@ -1,12 +1,17 @@
 <script >
 import router from '../router';
 import axios from 'axios';
+// Pinia方法
+import { mapState, mapActions } from 'pinia';
+// 自己的資料庫(預設匯入)
+import dataStore from '../store/dataStore';
 export default {
     data() {
         return {
             pwdFlag: false, //密碼明碼
             code: "",
             message: "",
+            responseData:"",
             //json
             postData: {
                 email: "",//email
@@ -14,7 +19,11 @@ export default {
             }
         }
     },
+    computed: {
+        ...mapState(dataStore, ["userInfo"])
+    },
     methods: {
+        ...mapActions(dataStore, ["setUserInfo"]),
         pwdflagTrue() {
             this.pwdFlag = true;
         },
@@ -30,8 +39,10 @@ export default {
                     this.responseData = response;
                     this.code = this.responseData.data.code;
                     this.message = this.responseData.data.message;
+                    const userInfo =this.responseData.data.userInfo;
                     if (this.code === "200") {
                         alert(this.message);
+                        this.setUserInfo(userInfo);  //設置 userInfo
                         router.push("/personal_info");
                     } else {
                         alert(this.message);
@@ -64,14 +75,14 @@ export default {
                     <input type="text" placeholder="輸入Email" v-model="postData.email"
                         class="border-2 border-black ml-[50px] mt-[40px] w-[400px] h-[55px] text-[24px] rounded-lg pl-[60px]">
                     <div
-                        class="absolute w-[35px] h-[35px] bg-[url('../../public/Account_icon.png')] bg-cover bottom-[9px] left-[60px]">
+                        class="absolute w-[35px] h-[35px] bg-[url('/src/assets/img/RegisterPageImg/Account_icon.png')] bg-cover bottom-[9px] left-[60px]">
                     </div>
                 </div>
                 <div class="relative">
                     <input placeholder="輸入密碼" :type="pwdFlag ? 'text' : 'password'" v-model="postData.password"
                         class="border-2 border-black ml-[50px] mt-[50px] w-[400px] h-[55px] text-[24px] rounded-lg px-[60px]">
                     <div
-                        class="absolute w-[35px] h-[35px] bg-[url('../../Password_icon.png')] bg-cover bottom-[9px] left-[60px]">
+                        class="absolute w-[35px] h-[35px] bg-[url('/src/assets/img/RegisterPageImg/Password_icon.png')] bg-cover bottom-[9px] left-[60px]">
                     </div>
                     <i class="absolute bottom-[25px] left-[400px] fa-regular fa-eye fa-2xl" @click="pwdflagTrue"
                         v-if="this.pwdFlag === false"></i>
