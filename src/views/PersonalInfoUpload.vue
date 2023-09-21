@@ -1,51 +1,89 @@
 <script>
-import { RouterLink, RouterView } from 'vue-router';
-export default {
-    components:{
-        RouterLink,
-    },
+import router from '../router';
+import axios from 'axios';
+// import pdf from 'vue-pdf';
+export default {  
+    // components: {
+    //   pdf
+    // },
     data() {
         return {
-            // user:{
-            //     email:"asdf@gmail.com",
-            //     pwd:"123456",
-            //     user_name:"",
-            //     phone:"0123456789"
-            // },    
+            // pwdFlag: false, //密碼明碼
+            // code: "",
+            // message: "",
+            // //json
+            postData: {
+                // email: "",//email
+                // password: "",//密碼
+                uuid: "bdcd914c-43ce-42d3-983c-00acd5694fc4",//找pdf用
+                pdf: null,//pdf
+            },
+            // pdf: null,//pdf
+            // pdfNew: null,//pdf
 
-          //  trueEmail: new RegExp("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"),
-          //  truePhone: new RegExp("^0[\\d]{1}[\\d]{4}[\\d]{4}$"),
-        
-           pdfPath: ""
-        
-        }
+            // formData: new FormData() //因為我這邊沒有使用form，所以就自行new了一個FormData
+      
+              uuid: "bdcd914c-43ce-42d3-983c-00acd5694fc4",
+
+              code: 0,
+              path: "pdfs",
+
+              pdfName: '',
+              pdfUrl: '',
+
+      };
     },
-    methods:{
-        editPersomInfo(){
-            // if(!this.trueEmail.test(this.user.email)){
-            //     return false;
-            // }
-
-            // fetch("...",{
-            //     method:"post",
-            //     mode:"no-cors",
-            //     headers:{
-            //         "Accect":"application/json, text/plain, */*",
-            //         "Content-Type": "application/x-www-form-urlencoded"
-            //     },
-            //     body: "email" + this.user.email+
-            //         "pwd" + this.user.pwd+
-            //         "user_name" + this.user.user_name+
-            //         "phone" + this.user.phone
-            // })
-            // .then(respone => respone.json())
-            // .then(data =>{
-            //     console.log(data);
-            // })
-
-            return false;
+    methods: {
+        pwdflagTrue() {
+            this.pwdFlag = true;
         },
+        pwdflagFalse() {
+            this.pwdFlag = false;
+        },
+        registerRouterPush() {
+            router.push("/register_page")
+        },
+
+    // 上传pdf
+    uploadPdf (event) {
+      console.log(event)
+      if (event.target.files[0].type != 'application/pdf') {
+        return this.$message.warning('请选择上传pdf文件')
+      }
+      // if (ie9()) {
+      //   this.$message.warning('iE9及以下版本IE浏览器暂不支持该功能，请升级IE浏览器或者用其他浏览器操作。')
+      //   retrun
+      // }
+      //iE9及以下版本IE浏览器暂不支持该功能，请升级IE浏览器或者用其他浏览器操作。
+      let inputDOM = event.target
+      let _this = this
+      var reader = new FileReader()
+      reader.readAsDataURL(event.target.files[0])//读取文件
+      reader.onload = function (e) {
+        _this.getPdfUrl(event.target.files[0])//将得到的blob传出读取
+        _this.pdfName = event.target.files[0].name
+        inputDOM.value = null //将input置空 否则上传相同文件无反应 (不过置空后28行的打印 就看不到 event.target.files 文件数据（可以先注释此行看下数据--就是pdf文件）   )
+      }
+    },
+    //通过读取pdf得到url
+    getPdfUrl (file) {
+      let url = URL.createObjectURL(file) //将blob文件转化成url
+      this.pdfUrl = url  //赋值给url
+      console.log(url)  // blob:http://localhost:8080/f2049a9d-31a6-4bd9-8a94-23dee457218f
+      return url
+    },
+    // 打开pdf
+    gotoPdf (pdfUrl) {
+      // window.location.href = pdfUrl
+      window.open(pdfUrl)
+    },
+    // 删除pdf
+    delPdf () {
+      this.pdfName = ''
+      this.pdfUrl = ''
     }
+    
+  },
 }
 
 </script>
@@ -56,21 +94,18 @@ export default {
   <!-- <p>Personal Info</p> -->
   
   <h1>上傳履歷</h1>
-  <div class="frame">
-    
-    <form name = "frm" method = "post" action = "localhost:8080/user_page_upload">
-      <!-- <input type="file" v-model="pdfPath"/> -->
-      <input type="file" />
-      <button type="submit" class="custom-btn btn-5"></button><br/>
-    </form>     
-    <button class="custom-btn btn-5"><a href="/personal_info"><span>上傳</span></a></button><br/>
-    
-    <!-- <button class="custom-btn btn-5"><span>上傳履歷</span></button><br/>
-    <button class="custom-btn btn-5"><span>編輯發出的案子</span></button><br/>
-    <button class="custom-btn btn-5"><span>編輯已接的案子</span></button><br/>
-    <button class="custom-btn btn-4"><span>管理者頁面</span></button><br/> -->
-    
-  </div>  
+  <!-- <div class="frame"> -->
+  
+    <!-- <iframe style="width: 100%; height: 100%;" src="docment.pdf"></iframe> -->
+
+    <div class="content">
+      <input type="file" class="box-orc-input" @change="uploadPdf($event)" />
+
+      <span  v-if="pdfName" @click="gotoPdf(pdfUrl)">{{pdfName}} <span @click.stop.prevent="delPdf()">❌</span></span>
+    </div>
+
+  <!-- </div> -->
+
 </template>
 
 <style lang="scss" scoped>
@@ -219,5 +254,38 @@ background: linear-gradient(0deg, rgba(255,27,0,1) 0%, rgba(251,75,2,1) 100%);
   width:100%;
   transition:800ms ease all;
 }
+
+.uploader-example {
+    width: 880px;
+    padding: 15px;
+    margin: 40px auto 0;
+    font-size: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .4);
+  }
+  .uploader-example .uploader-btn {
+    margin-right: 4px;
+  }
+  .uploader-example .uploader-list {
+    max-height: 440px;
+    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .currentPage {
+    cursor: pointer;
+    color: #8c8e92;
+  }
+  .arrow{
+    position:fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 2;
+    width: 100%;
+    background-color: #191919;
+    padding: 12px 0;
+    margin: 0;
+    text-align: center;
+  }
 
 </style>
