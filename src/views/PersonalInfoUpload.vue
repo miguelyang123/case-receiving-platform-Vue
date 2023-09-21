@@ -103,7 +103,8 @@ export default {
         let config = {
           headers:{'Content-Type':'multipart/form-data'}
         }; //添加请求头
-        this.$http.post('http://localhost:8080/api/pdf_upload',param,config)
+        // this.$http.post('http://localhost:8080/api/pdf_upload',param,config)
+        axios.post('http://localhost:8080/api/pdf_upload',param,config)
           .then(response=>{
             console.log(response.data);
           })
