@@ -31,7 +31,7 @@ export default {
     methods: {
         checkEmailToken() {
             //確認驗證碼 
-            axios.post('http://localhost:8080/api/check_reset_pwd_token', this.postToken)
+            axios.post('http://localhost:8080/api/check_reset_pwd_token', this.postToken ,{ withCredentials: true })
                 .then(response => {
                     this.checkEmailTokenResponseData = response;
                     this.checkEmailTokenCode = this.checkEmailTokenResponseData.data.code;
@@ -55,7 +55,7 @@ export default {
                 alert("請輸入有效的email!");
                 return;
             }
-            axios.post('http://localhost:8080/api/forgot_pwd', this.postEmail)
+            axios.post('http://localhost:8080/api/forgot_pwd', this.postEmail,{ withCredentials: true })
                 .then(response => {
                     this.geteMailTokenResponseData = response;
                     this.geteMailTokenCode = this.geteMailTokenResponseData.data.code;
@@ -94,7 +94,7 @@ export default {
                         <input type="text" placeholder="輸入Email" v-model="postEmail.email"
                             class="border-2 border-black w-[550px] h-[50px] block mt-[30px] text-[24px] rounded-lg pl-[50px]">
                         <div
-                            class="absolute w-[35px] h-[35px] bg-[url('../../public/Account_icon.png')] bg-cover bottom-[8px] left-[8px]">
+                            class="absolute w-[35px] h-[35px] bg-[url('/src/assets/img/RegisterPageImg/Account_icon.png')] bg-cover bottom-[8px] left-[8px]">
                         </div>
                     </div>
                     <div class="relative">

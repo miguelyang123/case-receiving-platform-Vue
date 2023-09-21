@@ -44,7 +44,7 @@ export default {
                         <input :type="pwdFlag ? 'text' : 'password'" v-model="password" placeholder="輸入新密碼(長度8字元以上)"
                             class="border-2 border-black w-[450px] h-[50px] block mt-[30px] text-[24px] rounded-lg pl-[50px]">
                         <div
-                            class="absolute w-[35px] h-[35px] bg-[url('../../Password_icon.png')] bg-cover bottom-[6px] left-[10px]">
+                            class="absolute w-[35px] h-[35px] bg-[url('/src/assets/img/RegisterPageImg/Password_icon.png')] bg-cover bottom-[6px] left-[10px]">
                         </div>
                         <i class="absolute bottom-[25px] left-[400px] fa-regular fa-eye fa-2xl" @click="pwdflagTrue"
                             v-if="this.pwdFlag === false"></i>
@@ -55,7 +55,7 @@ export default {
                         <input :type="repeatpwdFlag ? 'text' : 'password'" v-model="repeatPassword" placeholder="重新輸入新密碼"
                             class="border-2 border-black w-[450px] h-[50px] block mt-[40px] text-[24px] rounded-lg pl-[50px]">
                         <div
-                            class="absolute w-[35px] h-[35px] bg-[url('../../Password_icon.png')] bg-cover bottom-[6px] left-[10px]">
+                            class="absolute w-[35px] h-[35px] bg-[url('/src/assets/img/RegisterPageImg/Password_icon.png')] bg-cover bottom-[6px] left-[10px]">
                         </div>
                         <i class="absolute bottom-[25px] left-[400px] fa-regular fa-eye fa-2xl" @click="repeatpwdflagTrue"
                             v-if="this.repeatpwdFlag === false"></i>
