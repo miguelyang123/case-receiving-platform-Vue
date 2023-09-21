@@ -108,9 +108,59 @@ export default {
           .then(response=>{
             console.log(response.data);
           })
-      }
-    
-  },
+      },
+      download(){
+        let uuid = this.uuid;
+        let param = new FormData(); //创建form对象
+        param.append('uuid',uuid);//通过append向form对象添加数据
+        axios.post('http://localhost:8080/api/pdf_download',param, {
+            responseType: 'blob', // important
+            timeout: 20000,
+        }).then((response) => {
+          console.log("response(1)");
+            // //返回的是一个错误
+            // if(response.headers['content-type']==='application/json'){
+            //     //提取错误的json消息并转换(此时json消息依旧在response.data中，这是一个blob数据)
+            //     let reader = new FileReader();
+            //     reader.onload = e => this.$message.error(JSON.parse(e.target.result).msg);
+            //     reader.readAsText(response.data);
+            //     console.log("response(2)");
+            //     return false;
+            // }
+            // //接收的是文件,fileName是一个property,设置了默认值(比如"文件模版.xls")
+            // let fileName = this.fileName;
+            // //服务器返回的请求头中包含了文件名信息,提取出来
+            // //可能出现的BUG:如果在响应头中能看到"content-disposition",axios拿到的response却没有,
+            // //这不怪axios，你需要去服务器设置一个叫Access-Control-Expose-Headers的东西
+            // //让它包含"content-disposition"
+            // console.log("response(3)");
+            // if(response.headers["content-disposition"]){
+            //     const patt = new RegExp("filename=([^;]+\\.[^\\.;]+);*");
+            //     const result = patt.exec(response.headers["content-disposition"]);
+                
+            //     console.log("response(4)");
+            //     if(result.length>1){
+                  
+            //         console.log("response(5)");
+            //         //中文解码
+            //         fileName = decodeURI(result[1]);
+            //     }
+            // }
+            console.log("response(6)");
+            //制作a标签并点击下载
+            const url = window.URL.createObjectURL(new Blob([response.data],
+                { type: 'application/octet-stream' }));
+            const link = document.createElement('a');
+            link.href = url;
+            // link.setAttribute('download', fileName);
+            link.setAttribute('download', this.uuid+".pdf");
+            document.body.appendChild(link);
+            link.click();
+        });
+        
+      },
+
+    }
 }
 
 </script>
@@ -134,6 +184,8 @@ export default {
   <!-- </div> -->
 
   <input class="file" name="file" type="file" accept=".pdf" @change="update"/>
+
+    <button @click="download">下載</button>
 
 </template>
 
