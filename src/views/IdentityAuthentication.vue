@@ -13,10 +13,13 @@ export default {
             geteMailTokenCode: "",
             geteMailTokenMessage: "",
             //確認驗證碼 後端回傳的資料
-            checkEmailTokenResponseData:null,
+            checkEmailTokenResponseData: null,
             checkEmailTokenCode: "",
             checkEmailTokenMessage: "",
-            isAble:false, //按鈕disable
+            isAble: false, //按鈕disable
+            content: "取得Email驗證碼",   // 按鈕顯示內容
+            totalTime: 60,  //倒數時間
+            clock: Number,
             postEmail: {
                 email: "",
             },
@@ -31,7 +34,7 @@ export default {
     methods: {
         checkEmailToken() {
             //確認驗證碼 
-            axios.post('http://localhost:8080/api/check_reset_pwd_token', this.postToken ,{ withCredentials: true })
+            axios.post('http://localhost:8080/api/check_reset_pwd_token', this.postToken, { withCredentials: true })
                 .then(response => {
                     this.checkEmailTokenResponseData = response;
                     this.checkEmailTokenCode = this.checkEmailTokenResponseData.data.code;
@@ -55,14 +58,26 @@ export default {
                 alert("請輸入有效的email!");
                 return;
             }
-            axios.post('http://localhost:8080/api/forgot_pwd', this.postEmail,{ withCredentials: true })
+            axios.post('http://localhost:8080/api/forgot_pwd', this.postEmail, { withCredentials: true })
                 .then(response => {
                     this.geteMailTokenResponseData = response;
                     this.geteMailTokenCode = this.geteMailTokenResponseData.data.code;
                     this.geteMailTokenMessage = this.geteMailTokenResponseData.data.message;
                     if (this.geteMailTokenCode === "200") {
                         alert(this.geteMailTokenMessage);
-                        this.isAble = true; 
+                        this.isAble = true;
+                        this.content = this.totalTime + '秒後重新發送'
+                        this.clock = window.setInterval(() => {
+                            this.totalTime--
+                            this.content = this.totalTime + '秒後重新發送'
+                            if (this.totalTime < 0) {
+                                window.clearInterval(clock)
+                                this.content = '重新發送驗證碼'
+                                this.totalTime = 60
+                                this.isAble = false;
+                            }
+                        }, 1000)
+
                     } else {
                         alert(this.geteMailTokenMessage);
                     }
@@ -70,6 +85,18 @@ export default {
                 .catch(error => {
                     alert(error);
                 });
+        },
+        reset() {
+            //重置按鈕
+            if (this.clock) {
+                window.clearInterval(this.clock);
+            }
+            this.totalTime = 60;
+            this.postEmail.email = "";
+            this.postToken.resetPwdToken = "";
+            this.isAble = false;
+            this.content = '取得Email驗證碼';
+
         }
     }
 }
@@ -101,9 +128,8 @@ export default {
                         <input type="text" placeholder="輸入Email驗證碼" v-model="postToken.resetPwdToken"
                             class="border-2 border-black w-[550px] h-[50px] block mt-[40px] text-[24px] rounded-lg pl-[50px]">
                         <i class="fa-solid fa-envelope fa-2xl relative bottom-[37px] left-[10px]"></i>
-                        <button type="button"
-                            class="relative bottom-[37px] left-[380px]   bg-[#D9D9D9] rounded" :disabled="isAble"
-                            @click="geteMailToken">取得Email驗證碼</button>
+                        <button type="button" class="relative bottom-[37px] left-[380px]    bg-[#D9D9D9] rounded"
+                            :disabled="isAble" @click="geteMailToken">{{ content }}</button>
                     </div>
                 </div>
             </div>
@@ -112,7 +138,8 @@ export default {
                     class="w-[100px] h-[40px]  text-[20px] rounded-lg bg-[#2B4BF0] text-white hover:scale-105 active:scale-95 mr-[30px]"
                     @click="checkEmailToken">下一步</button>
                 <button type="button"
-                    class="w-[100px] h-[40px]  text-[20px] rounded-lg border-2 border-black text-black hover:scale-105 active:scale-95">重置</button>
+                    class="w-[100px] h-[40px]  text-[20px] rounded-lg border-2 border-black text-black hover:scale-105 active:scale-95"
+                    @click="reset">重置</button>
             </div>
         </div>
     </div>
