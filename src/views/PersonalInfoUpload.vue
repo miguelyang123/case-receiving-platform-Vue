@@ -116,7 +116,7 @@ export default {
 </script>
 
 <template>
-<!-- <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet"> -->
+<link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
   <!-- <h1>Speed接案網</h1> -->
   <!-- <p>Personal Info</p> -->
   
@@ -133,7 +133,7 @@ export default {
 
   <!-- </div> -->
 
-  <input class="file" name="file" type="file" accept=".pdf/*" @change="update"/>
+  <input class="file" name="file" type="file" accept=".pdf" @change="update"/>
 
 </template>
 
