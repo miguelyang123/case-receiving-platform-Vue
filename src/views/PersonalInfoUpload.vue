@@ -98,16 +98,17 @@ export default {
         let param = new FormData(); //创建form对象
         param.append('uuid',uuid);//通过append向form对象添加数据
         param.append('file',file);//通过append向form对象添加数据
-        console.log(param.get('uuid')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
-        console.log(param.get('file')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
+        // console.log(param.get('uuid')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
+        // console.log(param.get('file')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
         let config = {
           headers:{'Content-Type':'multipart/form-data'}
         }; //添加请求头
         // this.$http.post('http://localhost:8080/api/pdf_upload',param,config)
+        // axios.post('http://localhost:8080/api/pdf_upload',param,config)
         axios.post('http://localhost:8080/api/pdf_upload',param,config)
-          .then(response=>{
-            console.log(response.data);
-          })
+          // .then(response=>{
+          //   console.log(response.data);
+          // })
       },
       download(){
         let uuid = this.uuid;
@@ -117,7 +118,7 @@ export default {
             responseType: 'blob', // important
             timeout: 20000,
         }).then((response) => {
-          console.log("response(1)");
+          // console.log("response(1)");
             // //返回的是一个错误
             // if(response.headers['content-type']==='application/json'){
             //     //提取错误的json消息并转换(此时json消息依旧在response.data中，这是一个blob数据)
@@ -146,7 +147,7 @@ export default {
             //         fileName = decodeURI(result[1]);
             //     }
             // }
-            console.log("response(6)");
+            // console.log("response(6)");
             //制作a标签并点击下载
             const url = window.URL.createObjectURL(new Blob([response.data],
                 { type: 'application/octet-stream' }));
@@ -159,6 +160,45 @@ export default {
         });
         
       },
+      
+      // preview(){
+      //   let uuid = this.uuid;
+      //   let param = new FormData(); //创建form对象
+      //   param.append('uuid',uuid);//通过append向form对象添加数据
+      //   axios.post('http://localhost:8080/api/pdf_download',param, {
+      //       responseType: 'blob', // important
+      //       timeout: 20000,
+      //   })
+      //   .then((response) => {
+      //       //制作a标签并点击下载
+      //       const url = window.URL.createObjectURL(new Blob([response.data],
+      //           { type: 'application/octet-stream' }));
+      //       const link = document.createElement('a');
+      //       link.href = url;
+      //       // link.setAttribute('download', fileName);
+      //       link.setAttribute('http://localhost:5173/personal_info_upload/'+'this.uuid'+'.pdf', this.uuid+".pdf");
+      //       document.body.appendChild(link);
+      //       link.click();
+      //   });
+        
+      // },
+      // //通过读取pdf得到url
+      // getPdfUrl (file) {
+      //   let url = URL.createObjectURL(file) //将blob文件转化成url
+      //   this.pdfUrl = url  //赋值给url
+      //   console.log(url)  // blob:http://localhost:8080/f2049a9d-31a6-4bd9-8a94-23dee457218f
+      //   return url
+      // },
+      // // 打开pdf
+      // gotoPdf (pdfUrl) {
+      //   // window.location.href = pdfUrl
+      //   window.open(pdfUrl)
+      // },
+      // // 删除pdf
+      // delPdf () {
+      //   this.pdfName = ''
+      //   this.pdfUrl = ''
+      // }
 
     }
 }
@@ -185,7 +225,13 @@ export default {
 
   <input class="file" name="file" type="file" accept=".pdf" @change="update"/>
 
-    <button @click="download">下載</button>
+  <button @click="download">下載</button>
+
+  <!-- <button @click="preview">預覽</button>
+
+  <div class="content">
+    <span  v-if="pdfName" @click="gotoPdf(pdfUrl)">{{pdfName}} <span @click.stop.prevent="delPdf()">❌</span></span>
+  </div> -->
 
 </template>
 
