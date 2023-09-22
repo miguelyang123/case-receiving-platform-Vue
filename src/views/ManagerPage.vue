@@ -49,7 +49,7 @@ export default {
                 user_name:"",
                 phone:"",
                 rating:0,
-                pathPdf:"null",
+                resumePdfPath:"null",
                 administrator:[],
                 lockedStatus:[]
             },
@@ -140,22 +140,20 @@ export default {
 
         // 修改頁面
         editNum(data){
-            console.log(data);
             this.bgc = true;
             this.editPage = true;
 
             let uuidAndPdf={
                 uuid:"",
-                pdf:""
+                resumePdfPath:""
             }
             this.dataUser.forEach((item)=>{
                 if(item.email===data.email){
                     uuidAndPdf = {
                         uuid:item.uuid,
-                        pdf:item.resumePdfPath
+                        resumePdfPath:item.resumePdfPath
                         // pdf:(item.resumePdfPath === null ? "null":item.resumePdfPath)
                     }
-                    console.log(item.resume_pdf_path);
                     return;
                 }
             })
@@ -166,7 +164,7 @@ export default {
                 user_name:data.姓名,
                 phone:data.手機,
                 rating:data.評價,
-                pathPdf:uuidAndPdf.pdf,
+                resumePdfPath:uuidAndPdf.pdf,
                 administrator:(data.身分權限 === "管理者" ? "true":"false"),
                 lockedStatus:(data.鎖定狀態 === "是" ? "true":"false")
             }
@@ -174,30 +172,22 @@ export default {
 
         //修改檢查
         editCheck(){
-            console.log(this.edit);
-            axios.post("http://localhost:8080/api/edit_user",{
-                uuid:this.edit.uuid,
-                email:this.edit.email,
-                user_name:this.edit.user_name,
-                phone:this.edit.phone,
-                rating:this.edit.rating,
-                resumePdfPath:this.edit.pathPdf,
-                lockedStatus:this.edit.lockedStatus,
-                administrator:this.edit.administrator
-            })
+            axios.post("http://localhost:8080/api/edit_user",this.edit)
             .then((data) => {
                 console.log(data);
                 this.editPage=false;
                 this.editPageCheck=true;
 
-                if(data.code==="200"){
+                if(data.data.code==="200"){
                     this.editStatus.text="修改成功";
                     this.editStatus.icon="icon-park-solid:check-one";
                     this.editStatus.icon_style="text-[green]";
                     this.editStatus.meesage="";
 
                     setTimeout(()=>{
-                        this.edit=false;
+                        this.editPageCheck=false;
+                        this.bgc=false;
+                        this.searchAll();
                     },"3000");
 
                 }else{
@@ -209,48 +199,6 @@ export default {
             }).catch((err) => {
                 console.log(err);
             })
-
-        //     fetch("http://localhost:8080/api/edit_user",{
-        //         method:"post",
-        //         contentType: "application/json;charset=utf-8",
-        //         headers:{
-        //             "contentType": "application/x-www-form-urlencoded",
-        //             "Accept":"application/json, text/plain, */*"
-        //         },
-        //         body:"uuid="+this.edit.uuid+
-        //             "&email="+this.edit.email+
-        //             "&user_name="+this.edit.user_name+
-        //             "&phone="+this.edit.phone+
-        //             "&rating="+1+
-        //             "&resumePdfPath="+null+
-        //             "&lockedStatus="+true+
-        //             "&administrator="+false
-        //     })
-        //     .then(response => response.json())
-        //     .then(data =>{
-        //         console.log(data);
-        //         this.editPage=false;
-        //         this.editPageCheck=true;
-
-        //         if(data.code==="200"){
-        //             this.editStatus.text="修改成功";
-        //             this.editStatus.icon="icon-park-solid:check-one";
-        //             this.editStatus.icon_style="text-[green]";
-        //             this.editStatus.meesage="";
-
-        //             setTimeout(()=>{
-        //                 this.edit=false;
-        //             },"3000");
-
-        //         }else{
-        //             this.editStatus.text="修改失敗";
-        //             this.editStatus.icon="fluent-mdl2:status-error-full";
-        //             this.editStatus.icon_style="text-[red]";
-        //             this.editStatus.meesage="人員帳號: "+ this.edit.email + " " + data.message;
-        //         }
-        //     }).catch(err => {
-        //         console.log(err);
-        //     })
         },
         
     },
@@ -423,7 +371,7 @@ export default {
     </div>
 
     <!-- 背景 -->
-    <div v-if="bgc" class="fixed top-0 left-0 w-full h-[100vh] bg-[#00000083] z-0" @click="bgc=false"></div>
+    <div v-if="bgc" class="fixed top-0 left-0 w-full h-[100vh] bg-[#00000083] z-0" @click="bgc=false,editPage=false,editPageCheck=false"></div>
 </template>
 <style lang="scss" scoped>
     .editBtn{
