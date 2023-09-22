@@ -89,7 +89,7 @@ export default {
     integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <div class="flex justify-center mt-[50px]  h-screen w-screen">
+  <div class="flex justify-center mt-[50px]  ">
     <div class="border-2 border-black rounded-[30px] w-[1150px] h-[600px]">
       <div class="flex  h-[100px] justify-center items-center">
         <p class="text-[40px] font-bold">會員註冊</p>

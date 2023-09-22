@@ -65,7 +65,7 @@ export default {
 </script>
 
 <template>
-    <div class="flex justify-center mt-[50px]  h-screen w-screen">
+    <div class="flex justify-center mt-[50px]  ">
         <div class="border-2 border-black  rounded-xl w-[900px] h-[400px]">
             <div class=" h-[100px] justify-center items-center flex ">
                 <div>
