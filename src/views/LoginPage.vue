@@ -74,9 +74,7 @@ export default {
                 <div class="relative">
                     <input type="text" placeholder="輸入Email" v-model="postData.email"
                         class="border-2 border-black ml-[50px] mt-[40px] w-[400px] h-[55px] text-[24px] rounded-lg pl-[60px]">
-                    <div
-                        class="absolute w-[35px] h-[35px] bg-[url('/src/assets/img/RegisterPageImg/Account_icon.png')] bg-cover bottom-[9px] left-[60px]">
-                    </div>
+                        <i class="fa-solid fa-envelope fa-2xl absolute bottom-[25px] left-[62px]"></i>
                 </div>
                 <div class="relative">
                     <input placeholder="輸入密碼" :type="pwdFlag ? 'text' : 'password'" v-model="postData.password"

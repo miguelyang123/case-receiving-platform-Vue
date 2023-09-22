@@ -120,14 +120,12 @@ export default {
                     <div class="relative">
                         <input type="text" placeholder="輸入Email" v-model="postEmail.email"
                             class="border-2 border-black w-[550px] h-[50px] block mt-[30px] text-[24px] rounded-lg pl-[50px]">
-                        <div
-                            class="absolute w-[35px] h-[35px] bg-[url('/src/assets/img/RegisterPageImg/Account_icon.png')] bg-cover bottom-[8px] left-[8px]">
-                        </div>
+                            <i class="fa-solid fa-envelope fa-2xl absolute bottom-[23px] left-[10px]"></i>
                     </div>
                     <div class="relative">
                         <input type="text" placeholder="輸入Email驗證碼" v-model="postToken.resetPwdToken"
                             class="border-2 border-black w-[550px] h-[50px] block mt-[40px] text-[24px] rounded-lg pl-[50px]">
-                        <i class="fa-solid fa-envelope fa-2xl relative bottom-[37px] left-[10px]"></i>
+                        <i class="fa-solid fa-envelope-open-text fa-2xl relative bottom-[37px] left-[10px]"></i>
                         <button type="button" class="relative bottom-[37px] left-[380px]    bg-[#D9D9D9] rounded"
                             :disabled="isAble" @click="geteMailToken">{{ content }}</button>
                     </div>
