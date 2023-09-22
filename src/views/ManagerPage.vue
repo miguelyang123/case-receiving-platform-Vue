@@ -189,7 +189,7 @@ export default {
                         this.editPageCheck=false;
                         this.bgc=false;
                         this.searchAll();
-                    },"3000");
+                    },"2000");
 
                 }else{
                     this.editStatus.text="修改失敗";
@@ -228,13 +228,21 @@ export default {
     },
     created(){
         // 檢測登入狀態
-        let userData = this.getUserInfo();
-        if(!userData){
-            router.push("/login_page");
-        }else if(!userData.administrator){
-            alert("檢測到非管理者身分，無法進入該網頁");
-            router.push("/");
-        }
+        axios.get("http://localhost:8080/api/get_balance",{ withCredentials: true })
+        .then(res => {
+            console.log(res);
+            if(res.data.code==="200"){
+                if(!res.data.userInfo.administrator){
+                    alert("檢測到非管理者身分，無法進入該網頁");
+                    router.push("/");
+                }
+            }else{
+                router.push("/login_page");
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        })
     },
 
     computed: {
@@ -308,11 +316,16 @@ export default {
             </tr>
         </thead>
         <tbody>
-            <tr v-for="(item1,index1) in pageAllUsers">
+            <tr v-if="pageAllUsers.length>0" v-for="(item1,index1) in pageAllUsers">
                 <td class="border-2 border-black text-center py-2">
                     <button type="button" class="editBtn" @click="editNum(item1)">修改</button>
                 </td>
                 <td class="border-2 border-black text-center text-lg" v-for="(item2,index2) in item1" >{{ item2 }}</td>
+            </tr>
+            <tr v-if="pageAllUsers.length<=0">
+                <td colspan="7" class="py-3 pl-6 text-2xl">
+                    查無資料
+                </td>
             </tr>
         </tbody>
         <tfoot>
@@ -365,7 +378,7 @@ export default {
             </li>
         </ul>
         <div class="flex justify-evenly">
-            <button type="button" class="py-3 px-6 bg-[#7e7e7e] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="bgc=false">取消</button>
+            <button type="button" class="py-3 px-6 bg-[#7e7e7e] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="bgc=false,editPage=false">取消</button>
             <button type="button" class="py-3 px-6 bg-[#FF6E6E] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="editCheck">修改</button>
         </div>
     </div>

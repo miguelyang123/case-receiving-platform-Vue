@@ -34,7 +34,7 @@ export default {
             router.push("/register_page")
         },
         login() {
-            axios.post('http://localhost:8080/api/login', this.postData)
+            axios.post('http://localhost:8080/api/login', this.postData,{ withCredentials: true })
                 .then(response => {
                     this.responseData = response;
                     this.code = this.responseData.data.code;

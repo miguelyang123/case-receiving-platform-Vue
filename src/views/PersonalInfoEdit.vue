@@ -1,49 +1,143 @@
 <script>
 import { RouterLink, RouterView } from 'vue-router';
+import { mapActions } from 'pinia';
+import  defineStore  from '../store/dataStore';
 import { Icon } from '@iconify/vue';
+import axios from 'axios';
+import router from '../router';
 export default {
     components:{
         RouterLink,Icon
     },
     data() {
         return {
+            
             user:{
-                email:"asdf@gmail.com",
-                pwd:"123456",
+                email:"",
+                pwd:"**********",
                 user_name:"",
-                phone:"0123456789"
+                phone:""
             },    
 
            trueEmail: new RegExp("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"),
            truePhone: new RegExp("^0[\\d]{1}[\\d]{4}[\\d]{4}$"),
+           truePwd: new RegExp(".{8,30}$"),
+
+
+            // 修改密碼
+            editPwd:false,  // 修改狀態
+            editPwdCheck:false,
+            bgc:false,
+            editPwdPage:{
+                old_password:"",
+                new_password:"",
+                checkNewPwd:""
+            },
+            editStatus:{
+                text:"",
+                icon:"icon-park-solid:check-one",
+                icon_style:"",
+                meesage:""
+            }
         }
     },
     methods:{
+
+        ...mapActions(defineStore,["getUserInfo","setUserInfo"]),
+
         editPersomInfo(){
             if(!this.trueEmail.test(this.user.email) || !this.truePhone.test(this.user.phone)){
+                alert("Email格式 或 手機格式 填寫錯誤")
                 return false;
             }
-
-            // fetch("...",{
-            //     method:"post",
-            //     mode:"no-cors",
-            //     headers:{
-            //         "Accect":"application/json, text/plain, */*",
-            //         "Content-Type": "application/x-www-form-urlencoded"
-            //     },
-            //     body: "email" + this.user.email+
-            //         "pwd" + this.user.pwd+
-            //         "user_name" + this.user.user_name+
-            //         "phone" + this.user.phone
-            // })
-            // .then(respone => respone.json())
-            // .then(data =>{
-            //     console.log(data);
-            // })
+            axios.post("http://localhost:8080/api/edit_user",{
+                uuid:this.userData.uuid,
+                email:this.user.email,
+                user_name:this.user.user_name,
+                phone:this.user.phone
+            })
+            .then(data =>{
+                if(data.data.code==="200"){
+                    alert(data.data.message);
+                    this.setUserInfo(data.data.userInfo);
+                    this.userData = this.getUserInfo();
+                    this.user={
+                        email:this.userData.email,
+                        pwd:"**********",
+                        user_name:this.userData.user_name,
+                        phone:this.userData.phone
+                    }
+                }else{
+                    alert(data.data.message);
+                }
+                console.log(data);
+            })
 
             return false;
         },
-    }
+
+
+        //修改密碼檢查
+        editCheck(){
+            if(this.editPwdPage.checkNewPwd!==this.editPwdPage.new_password){
+                alert("密碼與確認密碼不一致!!!");
+                return;
+            }
+            if(!this.truePwd.test(this.editPwdPage.new_password)){
+                alert("密碼格式錯誤!!!");
+                return;
+            }
+            axios.post("http://localhost:8080/api/change_pwd",{
+                old_password:this.editPwdPage.old_password,
+                new_password:this.editPwdPage.new_password
+            },{ withCredentials: true })
+            .then((data) => {
+                console.log(data);
+                console.log(this.editPwdPage);
+                this.editPwdCheck=true;
+                this.editPwd=false;
+
+                if(data.data.code==="200"){
+                    this.editStatus.text="修改成功";
+                    this.editStatus.icon="icon-park-solid:check-one";
+                    this.editStatus.icon_style="text-[green]";
+                    this.editStatus.meesage="";
+
+                    setTimeout(()=>{
+                        this.editPwdCheck=false;
+                        this.bgc=false;
+                    },"2000");
+
+                }else{
+                    this.editStatus.text="修改失敗";
+                    this.editStatus.icon="fluent-mdl2:status-error-full";
+                    this.editStatus.icon_style="text-[red]";
+                    this.editStatus.meesage="密碼格式錯誤";
+                }
+            }).catch((err) => {
+                console.log(err);
+            })
+        },
+    },
+    created(){
+        axios.get("http://localhost:8080/api/get_balance",{ withCredentials: true })
+        .then(res => {
+            console.log(res);
+            if(res.data.code==="200"){
+                this.user={
+                    email:res.data.userInfo.email,
+                    pwd:"**********",
+                    user_name:res.data.userInfo.user_name,
+                    phone:res.data.userInfo.phone
+                }
+            }else{
+                router.push("/login_page");
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    },
 }
 </script>
 <template >
@@ -72,7 +166,7 @@ export default {
                             <th>密碼</th>
                             <td>
                                 <input type="password" class="bg-[#cfcfcf]" v-model="user.pwd" disabled>
-                                <RouterLink class="editPwd" to="#"> 修改</RouterLink>
+                                <button type="button" class="editPwd" @click="editPwd=true,bgc=true"> 修改</button>
                             </td>
                         </tr>
                         <tr>
@@ -95,9 +189,52 @@ export default {
                     </tbody>
                 </table>
             </div>
-            <input type="submit" class=" flex text-white rounded-lg bg-[#FF6E6E] py-3 px-12 mx-auto my-3 text-2xl font-bold hover:scale-105 active:scale-95" value="修改">
+            <input type="submit" class=" flex text-white rounded-lg bg-[#FF6E6E] cursor-pointer py-3 px-12 mx-auto my-3 text-2xl font-bold hover:scale-105 active:scale-95" value="修改">
         </form>
     </div>
+
+
+    <!-- 修改密碼 -->
+    <div v-if="editPwd" class=" fixed top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 bg-[#FFFFFF] border-[black] border p-6 rounded-2xl z-10">
+        <form action="#" method="post" @submit.prevent="editCheck">
+            <h1 class="text-center text-3xl font-bold my-3">修改密碼</h1>
+            <ul class=" editContent">
+                <li>
+                    <label for="oldPwd">舊密碼: </label>
+                    <div>
+                        <input id="oldPwd" type="text" v-model="editPwdPage.old_password" placeholder="請輸入舊密碼"  required>
+                    </div>         
+                </li>
+                <li>  
+                    <label for="newPwd">新密碼: </label>
+                    <div>
+                        <input id="newPwd" type="text" v-model="editPwdPage.new_password" placeholder="請輸入新密碼"  required>
+                    </div>      
+                </li>
+                <li>  
+                    <label for="checkNewPwd">確認密碼: </label>
+                    <div>
+                        <input id="checkNewPwd" type="text" v-model="editPwdPage.checkNewPwd" placeholder="請輸入確認密碼" required>
+                    </div>
+                </li>
+            </ul>
+            <div class="flex justify-evenly">
+                <button type="button" class="py-3 px-6 bg-[#7e7e7e] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="bgc=false,editPwd=false">取消</button>
+                <button type="submit" class="py-3 px-6 bg-[#FF6E6E] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95">修改</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 修改成功 -->
+    <div v-if="editPwdCheck" class="fixed top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 bg-[#FFFFFF] border-[black] border py-6 px-32 rounded-2xl z-10">
+        <h1 class="text-center text-3xl font-bold my-3">{{ editStatus.text }}</h1>
+        <p class="text-center text-3xl my-3 text-[red]">{{ editStatus.meesage }}</p>
+        <Icon :icon="editStatus.icon" :class="'my-6 mx-auto '+ editStatus.icon_style" width="120" />
+        <button v-if="editStatus.text==='修改失敗'" type="button" class="block mx-auto my-3 py-3 px-6 bg-[#FF6E6E] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="editPwdCheck=false">確定</button>
+    </div>
+
+    <!-- 背景 -->
+    <div v-if="bgc" class="fixed top-0 left-0 w-full h-[100vh] bg-[#00000083] z-0" @click="bgc=false,editPwd=false,editPwdCheck=false"></div>
 </template>
 
 <style lang="scss" scoped>
@@ -130,6 +267,48 @@ export default {
             scale: 0.9;
             color: blue;
             border-bottom: 1px blue solid;
+        }
+    }
+
+    // 修改內容
+    .editContent{
+        margin: 2.5rem 5rem;
+        li{
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+            font-weight: 700;
+            font-size: 1.25rem;
+            line-height: 1.5rem;
+
+            label{
+                margin-right: 0.75rem;
+            }
+            div{
+                background-color: #b7b7b7;
+                border-radius: 0.25rem;
+                padding: 0.5rem 0.75rem;
+                margin: 0 0.5rem;
+
+                input[type="text"]{
+                    border-bottom: 1px #757575 solid;
+                    outline: none;
+                    background-color: transparent;
+
+                    &:-webkit-autofill{
+                        
+                        -webkit-text-fill-color: rgb(0, 0, 0);
+                        -webkit-box-shadow: 0 0 0px 1000px #b7b7b7 inset;
+                        transition: background-color 5000s ease-in-out 0s;
+                        box-shadow: transparent;
+                    }
+
+                    &::placeholder{
+                        color: #3d3d3d;
+                    }
+                }
+   
+            }   
         }
     }
 </style>
