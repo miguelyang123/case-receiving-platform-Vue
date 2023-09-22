@@ -13,7 +13,7 @@ export default {
                 <h1 class="text-4xl font-bold">Speed接案網</h1>
                 <h2 class="mx-6 font-bold">你的專案，我的專長</h2>
             </div> 
-            <RouterLink class="headerBtn" to="/">我要發案</RouterLink>
+            <RouterLink class="headerBtn" to="/case_upload_page">我要發案</RouterLink>
         </div>
         <div class="flex px-16 py-3 bg-[#FF6E6E] justify-between">
             <div class="flex">
