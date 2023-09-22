@@ -53,25 +53,26 @@ export default {
         },
         geteMailToken() {
             //取得email認證碼
+            this.isAble = true;
             const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailPattern.test(this.postEmail.email)) {
                 alert("請輸入有效的email!");
+                this.isAble = false;
                 return;
             }
             axios.post('http://localhost:8080/api/forgot_pwd', this.postEmail, { withCredentials: true })
-                .then(response => {
+                .then(response => {  
                     this.geteMailTokenResponseData = response;
                     this.geteMailTokenCode = this.geteMailTokenResponseData.data.code;
                     this.geteMailTokenMessage = this.geteMailTokenResponseData.data.message;
-                    if (this.geteMailTokenCode === "200") {
+                    if (this.geteMailTokenCode === "200") {     
                         alert(this.geteMailTokenMessage);
-                        this.isAble = true;
                         this.content = this.totalTime + '秒後重新發送'
                         this.clock = window.setInterval(() => {
                             this.totalTime--
                             this.content = this.totalTime + '秒後重新發送'
                             if (this.totalTime < 0) {
-                                window.clearInterval(clock)
+                                window.clearInterval(this.clock);
                                 this.content = '重新發送驗證碼'
                                 this.totalTime = 60
                                 this.isAble = false;
@@ -79,10 +80,12 @@ export default {
                         }, 1000)
 
                     } else {
+                        this.isAble = false;
                         alert(this.geteMailTokenMessage);
                     }
                 })
                 .catch(error => {
+                    this.isAble = false;
                     alert(error);
                 });
         },
