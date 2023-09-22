@@ -52,6 +52,9 @@ export default defineStore("dataStore", {
     //   this.pageContent.allPage = thisallData.allPage;
     //   this.pageContent.pageNum = thisallData.pageNum;
     // }
+    getUserInfo(){
+      return this.userInfo;
+    },
     setUserInfo(userInfo) {
       //設置 userInfo
       this.userInfo = userInfo;

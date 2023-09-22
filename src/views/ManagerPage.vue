@@ -4,6 +4,7 @@ import { mapActions } from 'pinia';
 import  defineStore  from '../store/dataStore';
 import { Icon } from '@iconify/vue';
 import axios from 'axios';
+import router from '../router';
 export default {
     // components:{
     //     PageVue,
@@ -67,7 +68,7 @@ export default {
     },
     methods:{
 
-        ...mapActions(defineStore,["setAllPageContent","getThisPage"]),
+        ...mapActions(defineStore,["setAllPageContent","getThisPage","getUserInfo"]),
 
         // 篩選條件
         searchAll(){
@@ -203,9 +204,6 @@ export default {
         
     },
     mounted(){
-        
-    },
-    created(){
         fetch("http://localhost:8080/search_user/get_all")
         .then(response => {
             if(response.status === 200){
@@ -226,7 +224,17 @@ export default {
         })
         .catch(errorTest => {
             console.log(errorTest);
-        })     
+        })  
+    },
+    created(){
+        // 檢測登入狀態
+        let userData = this.getUserInfo();
+        if(!userData){
+            router.push("/login_page");
+        }else if(!userData.administrator){
+            alert("檢測到非管理者身分，無法進入該網頁");
+            router.push("/");
+        }
     },
 
     computed: {
