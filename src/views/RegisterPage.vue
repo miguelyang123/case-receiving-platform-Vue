@@ -63,7 +63,7 @@ export default {
         alert("輸入密碼與確認密碼不一致!");
         return;
       }
-      axios.post('http://localhost:8080/api/signup', this.postData)
+      axios.post('http://localhost:8080/api/signup', this.postData, { withCredentials: true })
         .then(response => {
           this.responseData = response;
           this.code = this.responseData.data.code;
