@@ -3,6 +3,7 @@ import { mapActions } from 'pinia';
 import  defineStore  from '../store/dataStore'
 import { RouterLink, RouterView } from 'vue-router';
 import { Icon } from '@iconify/vue';
+import axios from 'axios';
 // import PageVue from "../components/Page.vue";
 export default {
     components: {
@@ -12,16 +13,16 @@ export default {
     data() {
         return {
             thisType: ["text-red-600", ""],
-            mapShow: false,
-            map: ["地區不限",
-                "臺北", "新北", "基隆", "桃園", "新竹", "宜蘭",
-                "苗栗", "臺中", "彰化", "南投", "雲林",
-                "嘉義", "臺南", "高雄", "屏東", "澎湖",
-                "花蓮", "臺東",
-                "金門", "連江"
-            ],
-            thisMap: "地區不限",
 
+            mapSelect:{
+                mapShow: false,
+                showAllMap: [],
+                thisMap: "地區不限",
+
+                onsite:"",
+                remote:""
+            },
+            
             priceShow: false,
             price: ["案件金額不限", "5千以下", "5001 ~ 1萬", "1萬 ~ 5萬"],
             thisPrice: "案件金額",
@@ -29,15 +30,7 @@ export default {
             thisKeyWord: "",  // 關鍵字
 
             // 找到的資訊
-            allUsers: [{
-                'title': '照片編輯', 'price': 50000, 'location': '台南', 'caseDate': '2023/09/30', 'case_class':'線上' ,
-                'content': 'Lorem ipsum dolor sit amet consectetur adipisicing elit.             Totam tempora aut soluta dolor nisi recusandae   \n   \n  dolorum aperiam, repellat',
-                'uuid':'AA123','user_name':'寺井','email':'dfgh@gmail.com','phone':'0912345678','評價':0
-            }, {
-                'title': '影片編輯', 'price': 30000, 'location': '新北', 'caseDate': '2023/10/20', 'case_class':'線下' , 
-                'content': 'Lorem ipsum dolor sit amet consectetur adipisicing elit.             Totam tempora aut soluta dolor nisi recusandae   \n   \n   doloremque placeat',
-                'uuid':'BB456','user_name':'皈依','email':'bhjk@gmail.com','phone':'0987654321','評價':3
-            }],
+            allUsers: [],
             pageAllUsers:[],
 
             showPage:5,  // 顯示幾筆
@@ -65,16 +58,29 @@ export default {
         // 顯示點選哪個類別
         thisType1(index) {
             if (index === 0) {
-                if (this.thisType[1] === '線上') { this.thisType[1] = '' } else { this.thisType[1] = '線上' }
+                if (this.thisType[1] === '線上') { 
+                    this.thisType[1] = '';
+                    this.mapSelect.showAllMap = this.mapSelect.onsite.concat(this.mapSelect.remote);
+                } else { 
+                    this.thisType[1] = '線上'; 
+                    this.mapSelect.showAllMap = this.mapSelect.onsite;
+                }
             } else {
-                if (this.thisType[1] === '線下') { this.thisType[1] = '' } else { this.thisType[1] = '線下' }
+                if (this.thisType[1] === '線下') { 
+                    this.thisType[1] = '' ;
+                    this.mapSelect.showAllMap = this.mapSelect.onsite.concat(this.mapSelect.remote);
+                } else { 
+                    this.thisType[1] = '線下' ;
+                    this.mapSelect.showAllMap = this.mapSelect.remote;
+                }
             }
         },
 
         changeMap(index1) {
-            this.thisMap = index1;
-            this.mapShow = false;
+            this.mapSelect.thisMap = index1;
+            this.mapSelect.mapShow = false;
         },
+
         changePrice(index1) {
             this.thisPrice = index1;
             this.priceShow = false;
@@ -135,41 +141,92 @@ export default {
                 arr.push(i);
             }
 
-            this.content();
-
             return arr;
         },
     },
+    created(){
+        // 所有城市變例
+        let locationAPI = ["onsite","remote"];
+        locationAPI.forEach(item =>{
+            axios.get("http://localhost:8080/location_api/get_"+item)
+            .then(data =>{
+                console.log(data);
+                let arr=[];
+                if(data.data.code==="200"){
+
+                    Object.values(data.data.locationList).forEach(item => {
+                        arr.push(item);
+                    })
+
+                    if(item==="onsite"){
+                        this.mapSelect.onsite =arr;
+                        this.mapSelect.showAllMap = this.mapSelect.onsite;
+                    }else{
+                        this.mapSelect.remote = arr;
+                        this.mapSelect.showAllMap = this.mapSelect.onsite.concat(this.mapSelect.remote);
+                    }
+                }
+            })
+            .catch(err =>{
+                console.log(err);
+            })
+        }) 
+
+        // 所有案子變例
+        axios.get("http://localhost:8080/search_case/with_param",{
+            params:{
+                searchKeyword:"測試",  // 搜尋名稱與內文關鍵字
+                minBudget:"10000",   // 最小(等於)預算
+                maxBudget:"20000",  // 最大(等於)預算
+                location:"1A",   //  地點(location_id)
+                deadlineFrom:"2023-09-20T00:00:00", // 結案日從輸入日期
+                deadlineTo:"2023-09-30T00:00:00",  // 結案日到輸入日期
+                caseClass:"onsite",  // onsite (現場)| remote (遠端) 
+                initiator:"55038db7-d878-4ff6-b36e-cddd1b3cb141",  // 搜尋發案者(id)
+                onShelf:"true",  // 搜尋上下架
+                currentStatus:"Not Started",  // 目前案子狀態
+                caseRating:0  // 案子完成評價
+            }
+        })
+        .then(data =>{
+            console.log(data);
+            this.thisKeyWord.split
+            this.allUsers = data.data.caseList;
+        })
+        .catch(err =>{
+            console.log(err);
+        })
+    }
 }
 </script>
 <template>
     <div class="w-[85%] mx-auto py-6 mb-[10rem]">
         <h1 class="text-3xl font-bold">找案件</h1>
         <div class="flex my-6">
-            <button class="findCaseType" @click="thisType1(0)">
-                <Icon icon="fluent-mdl2:join-online-meeting" :class="{ 'text-red-600': thisType[1] === '線上' }"
+            <button class="findCaseType group" @click="thisType1(0)">
+                <Icon icon="fluent-mdl2:join-online-meeting" :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === '線上' }"
                     width="65"></Icon>
-                <p :class="{ 'text-red-600': thisType[1] === '線上' }">遠端</p>
+                <p :class="{ 'group-hover:text-red-600 ':true, 'text-red-600': thisType[1] === '線上' }">遠端</p>
             </button>
-            <button class="findCaseType" @click="thisType1(1)">
-                <Icon icon="healthicons:domestic-worker" :class="{ 'text-red-600': thisType[1] === '線下' }"
+            <button class="findCaseType group" @click="thisType1(1)">
+                <Icon icon="healthicons:domestic-worker" :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === '線下' }"
                     width="65"></Icon>
-                <p :class="{ 'text-red-600': thisType[1] === '線下' }">線場</p>
+                <p :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === '線下' }">線場</p>
             </button>
         </div>
         <div class="flex">
-            <div class=" relative" @mouseover="mapShow = true" @mouseleave="mapShow = false">
+            <div class=" relative" @mouseover="mapSelect.mapShow = true" @mouseleave="mapSelect.mapShow = false">
                 <div class=" filter">
-                    <p>{{ thisMap }}</p>
+                    <p>{{ mapSelect.thisMap }}</p>
                     <p class="text-lg ml-3">V</p>
                 </div>
-                <div v-if="mapShow" class="mapAndPriceSelect shadow-xl">
-                    <div v-for="(item, index) in map"
-                        class=" text-[1rem] font-bold py-3 pl-6 pr-10 cursor-pointer hover:bg-blue-300 hover:text-white"
-                        @click="changeMap(item)">
-                        <input type="radio" :id="'map' + index" name="thismap" class="mr-3 cursor-pointer" :value="item"
-                            :checked="thisMap === item">
-                        <label :for="'map' + index" class="cursor-pointer">{{ item }}</label>
+                <div v-if="mapSelect.mapShow" class="mapAndPriceSelect shadow-xl">
+                    <div v-for="(item, index) in mapSelect.showAllMap"
+                        class=" text-[1rem] font-bold py-3 pl-6 cursor-pointer hover:bg-blue-300 hover:text-white"
+                        @click="changeMap(item.locationName)">
+                        <input type="radio" :id="'showMap' + index" name="thismap" class="mr-3 cursor-pointer" :value="item.locationId"
+                            :checked="mapSelect.thisMap === item.locationName">
+                        <label :for="'showMap' + index" class="cursor-pointer mr-6">{{ item.locationName }}</label>
                     </div>
                 </div>
             </div>
@@ -192,7 +249,9 @@ export default {
 
             <div class=" flex ">
                 <input type="text" placeholder="請輸入關鍵字" v-model="thisKeyWord" class="searchKeyWords">
-                <img src="../assets/img/TackCaseImg/search.png" width="50" alt="">
+                <div class="icon">
+                    <Icon icon="tabler:search" width="30" />
+                </div>
             </div>
         </div>
 
@@ -201,16 +260,17 @@ export default {
         <!-- <RouterLink :to="{ name: 'TackCaseDetailsPage', params: { thisList: JSON.stringify(item) } }" class=" relative" -->
         <div class=" relative cursor-pointer" @click="thisCase(item)"
             v-for="(item, index) in allUsers">
-            <h1 class=" font-bold text-xl">{{ item.title }}</h1>
+            <h1 class=" font-bold text-xl">{{ item.caseName }}</h1>
             <div class="flex">
-                <p class="text-red-600 font-bold text-lg">{{ item.price }}</p>
+                <p class="text-red-600 font-bold text-lg">{{ item.budget }}</p>
                 <div class="flex items-center ml-4">
                     <img src="../assets/img/TackCaseImg/location.png" alt="" width="15" class="h-[15px]">
                     <p class="text-[#7F7F7F] ml-2 font-bold text-lg">{{ item.location }}</p>
                 </div>
                 <div class="flex items-center ml-4">
                     <img src="../assets/img/TackCaseImg/date.png" alt="" width="15" class="h-[15px]">
-                    <p class="text-[#7F7F7F] ml-2 font-bold text-lg">{{ item.caseDate }}</p>
+                    <p class="text-[#7F7F7F] ml-2 font-bold text-lg">{{  item.deadline.split("T")[0]}}</p> 
+                    <!-- item.deadline.toLocaleDateString() -->
                 </div>
             </div>
 
@@ -268,11 +328,6 @@ export default {
         scale: 1.05;
     }
 
-    &:hover>iconify-icon,
-    &:hover>iconify-icon+p {
-        color: rgb(220, 38, 38);
-    }
-
     &:active {
         scale: 0.95;
     }
@@ -287,7 +342,7 @@ export default {
     margin-right: 0.75rem;
     border: 2px #454545 solid;
     border-radius: 0.5rem;
-    width: 175px;
+    width: 225px;
     color: #454545;
     font-weight: bold;
     cursor: pointer;
@@ -307,7 +362,7 @@ export default {
         color: #454545;
     }
 
-    &+img {
+    &+.icon {
         background-color: #7F7F7F;
         padding: 0.75rem;
         border-radius: 0 0.5rem 0.5rem 0;
@@ -326,6 +381,7 @@ export default {
 // 下拉選單
 .mapAndPriceSelect {
     // padding: 0.75rem 2rem 0.75rem 1.5rem;
+    
     position: absolute;
     background: white;
     max-height: 200px;
