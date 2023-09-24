@@ -33,7 +33,7 @@ export default {
             allUsers: [],
             pageAllUsers:[],
 
-            showPage:5,  // 顯示幾筆
+            showPage:1,  // 顯示幾筆
             page: 1,      // 當前頁數
             allPage: 2,  // 總頁數
             pageNum: 5    // 分頁數量
@@ -141,6 +141,8 @@ export default {
                 arr.push(i);
             }
 
+            this.content();
+
             return arr;
         },
     },
@@ -190,8 +192,11 @@ export default {
         })
         .then(data =>{
             console.log(data);
-            this.thisKeyWord.split
             this.allUsers = data.data.caseList;
+
+            this.allPage = Math.ceil((this.allUsers.length)/this.showPage); 
+            this.content();
+            
         })
         .catch(err =>{
             console.log(err);
@@ -215,7 +220,7 @@ export default {
             </button>
         </div>
         <div class="flex">
-            <div class=" relative" @mouseover="mapSelect.mapShow = true" @mouseleave="mapSelect.mapShow = false">
+            <div class=" relative w-[225px]" @mouseover="mapSelect.mapShow = true" @mouseleave="mapSelect.mapShow = false">
                 <div class=" filter">
                     <p>{{ mapSelect.thisMap }}</p>
                     <p class="text-lg ml-3">V</p>
@@ -226,7 +231,7 @@ export default {
                         @click="changeMap(item.locationName)">
                         <input type="radio" :id="'showMap' + index" name="thismap" class="mr-3 cursor-pointer" :value="item.locationId"
                             :checked="mapSelect.thisMap === item.locationName">
-                        <label :for="'showMap' + index" class="cursor-pointer mr-6">{{ item.locationName }}</label>
+                        <label :for="'showMap' + index" class="cursor-pointer">{{ item.locationName }}</label>
                     </div>
                 </div>
             </div>
@@ -259,7 +264,7 @@ export default {
 
         <!-- <RouterLink :to="{ name: 'TackCaseDetailsPage', params: { thisList: JSON.stringify(item) } }" class=" relative" -->
         <div class=" relative cursor-pointer" @click="thisCase(item)"
-            v-for="(item, index) in allUsers">
+            v-for="(item, index) in pageAllUsers">
             <h1 class=" font-bold text-xl">{{ item.caseName }}</h1>
             <div class="flex">
                 <p class="text-red-600 font-bold text-lg">{{ item.budget }}</p>
@@ -342,7 +347,7 @@ export default {
     margin-right: 0.75rem;
     border: 2px #454545 solid;
     border-radius: 0.5rem;
-    width: 225px;
+    
     color: #454545;
     font-weight: bold;
     cursor: pointer;
@@ -381,7 +386,7 @@ export default {
 // 下拉選單
 .mapAndPriceSelect {
     // padding: 0.75rem 2rem 0.75rem 1.5rem;
-    
+    width: inherit;
     position: absolute;
     background: white;
     max-height: 200px;
