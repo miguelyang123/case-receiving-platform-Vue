@@ -22,7 +22,7 @@ export default {
         ...mapState(dataStore, ["isLogin", "userName"]),
     },
     methods: {
-        ...mapActions(dataStore, ["setIsLoginTrue", "setIsLoginFalse","clearPersist"]),
+        ...mapActions(dataStore, ["setIsLoginTrue", "setIsLoginFalse", "clearPersist"]),
         login() {
             router.push("/login_page");
         },
@@ -48,6 +48,9 @@ export default {
         myAccount() {
             router.push("/personal_info");
         },
+        register() {
+            router.push("/register_page");
+        }
     },
 }
 </script>
@@ -67,11 +70,14 @@ export default {
                 <RouterLink class="navBtn" to="/tackcasepage">我要接案</RouterLink>
             </div>
             <div class="flex">
-                <p class="font-bold text-2xl mx-[1rem]" v-if="this.isLogin === true">您好，{{ this.userName }}</p>
+                <p class="font-bold text-2xl mx-[1rem]" v-if="this.isLogin === true">您好，{{ this.userName }}!</p>
                 <button type="button" class="navBtn" @click="myAccount" v-if="this.isLogin === true">我的帳號</button>
                 <button type="button"
                     class="font-bold text-2xl hover:scale-105 hover:text-[#FF0000] active:scale-95 active:text-[#0000FF] "
                     @click="login" v-if="this.isLogin === false">登入</button>
+                <button type="button"
+                    class="font-bold mx-[1.5rem] text-2xl hover:scale-105 hover:text-[#FF0000] active:scale-95 active:text-[#0000FF] "
+                    @click="register" v-if="this.isLogin === false">註冊</button>
                 <button type="button"
                     class="font-bold text-2xl hover:scale-105 hover:text-[#FF0000] active:scale-95 active:text-[#0000FF] "
                     @click="logout" v-if="this.isLogin === true">登出</button>
