@@ -41,17 +41,31 @@ export default {
     },
     methods: {
 
-        ...mapActions(defineStore,["setCaseThisData"]),
+        ...mapActions(defineStore,["setCassUser"]),
 
         thisCase(item){
-            
-            this.$router.push({
-                path:'tackcasedetailspage',
-                query:{
-                    thisList:JSON.stringify(item)
+            axios.get("http://localhost:8080/search_user/with_Input",{
+                params:{
+                    uuid:item.initiator
                 }
             })
+            .then(data =>{
+                console.log(data);
 
+                if(data.data.code==="200"){
+
+                    // this.$router.push({
+                    //     path:'tackcasedetailspage',
+                    //     query:{
+                    //         thisList:JSON.stringify(item),
+                    //         thisUser:JSON.stringify(data.data.userInfoList)
+                    //     }
+                    // })
+
+                    this.setCassUser(data.data.userInfoList,item);
+                    this.$router.push("/tackcasedetailspage");
+                }
+            })
             // this.setCaseThisData(JSON.stringify(item));
         },
 
@@ -152,7 +166,6 @@ export default {
         locationAPI.forEach(item =>{
             axios.get("http://localhost:8080/location_api/get_"+item)
             .then(data =>{
-                console.log(data);
                 let arr=[];
                 if(data.data.code==="200"){
 

@@ -15,7 +15,11 @@ export default defineStore("dataStore", {
     //   allPage:1,  // 總數
     //   pageNum:5, // 分頁數
     // }
+
     userInfo:null, //登入畫面後端回傳的userInfo(object)
+
+    caseUser:null,
+    thisCase:null,
   }),
   //getters 類似 computed
   //沒有this
@@ -59,12 +63,24 @@ export default defineStore("dataStore", {
       //設置 userInfo
       this.userInfo = userInfo;
     },
+
+    getCassUser(){
+      return this.caseUser;
+    },
+    setCassUser(caseUser,thisCase){
+      this.caseUser = caseUser;
+      this.thisCase = thisCase;
+    }
   },
      persist: [
       {
         key: 'userInfo',
         paths: ['userInfo'],
         storage: localStorage,
-      },
+      },{
+        key: 'caseUser',
+        paths: ['caseUser','thisCase'],
+        storage: localStorage,
+      }
     ]
 });
