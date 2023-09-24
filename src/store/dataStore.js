@@ -6,7 +6,7 @@ export default defineStore("dataStore", {
   //state 類似 vue data
   state: () => ({
     numTest: 1,
-    
+
     // 分頁處理(暫時停用)
     // pageContent:{
     //   arrList:"",  // 所有資料
@@ -15,7 +15,9 @@ export default defineStore("dataStore", {
     //   allPage:1,  // 總數
     //   pageNum:5, // 分頁數
     // }
-    userInfo:null, //登入畫面後端回傳的userInfo(object)
+    userInfo: null, //登入畫面後端回傳的userInfo(object)
+    isLogin: false,
+    userName: "",
   }),
   //getters 類似 computed
   //沒有this
@@ -56,12 +58,37 @@ export default defineStore("dataStore", {
       //設置 userInfo
       this.userInfo = userInfo;
     },
+    setUserName(user_name) {
+      //設置 userName
+      this.userName = user_name;
+    },
+    setIsLoginTrue() {
+      this.isLogin = true;
+    },
+    setIsLoginFalse() {
+      this.isLogin = false;
+    },
+    clearPersist() {
+      this.userInfo = null;
+      this.isLogin = false;
+      this.userName = "";
+    }
   },
-     persist: [
-      {
-        key: 'userInfo',
-        paths: ['userInfo'],
-        storage: localStorage,
-      },
-    ]
+  persist: [
+    {
+      key: 'userInfo',
+      paths: ['userInfo'],
+      storage: localStorage,
+    },
+    {
+      key: 'isLogin',
+      paths: ['isLogin'],
+      storage: localStorage,
+    },
+    {
+      key: 'userName',
+      paths: ['userName'],
+      storage: localStorage,
+    },
+  ]
 });

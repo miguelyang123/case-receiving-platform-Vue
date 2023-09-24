@@ -20,10 +20,10 @@ export default {
         }
     },
     computed: {
-        ...mapState(dataStore, ["userInfo"])
+        ...mapState(dataStore, ["userInfo","isLogin","userName"])
     },
     methods: {
-        ...mapActions(dataStore, ["setUserInfo"]),
+        ...mapActions(dataStore, ["setUserInfo","setIsLoginTrue","setIsLoginFalse","setUserName"]),
         pwdflagTrue() {
             this.pwdFlag = true;
         },
@@ -40,16 +40,21 @@ export default {
                     this.code = this.responseData.data.code;
                     this.message = this.responseData.data.message;
                     const userInfo =this.responseData.data.userInfo;
+                    const userName =this.responseData.data.userInfo.user_name;
                     if (this.code === "200") {
                         alert(this.message);
                         this.setUserInfo(userInfo);  //設置 userInfo
+                        this.setUserName(userName);
+                        this.setIsLoginTrue();
                         router.push("/");
                     } else {
                         alert(this.message);
+                        this.setIsLoginFalse();
                     }
                 })
                 .catch(error => {
                     alert(error);
+                    this.setIsLoginFalse();
                 });
         },
         forgottenPassword(){
