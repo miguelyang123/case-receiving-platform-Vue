@@ -77,6 +77,16 @@ const router = createRouter({
       name: "CaseUploadPage",
       component: () => import("../views/CaseUploadPage.vue"),
     },
+    {
+      path: "/case_edit_search_page",
+      name: "CaseEditSearchPage",
+      component: () => import("../views/CaseEditSearchPage.vue"),
+    },
+    {
+      path: "/case_edit_page",
+      name: "CaseEditPage",
+      component: () => import("../views/CaseEditPage.vue"),
+    },
   ],
 });
 

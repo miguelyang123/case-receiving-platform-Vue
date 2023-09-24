@@ -1,10 +1,10 @@
 <script>
 import router from '../router';
 import axios from 'axios';
-// // pinia 全域資料庫
-// import { mapState, mapActions } from "pinia";
-// // 匯入資料庫
-// import dataStore from "../store/dataStore";
+// pinia 全域資料庫
+import { mapState, mapActions } from "pinia";
+// 匯入資料庫
+import dataStore from "../store/dataStore";
 
 export default {  
     data() {
@@ -53,10 +53,10 @@ export default {
 
       };
     },
-    // computed: {
-    //   //參數 1.資料庫 2.要取用的 state / getters
-    //   ...mapState(dataStore, ["numTest"]),
-    // },
+    computed: {
+      //參數 1.資料庫 2.要取用的 state / getters
+      ...mapState(dataStore, ["numTest", "caseEditId"]),
+    },
     methods: {
         pwdflagTrue() {
             this.pwdFlag = true;
@@ -94,6 +94,16 @@ export default {
         categoryChange(event) {
             // console.log(event.target.value);
             if(event.target.value === "1") {
+              this.getOnSiteInfo();
+            } else {
+              this.getRemoteInfo();
+            }
+            
+        },
+        
+        categoryChangeNew(value) {
+            // console.log(event.target.value);
+            if(value === "1") {
               this.getOnSiteInfo();
             } else {
               this.getRemoteInfo();
@@ -163,6 +173,23 @@ export default {
       },
       mounted() {
         // this.getLocationInfo();
+
+        console.log("id: "+this.caseEditId);
+
+        // 先給 假資料
+        this.caseName = "123";
+        this.caseBudget = 100;
+        this.caseDeadline = "2023-09-24";
+        // this.caseCategory = "onsite";
+        // this.caseCategory = "現場";
+        // this.caseCategory = 1;
+        this.categoryKey = "1";
+        this.categoryChangeNew(this.categoryKey);
+        // this.caseLocation = "1S";
+        // this.caseLocation = "1S";
+        this.locationSelected = "1S";
+        this.caseContent = "123";
+
       },
       
 }
@@ -175,7 +202,7 @@ export default {
   <!-- <p>Personal Info</p> -->
   
   <div class="flex m-4">
-    <p class="text-4xl">發案畫面</p>
+    <p class="text-4xl">案子修改畫面</p>
     <button class="custom-btn btn-5 relative left-2/3" @click="addCase">提交</button>
     <!-- <button class="custom-btn btn-5 relative left-2/3" @click="checkAllValue">提交(確認用)</button> -->
   </div>

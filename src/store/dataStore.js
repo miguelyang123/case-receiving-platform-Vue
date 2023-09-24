@@ -16,6 +16,7 @@ export default defineStore("dataStore", {
     //   pageNum:5, // 分頁數
     // }
     userInfo:null, //登入畫面後端回傳的userInfo(object)
+    caseEditId:null,
   }),
   //getters 類似 computed
   //沒有this
@@ -55,6 +56,10 @@ export default defineStore("dataStore", {
     setUserInfo(userInfo) {
       //設置 userInfo
       this.userInfo = userInfo;
+    },
+    setCaseEditId(id) {
+      //設置 caseEditId
+      this.caseEditId = id;
     },
   },
      persist: [
