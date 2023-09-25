@@ -72,6 +72,11 @@ const router = createRouter({
       name: "ManagerPage",
       component: () => import("../views/ManagerPage.vue"),
     },
+    {
+      path: "/case_upload_page",
+      name: "CaseUploadPage",
+      component: () => import("../views/CaseUploadPage.vue"),
+    },
   ],
 });
 
