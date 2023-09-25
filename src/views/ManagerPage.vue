@@ -332,7 +332,7 @@ export default {
             <tr>
                 <td colspan="7" class="py-3 pr-3">
                     <!-- <PageVue @pageArr="pageArr1"></PageVue> -->
-                    <div v-if="page !== 0" class="flex justify-end items-end">
+                    <div v-if="pageAllUsers.length>0" class="flex justify-end items-end">
                         <button v-if="page !== 1" type="button" class="pageBtn" @click="pageBlank()">上一頁</button>
 
                         <button v-if="page > Math.floor(this.pageNum / 2) + 1" type="button" class="pageBtn" @click="page = 1">1</button>

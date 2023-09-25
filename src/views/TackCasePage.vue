@@ -18,14 +18,20 @@ export default {
                 mapShow: false,
                 showAllMap: [],
                 thisMap: "地區不限",
+                thisMapId:"",
 
                 onsite:"",
                 remote:""
             },
             
-            priceShow: false,
-            price: ["案件金額不限", "5千以下", "5001 ~ 1萬", "1萬 ~ 5萬"],
-            thisPrice: "案件金額",
+            // priceShow: false,
+            // price: ["案件金額不限", "5千以下", "5001 ~ 1萬", "1萬 ~ 5萬"],
+            // thisPrice: "案件金額",
+
+            price:{
+                minPrice:'',
+                maxPrice:''
+            },
 
             thisKeyWord: "",  // 關鍵字
 
@@ -33,7 +39,7 @@ export default {
             allUsers: [],
             pageAllUsers:[],
 
-            showPage:1,  // 顯示幾筆
+            showPage:10,  // 顯示幾筆
             page: 1,      // 當前頁數
             allPage: 2,  // 總頁數
             pageNum: 5    // 分頁數量
@@ -72,27 +78,28 @@ export default {
         // 顯示點選哪個類別
         thisType1(index) {
             if (index === 0) {
-                if (this.thisType[1] === '線上') { 
+                if (this.thisType[1] === 'onsite') { 
                     this.thisType[1] = '';
                     this.mapSelect.showAllMap = this.mapSelect.onsite.concat(this.mapSelect.remote);
                 } else { 
-                    this.thisType[1] = '線上'; 
+                    this.thisType[1] = 'onsite'; 
                     this.mapSelect.showAllMap = this.mapSelect.onsite;
                 }
             } else {
-                if (this.thisType[1] === '線下') { 
+                if (this.thisType[1] === 'remote') { 
                     this.thisType[1] = '' ;
                     this.mapSelect.showAllMap = this.mapSelect.onsite.concat(this.mapSelect.remote);
                 } else { 
-                    this.thisType[1] = '線下' ;
+                    this.thisType[1] = 'remote' ;
                     this.mapSelect.showAllMap = this.mapSelect.remote;
                 }
             }
         },
 
         changeMap(index1) {
-            this.mapSelect.thisMap = index1;
+            this.mapSelect.thisMap = index1.locationName;
             this.mapSelect.mapShow = false;
+            this.searchAllData(index1.locationId);
         },
 
         changePrice(index1) {
@@ -129,6 +136,37 @@ export default {
             this.pageAllUsers = pageArrList;
         },
 
+        // 抓取篩選與全部內容
+        searchAllData(lo_id){
+            this.mapSelect.thisMapId=lo_id;
+            // 所有案子變例
+            axios.get("http://localhost:8080/search_case/with_param",{
+                params:{
+                    searchKeyword:this.thisKeyWord,  // 搜尋名稱與內文關鍵字
+                    minBudget:this.price.minPrice,   // 最小(等於)預算
+                    maxBudget:this.price.maxPrice,  // 最大(等於)預算
+                    location:lo_id,   //  地點(location_id)
+                    deadlineFrom:"", // 結案日從輸入日期
+                    deadlineTo:"",  // 結案日到輸入日期
+                    caseClass:this.thisType[1],  // onsite (現場)| remote (遠端) 
+                    initiator:"",  // 搜尋發案者(id)
+                    onShelf:"",  // 搜尋上下架
+                    currentStatus:null,  // 目前案子狀態
+                    caseRating:null  // 案子完成評價
+                }
+            })
+            .then(data =>{
+                console.log(data);
+                this.allUsers = data.data.caseList;
+
+                this.allPage = Math.ceil((this.allUsers.length)/this.showPage); 
+                this.content();
+                
+            })
+            .catch(err =>{
+                console.log(err);
+            })
+        }
     },
 
     computed: {
@@ -163,6 +201,7 @@ export default {
     created(){
         // 所有城市變例
         let locationAPI = ["onsite","remote"];
+        
         locationAPI.forEach(item =>{
             axios.get("http://localhost:8080/location_api/get_"+item)
             .then(data =>{
@@ -185,35 +224,9 @@ export default {
             .catch(err =>{
                 console.log(err);
             })
-        }) 
+        });
 
-        // 所有案子變例
-        axios.get("http://localhost:8080/search_case/with_param",{
-            params:{
-                searchKeyword:"測試",  // 搜尋名稱與內文關鍵字
-                minBudget:"10000",   // 最小(等於)預算
-                maxBudget:"20000",  // 最大(等於)預算
-                location:"1A",   //  地點(location_id)
-                deadlineFrom:"2023-09-20T00:00:00", // 結案日從輸入日期
-                deadlineTo:"2023-09-30T00:00:00",  // 結案日到輸入日期
-                caseClass:"onsite",  // onsite (現場)| remote (遠端) 
-                initiator:"55038db7-d878-4ff6-b36e-cddd1b3cb141",  // 搜尋發案者(id)
-                onShelf:"true",  // 搜尋上下架
-                currentStatus:"Not Started",  // 目前案子狀態
-                caseRating:0  // 案子完成評價
-            }
-        })
-        .then(data =>{
-            console.log(data);
-            this.allUsers = data.data.caseList;
-
-            this.allPage = Math.ceil((this.allUsers.length)/this.showPage); 
-            this.content();
-            
-        })
-        .catch(err =>{
-            console.log(err);
-        })
+        this.searchAllData("");
     }
 }
 </script>
@@ -222,17 +235,17 @@ export default {
         <h1 class="text-3xl font-bold">找案件</h1>
         <div class="flex my-6">
             <button class="findCaseType group" @click="thisType1(0)">
-                <Icon icon="fluent-mdl2:join-online-meeting" :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === '線上' }"
+                <Icon icon="fluent-mdl2:join-online-meeting" :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === 'onsite' }"
                     width="65"></Icon>
-                <p :class="{ 'group-hover:text-red-600 ':true, 'text-red-600': thisType[1] === '線上' }">遠端</p>
+                <p :class="{ 'group-hover:text-red-600 ':true, 'text-red-600': thisType[1] === 'onsite' }">遠端</p>
             </button>
             <button class="findCaseType group" @click="thisType1(1)">
-                <Icon icon="healthicons:domestic-worker" :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === '線下' }"
+                <Icon icon="healthicons:domestic-worker" :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === 'remote' }"
                     width="65"></Icon>
-                <p :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === '線下' }">線場</p>
+                <p :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === 'remote' }">線場</p>
             </button>
         </div>
-        <div class="flex">
+        <div class="flex ">
             <div class=" relative w-[225px]" @mouseover="mapSelect.mapShow = true" @mouseleave="mapSelect.mapShow = false">
                 <div class=" filter">
                     <p>{{ mapSelect.thisMap }}</p>
@@ -241,7 +254,7 @@ export default {
                 <div v-if="mapSelect.mapShow" class="mapAndPriceSelect shadow-xl">
                     <div v-for="(item, index) in mapSelect.showAllMap"
                         class=" text-[1rem] font-bold py-3 pl-6 cursor-pointer hover:bg-blue-300 hover:text-white"
-                        @click="changeMap(item.locationName)">
+                        @click="changeMap(item)">
                         <input type="radio" :id="'showMap' + index" name="thismap" class="mr-3 cursor-pointer" :value="item.locationId"
                             :checked="mapSelect.thisMap === item.locationName">
                         <label :for="'showMap' + index" class="cursor-pointer">{{ item.locationName }}</label>
@@ -249,7 +262,7 @@ export default {
                 </div>
             </div>
 
-            <div class=" relative" @mouseover="priceShow = true" @mouseleave="priceShow = false">
+            <!-- <div class=" relative" @mouseover="priceShow = true" @mouseleave="priceShow = false">
                 <div class=" filter" style="width: 210px;">
                     <p>{{ thisPrice }}</p>
                     <p class="text-lg ml-3">V</p>
@@ -263,11 +276,17 @@ export default {
                         <label :for="'price' + index" class="cursor-pointer">{{ item }}</label>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
-            <div class=" flex ">
-                <input type="text" placeholder="請輸入關鍵字" v-model="thisKeyWord" class="searchKeyWords">
-                <div class="icon">
+            <div class="flex items-center mx-6">
+                <input type="number" placeholder="請輸入最小預算" v-model="price.minPrice" oninput="if(value<0)value='';if(value>100000000)value=100000000" class="searchPrice" @change="searchAllData(mapSelect.thisMapId)">
+                <p>~</p>
+                <input type="number" placeholder="請輸入最大預算" v-model="price.maxPrice" oninput="if(value<0)value='';if(value>100000000)value=100000000" class="searchPrice" @change="searchAllData(mapSelect.thisMapId)">
+            </div>
+            
+            <div class=" flex">
+                <input type="text" placeholder="請輸入關鍵字" v-model="thisKeyWord"  class="searchKeyWords" @change="searchAllData(mapSelect.thisMapId)">
+                <div class="icon" @click="searchAllData(mapSelect.thisMapId)">
                     <Icon icon="tabler:search" width="30" />
                 </div>
             </div>
@@ -308,12 +327,12 @@ export default {
             <hr class="my-6 border-[#cecece]">
         </div>
 
-        <div v-if="page === 0" class="text-center">
+        <div v-if="pageAllUsers.length<=0" class="text-center">
             <h1 class="text-2xl font-bold my-6">未搜尋到你想找的案子</h1>
             <p class="text-xl">你可以嘗試更換你的篩選條件或關鍵字</p>
         </div>
 
-        <div v-if="page !== 0" class="flex justify-end items-end">
+        <div v-if="pageAllUsers.length>0" class="flex justify-end items-end">
             <button v-if="page !== 1" type="button" class="pageBtn" @click="pageBlank()">上一頁</button>
 
             <button v-if="page > Math.floor(this.pageNum / 2) + 1" type="button" class="pageBtn" @click="page = 1">1</button>
@@ -366,8 +385,8 @@ export default {
     cursor: pointer;
 }
 
-// 關鍵字
-.searchKeyWords {
+// 關鍵字與金額
+.searchKeyWords,.searchPrice {
     outline: none;
     border: 2px #454545 solid;
     border-radius: 0.5rem 0 0 0.5rem;
@@ -393,6 +412,20 @@ export default {
         &:active {
             scale: 0.95;
         }
+    }
+}
+.searchPrice{
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    width: 10vw;
+    &::-webkit-inner-spin-button,&::-webkit-outer-spin-button{
+        display: none;
+    }
+
+    &+p{
+        margin: 0 1rem;
+        font-weight: 700;
+        font-size: 2rem;
     }
 }
 

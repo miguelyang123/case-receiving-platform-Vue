@@ -54,7 +54,7 @@ export default {
                     <div>
                         <div v-for="(item,index,arr) in newArrList" class="flex items-center my-6">
                             <img width="15" class="mr-3" v-if=" arr !== 0" :src="'/src/assets/img/TackCaseImg/' + ( arr===1 ? 'location.png' : 'date.png') " alt="">
-                            <p>{{ item }}</p>
+                            <p>{{ index==="deadline" ? item.split('T')[0]+'　'+item.split('T')[1] : item }}</p>
                         </div>
                     </div>
                 </div>
