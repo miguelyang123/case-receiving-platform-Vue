@@ -80,18 +80,18 @@ export default {
             if (index === 0) {
                 if (this.thisType[1] === 'onsite') { 
                     this.thisType[1] = '';
-                    this.mapSelect.showAllMap = this.mapSelect.onsite.concat(this.mapSelect.remote);
+                    this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(this.mapSelect.onsite.concat(this.mapSelect.remote));
                 } else { 
                     this.thisType[1] = 'onsite'; 
-                    this.mapSelect.showAllMap = this.mapSelect.onsite;
+                    this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(this.mapSelect.onsite);
                 }
             } else {
                 if (this.thisType[1] === 'remote') { 
                     this.thisType[1] = '' ;
-                    this.mapSelect.showAllMap = this.mapSelect.onsite.concat(this.mapSelect.remote);
+                    this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(this.mapSelect.onsite.concat(this.mapSelect.remote));
                 } else { 
                     this.thisType[1] = 'remote' ;
-                    this.mapSelect.showAllMap = this.mapSelect.remote;
+                    this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(this.mapSelect.remote);
                 }
             }
         },
@@ -156,8 +156,26 @@ export default {
                 }
             })
             .then(data =>{
-                console.log(data);
                 this.allUsers = data.data.caseList;
+
+                // Object.values(this.allUsers).forEach(item1 =>{
+                //     Object.values(this.mapSelect.showAllMap).forEach(item2 =>{
+                //         if(item1.location === item2.locationId){
+                //             item1.location=item2.locationName;
+                //         }
+                //     })
+                // })
+
+                this.allUsers.map(item1 =>{
+                    Object.values(this.mapSelect.showAllMap).forEach(item2 =>{
+                        if(item1.location === item2.locationId){
+                           return item1.location=item2.locationName;
+                        }
+                    })
+                })
+
+                console.log(data.data.caseList);
+                console.log(this.mapSelect.showAllMap);
 
                 this.allPage = Math.ceil((this.allUsers.length)/this.showPage); 
                 this.content();
@@ -214,11 +232,13 @@ export default {
 
                     if(item==="onsite"){
                         this.mapSelect.onsite =arr;
-                        this.mapSelect.showAllMap = this.mapSelect.onsite;
+                        this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(this.mapSelect.onsite);
                     }else{
                         this.mapSelect.remote = arr;
-                        this.mapSelect.showAllMap = this.mapSelect.onsite.concat(this.mapSelect.remote);
+                        this.mapSelect.showAllMap = this.mapSelect.showAllMap.concat(this.mapSelect.remote);
                     }
+
+                    console.log(arr);
                 }
             })
             .catch(err =>{
@@ -453,16 +473,15 @@ export default {
 
 // 分頁
 .pageBtn {
-        border: gray 2px solid;
-        padding: 0.75rem;
-        margin: 0 0.25rem;
-        font-size: 1.125rem;
-        line-height: 1.125rem;
-        font-weight: bold;
+    border: gray 2px solid;
+    padding: 0.75rem;
+    margin: 0 0.25rem;
+    font-size: 1.125rem;
+    line-height: 1.125rem;
+    font-weight: bold;
 
-        &:hover {
-            background: #ffc8d1;
-        }
+    &:hover {
+        background: #ffc8d1;
     }
-
+}
 </style>

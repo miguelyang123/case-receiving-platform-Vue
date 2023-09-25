@@ -81,10 +81,34 @@ export default {
                 <p class="font-bold my-1"> <span class="bg-[#FF6E6E]">&nbsp;</span>  {{ index }}</p>
                 <p>{{ item }}</p>
             </div>
+            <div>
+                <p class="font-bold my-1 text-xl"><span class="bg-[#FF6E6E]">&nbsp;</span> 評價</p>
+                <div class="ratings">
+                    <div class="empty_star">★★★★★</div>
+                    <div :class="'full_star'" :style="'width:'+caseUser[0].rating*20+'%'">★★★★★</div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <style lang="scss" scoped>
-    
+    .ratings {
+        position: relative;
+        vertical-align: middle;
+        display: inline-block;
+        color: #a2a2a2; /*背景星星顏色*/
+        overflow: hidden;
+        font-size: 2.5rem; /*調整字體大小可放大縮小星星*/
+        text-shadow: 0px 1px 0 #999;
+    }
+    .full_star {
+         /*調整寬度可變更星等*/
+        position: absolute;
+        left: 0;
+        top: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        color: #ff7300; /*前景星星顏色*/
+    }
 </style>
