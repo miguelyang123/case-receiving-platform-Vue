@@ -58,7 +58,7 @@ export default {
         findCaseWithInput(){
             console.log("01");
         //   axios.get('http://localhost:8080/search_case/with_param?initiator=bdcd914c-43ce-42d3-983c-00acd5694fc4', {
-          axios.get('http://localhost:8080/search_case/with_param'
+          axios.get('http://localhost:8080/search_case/with_param?initiator='+this.initiator
             // responseType: 'blob', // important
           )
           .then((response) => {
@@ -95,6 +95,14 @@ export default {
         },
 
       },
+      // beforeCreate() {
+      //   this.findCaseWithInput();
+  
+      // },
+      // created() {
+      //   this.findCaseWithInput();
+
+      // },
       mounted() {
         // this.getLocationInfo();
 
@@ -103,6 +111,10 @@ export default {
         // this.countReceiveAccount();
 
       },
+      // updated() {
+      //   this.findCaseWithInput();
+
+      // },
       
 }
 

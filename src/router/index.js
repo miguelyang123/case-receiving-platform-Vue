@@ -87,6 +87,16 @@ const router = createRouter({
       name: "CaseEditPage",
       component: () => import("../views/CaseEditPage.vue"),
     },
+    {
+      path: "/case_edit_receive_user_page",
+      name: "CaseEditReceiveUserPage",
+      component: () => import("../views/CaseEditReceiveUserPage.vue"),
+    },
+    {
+      path: "/case_done_check_page",
+      name: "CaseDoneCheckPage",
+      component: () => import("../views/CaseDoneCheckPage.vue"),
+    },
   ],
 });
 
