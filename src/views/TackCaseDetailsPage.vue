@@ -102,6 +102,7 @@ export default {
         font-size: 2.5rem; /*調整字體大小可放大縮小星星*/
         text-shadow: 0px 1px 0 #999;
     }
+    
     .full_star {
          /*調整寬度可變更星等*/
         position: absolute;
