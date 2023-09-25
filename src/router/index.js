@@ -135,6 +135,32 @@ const router = createRouter({
       path: "/managerpage",
       name: "ManagerPage",
       component: () => import("../views/ManagerPage.vue"),
+      meta: {
+        isAuth: true,
+      },
+      beforeEnter: (to, from, next) => {
+        if (to.meta.isAuth) {
+          axios.get('http://localhost:8080/api/get_balance', { withCredentials: true })
+            .then(response => {
+              const logoutResponseData = response;
+              const logoutResponseDataCode = logoutResponseData.data.code;
+              if (logoutResponseDataCode === "200") {
+                const logoutResponseDataAdministrator = logoutResponseData.data.userInfo.administrator;
+                if (!logoutResponseDataAdministrator) {
+                  alert("檢測到非管理者身分，無法進入該網頁!");
+                  next("/personal_info");
+                }
+
+              } else {
+                alert("請先登入!");
+                next("/login_page");
+              }
+            })
+            .catch(error => {
+              alert(error);
+            });
+        }
+      }
     },
     {
       path: "/case_upload_page",

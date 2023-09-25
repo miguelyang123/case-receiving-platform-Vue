@@ -226,25 +226,6 @@ export default {
             console.log(errorTest);
         })  
     },
-    created(){
-        // 檢測登入狀態
-        axios.get("http://localhost:8080/api/get_balance",{ withCredentials: true })
-        .then(res => {
-            console.log(res);
-            if(res.data.code==="200"){
-                if(!res.data.userInfo.administrator){
-                    alert("檢測到非管理者身分，無法進入該網頁");
-                    router.push("/");
-                }
-            }else{
-                router.push("/login_page");
-            }
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    },
-
     computed: {
         pageNumCheck() {
 
