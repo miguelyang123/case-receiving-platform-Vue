@@ -53,25 +53,26 @@ export default {
         },
         geteMailToken() {
             //取得email認證碼
+            this.isAble = true;
             const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailPattern.test(this.postEmail.email)) {
                 alert("請輸入有效的email!");
+                this.isAble = false;
                 return;
             }
             axios.post('http://localhost:8080/api/forgot_pwd', this.postEmail, { withCredentials: true })
-                .then(response => {
+                .then(response => {  
                     this.geteMailTokenResponseData = response;
                     this.geteMailTokenCode = this.geteMailTokenResponseData.data.code;
                     this.geteMailTokenMessage = this.geteMailTokenResponseData.data.message;
-                    if (this.geteMailTokenCode === "200") {
+                    if (this.geteMailTokenCode === "200") {     
                         alert(this.geteMailTokenMessage);
-                        this.isAble = true;
                         this.content = this.totalTime + '秒後重新發送'
                         this.clock = window.setInterval(() => {
                             this.totalTime--
                             this.content = this.totalTime + '秒後重新發送'
                             if (this.totalTime < 0) {
-                                window.clearInterval(clock)
+                                window.clearInterval(this.clock);
                                 this.content = '重新發送驗證碼'
                                 this.totalTime = 60
                                 this.isAble = false;
@@ -79,10 +80,12 @@ export default {
                         }, 1000)
 
                     } else {
+                        this.isAble = false;
                         alert(this.geteMailTokenMessage);
                     }
                 })
                 .catch(error => {
+                    this.isAble = false;
                     alert(error);
                 });
         },
@@ -108,7 +111,7 @@ export default {
         integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <div class="flex justify-center mt-[50px]  h-screen w-screen">
+    <div class="flex justify-center mt-[50px]  ">
         <div class="border-2 border-black  rounded-xl w-[900px] h-[400px]">
             <div class=" h-[100px] justify-center items-center flex ">
                 <div>
@@ -120,14 +123,12 @@ export default {
                     <div class="relative">
                         <input type="text" placeholder="輸入Email" v-model="postEmail.email"
                             class="border-2 border-black w-[550px] h-[50px] block mt-[30px] text-[24px] rounded-lg pl-[50px]">
-                        <div
-                            class="absolute w-[35px] h-[35px] bg-[url('/src/assets/img/RegisterPageImg/Account_icon.png')] bg-cover bottom-[8px] left-[8px]">
-                        </div>
+                            <i class="fa-solid fa-envelope fa-2xl absolute bottom-[23px] left-[10px]"></i>
                     </div>
                     <div class="relative">
                         <input type="text" placeholder="輸入Email驗證碼" v-model="postToken.resetPwdToken"
                             class="border-2 border-black w-[550px] h-[50px] block mt-[40px] text-[24px] rounded-lg pl-[50px]">
-                        <i class="fa-solid fa-envelope fa-2xl relative bottom-[37px] left-[10px]"></i>
+                        <i class="fa-solid fa-envelope-open-text fa-2xl relative bottom-[37px] left-[10px]"></i>
                         <button type="button" class="relative bottom-[37px] left-[380px]    bg-[#D9D9D9] rounded"
                             :disabled="isAble" @click="geteMailToken">{{ content }}</button>
                     </div>

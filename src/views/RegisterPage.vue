@@ -63,7 +63,7 @@ export default {
         alert("輸入密碼與確認密碼不一致!");
         return;
       }
-      axios.post('http://localhost:8080/api/signup', this.postData)
+      axios.post('http://localhost:8080/api/signup', this.postData, { withCredentials: true })
         .then(response => {
           this.responseData = response;
           this.code = this.responseData.data.code;
@@ -89,7 +89,7 @@ export default {
     integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <div class="flex justify-center mt-[50px]  h-screen w-screen">
+  <div class="flex justify-center mt-[50px]  ">
     <div class="border-2 border-black rounded-[30px] w-[1150px] h-[600px]">
       <div class="flex  h-[100px] justify-center items-center">
         <p class="text-[40px] font-bold">會員註冊</p>
@@ -115,9 +115,7 @@ export default {
           <div class="relative">
             <input type="text" placeholder="輸入Email" v-model="postData.email"
               class="border-2 border-black ml-[50px] mt-[40px] w-[400px] h-[55px] text-[24px] rounded-lg pl-[60px]">
-            <div
-              class="absolute w-[35px] h-[35px] bg-[url('/src/assets/img/RegisterPageImg/Account_icon.png')] bg-cover bottom-[9px] left-[60px]">
-            </div>
+              <i class="fa-solid fa-envelope fa-2xl absolute bottom-[25px] left-[62px]"></i>
           </div>
           <div class="relative">
             <input placeholder="輸入密碼(長度8字元以上)" :type="pwdFlag ? 'text' : 'password'" v-model="postData.password"

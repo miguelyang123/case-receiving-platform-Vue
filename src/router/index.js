@@ -7,6 +7,7 @@ import LoginPage from "../views/LoginPage.vue";
 import IdentityAuthentication from "../views/IdentityAuthentication.vue";
 import ResetPassword from "../views/ResetPassword.vue";
 import FinishResetPassword from "../views/FinishResetPassword.vue";
+import axios from 'axios';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,11 +46,53 @@ const router = createRouter({
       path: "/personal_info",
       name: "personalInfo",
       component: PersonalInfo,
+      meta: {
+        isAuth: true,
+      },
+      beforeEnter: (to, from, next) => {
+        if (to.meta.isAuth) {
+          axios.get('http://localhost:8080/api/get_balance', { withCredentials: true })
+            .then(response => {
+              const logoutResponseData = response;
+              const logoutResponseDataCode = logoutResponseData.data.code;
+              if (logoutResponseDataCode === "200") {
+                next();
+              } else {
+                alert("請先登入!");
+                next("/login_page");
+              }
+            })
+            .catch(error => {
+              alert(error);
+            });
+        }
+      }
     },
     {
       path: "/personal_info_upload",
       name: "personalInfoUpload",
       component: PersonalInfoUpload,
+      meta: {
+        isAuth: true,
+      },
+      beforeEnter: (to, from, next) => {
+        if (to.meta.isAuth) {
+          axios.get('http://localhost:8080/api/get_balance', { withCredentials: true })
+            .then(response => {
+              const logoutResponseData = response;
+              const logoutResponseDataCode = logoutResponseData.data.code;
+              if (logoutResponseDataCode === "200") {
+                next();
+              } else {
+                alert("請先登入!");
+                next("/login_page");
+              }
+            })
+            .catch(error => {
+              alert(error);
+            });
+        }
+      }
     },
     {
       path: "/tackcasepage",
@@ -60,12 +103,33 @@ const router = createRouter({
       path: "/tackcasedetailspage",
       name: "TackCaseDetailsPage",
       component: () => import("../views/TackCaseDetailsPage.vue"),
-      props:true,
+      props: true,
     },
     {
       path: "/personalinfoedit",
       name: "PersonalInfoEdit",
       component: () => import("../views/PersonalInfoEdit.vue"),
+      meta: {
+        isAuth: true,
+      },
+      beforeEnter: (to, from, next) => {
+        if (to.meta.isAuth) {
+          axios.get('http://localhost:8080/api/get_balance', { withCredentials: true })
+            .then(response => {
+              const logoutResponseData = response;
+              const logoutResponseDataCode = logoutResponseData.data.code;
+              if (logoutResponseDataCode === "200") {
+                next();
+              } else {
+                alert("請先登入!");
+                next("/login_page");
+              }
+            })
+            .catch(error => {
+              alert(error);
+            });
+        }
+      }
     },
     {
       path: "/managerpage",

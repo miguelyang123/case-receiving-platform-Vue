@@ -1,17 +1,26 @@
 <script >
 import router from '../router';
 import axios from 'axios';
+import Identify from '../components/Identify.vue'
 // Pinia方法
 import { mapState, mapActions } from 'pinia';
 // 自己的資料庫(預設匯入)
 import dataStore from '../store/dataStore';
 export default {
+    components: {
+        Identify
+    },
     data() {
         return {
             pwdFlag: false, //密碼明碼
             code: "",
             message: "",
-            responseData:"",
+            responseData: "",
+            identifyCode: '',
+            // 驗證碼規則
+            identifyCodes: '123456789ABCDEFGHGKMNPQRSTUVWXYZ',
+            //input 驗證碼
+            inputIdentifyCode: '',
             //json
             postData: {
                 email: "",//email
@@ -20,10 +29,10 @@ export default {
         }
     },
     computed: {
-        ...mapState(dataStore, ["userInfo"])
+        ...mapState(dataStore, ["userInfo", "isLogin", "userName"])
     },
     methods: {
-        ...mapActions(dataStore, ["setUserInfo"]),
+        ...mapActions(dataStore, ["setUserInfo", "setIsLoginTrue", "setIsLoginFalse", "setUserName"]),
         pwdflagTrue() {
             this.pwdFlag = true;
         },
@@ -34,28 +43,53 @@ export default {
             router.push("/register_page")
         },
         login() {
-            axios.post('http://localhost:8080/api/login', this.postData,{ withCredentials: true })
+            if (this.identifyCode !== this.inputIdentifyCode) {
+                alert("輸入的驗證碼錯誤!");
+                return;
+            }
+            axios.post('http://localhost:8080/api/login', this.postData, { withCredentials: true })
                 .then(response => {
                     this.responseData = response;
                     this.code = this.responseData.data.code;
                     this.message = this.responseData.data.message;
-                    const userInfo =this.responseData.data.userInfo;
                     if (this.code === "200") {
                         alert(this.message);
+                        const userInfo = this.responseData.data.userInfo;
+                        const userName = this.responseData.data.userInfo.user_name;
                         this.setUserInfo(userInfo);  //設置 userInfo
-                        router.push("/personal_info");
+                        this.setUserName(userName);
+                        this.setIsLoginTrue();
+                        router.push("/");
                     } else {
                         alert(this.message);
+                        this.setIsLoginFalse();
                     }
                 })
                 .catch(error => {
                     alert(error);
+                    this.setIsLoginFalse();
                 });
         },
-        forgottenPassword(){
+        forgottenPassword() {
             router.push("/identity_authentication");
-        }
+        },
+        // 切換驗證碼
+        refreshCode() {
+            this.identifyCode = ''
+            this.makeCode(this.identifyCodes, 4)
+        },
+        // 生成隨機驗證碼
+        makeCode(o, l) {
+            for (let i = 0; i < l; i++) {
+                this.identifyCode += this.identifyCodes[
+                    Math.floor(Math.random() * (this.identifyCodes.length - 0) + 0)
+                ]
+            }
+        },
     },
+    mounted() {
+        this.refreshCode();
+    }
 }
 </script>
 
@@ -65,8 +99,8 @@ export default {
         integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <div class="flex justify-center mt-[50px]  h-screen w-screen">
-        <div class="border-2 border-black rounded-[30px] w-[500px] h-[500px]">
+    <div class="flex justify-center mt-[50px]  ">
+        <div class="border-2 border-black rounded-[30px] w-[500px] h-[620px]">
             <div class="flex  h-[100px] justify-center items-center ">
                 <p class="text-[40px] font-bold">會員登入</p>
             </div>
@@ -74,9 +108,7 @@ export default {
                 <div class="relative">
                     <input type="text" placeholder="輸入Email" v-model="postData.email"
                         class="border-2 border-black ml-[50px] mt-[40px] w-[400px] h-[55px] text-[24px] rounded-lg pl-[60px]">
-                    <div
-                        class="absolute w-[35px] h-[35px] bg-[url('/src/assets/img/RegisterPageImg/Account_icon.png')] bg-cover bottom-[9px] left-[60px]">
-                    </div>
+                    <i class="fa-solid fa-envelope fa-2xl absolute bottom-[25px] left-[62px]"></i>
                 </div>
                 <div class="relative">
                     <input placeholder="輸入密碼" :type="pwdFlag ? 'text' : 'password'" v-model="postData.password"
@@ -90,10 +122,24 @@ export default {
                         v-if="this.pwdFlag === true"></i>
                 </div>
             </div>
+            <div class="h-[100px] mb-[20px] mt-[20px]">
+                <p class="text-[20px] ml-[50px] mb-[20px] font-bold">請輸入下圖出現的驗證碼：</p>
+                <div class="w-[350px] h-[46px]  flex ml-[80px] ">
+                    <div>
+                        <Identify :identifyCode="identifyCode"></Identify>
+                    </div>
+                    <button type="button" @click="refreshCode" class="text-[#fff] bg-[#007bff] w-[42px] h-[42px]">
+                        <i class="fa-solid fa-rotate-right fa-xl "></i>
+                    </button>
+                    <input type="text" class="w-[150px] h-[42px] border-2 border-black text-[22px]"
+                        v-model="inputIdentifyCode">
+                </div>
+            </div>
             <div class="h-[50px]  flex  justify-between px-[60px]">
                 <button type="button" class="text-[22px] font-bold hover:scale-105 active:scale-95 "
                     @click="registerRouterPush">會員註冊</button>
-                <button type="button" class="text-[22px] font-bold hover:scale-105 active:scale-95 " @click="forgottenPassword">忘記密碼</button>
+                <button type="button" class="text-[22px] font-bold hover:scale-105 active:scale-95 "
+                    @click="forgottenPassword">忘記密碼</button>
             </div>
             <div class="flex  h-[120px] justify-center items-center ">
                 <button type="button"

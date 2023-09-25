@@ -6,7 +6,7 @@ export default defineStore("dataStore", {
   //state 類似 vue data
   state: () => ({
     numTest: 1,
-    
+
     // 分頁處理(暫時停用)
     // pageContent:{
     //   arrList:"",  // 所有資料
@@ -17,6 +17,8 @@ export default defineStore("dataStore", {
     // }
 
     userInfo:null, //登入畫面後端回傳的userInfo(object)
+    isLogin: false,
+    userName: "",
 
     caseUser:null,
     thisCase:null,
@@ -63,6 +65,21 @@ export default defineStore("dataStore", {
       //設置 userInfo
       this.userInfo = userInfo;
     },
+    setUserName(user_name) {
+      //設置 userName
+      this.userName = user_name;
+    },
+    setIsLoginTrue() {
+      this.isLogin = true;
+    },
+    setIsLoginFalse() {
+      this.isLogin = false;
+    },
+    clearPersist() {
+      this.userInfo = null;
+      this.isLogin = false;
+      this.userName = "";
+    },
 
     getCassUser(){
       return this.caseUser;
@@ -72,15 +89,26 @@ export default defineStore("dataStore", {
       this.thisCase = thisCase;
     }
   },
-     persist: [
-      {
-        key: 'userInfo',
-        paths: ['userInfo'],
-        storage: localStorage,
-      },{
-        key: 'caseUser',
-        paths: ['caseUser','thisCase'],
-        storage: localStorage,
-      }
-    ]
+  persist: [
+    {
+      key: 'userInfo',
+      paths: ['userInfo'],
+      storage: localStorage,
+    },
+    {
+      key: 'isLogin',
+      paths: ['isLogin'],
+      storage: localStorage,
+    },
+    {
+      key: 'userName',
+      paths: ['userName'],
+      storage: localStorage,
+    },
+    {
+      key: 'caseUser',
+      paths: ['caseUser','thisCase'],
+      storage: localStorage,
+    }
+  ]
 });
