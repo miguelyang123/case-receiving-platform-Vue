@@ -1,39 +1,40 @@
 <script>
 import router from '../router';
+import { RouterLink, RouterView} from 'vue-router';
 import axios from 'axios';
-// import pdf from 'vue-pdf';
-// import ElementPlus from "element-plus";
+// pinia 全域資料庫
+import { mapState, mapActions } from "pinia";
+// 匯入資料庫
+import dataStore from "../store/dataStore";
 
 export default {  
-    // components: {
-    //   ElementPlus
-    // },
+    components:{
+        RouterLink,
+    },
     data() {
         return {
             // pwdFlag: false, //密碼明碼
             // code: "",
             // message: "",
             // //json
-            postData: {
-                // email: "",//email
-                // password: "",//密碼
-                uuid: "bdcd914c-43ce-42d3-983c-00acd5694fc4",//找pdf用
-                pdf: null,//pdf
-            },
+            // postData: {
+            //     // email: "",//email
+            //     // password: "",//密碼
+            //     uuid: "bdcd914c-43ce-42d3-983c-00acd5694fc4",//找pdf用
+            //     pdf: null,//pdf
+            // },
             // pdf: null,//pdf
             // pdfNew: null,//pdf
 
             // formData: new FormData() //因為我這邊沒有使用form，所以就自行new了一個FormData
       
-              uuid: "bdcd914c-43ce-42d3-983c-00acd5694fc4",
-
-              code: 0,
-              path: "pdfs",
-
-              // pdfName: '',
-              // pdfUrl: '',
+            
 
       };
+    },
+    computed: {
+      //參數 1.資料庫 2.要取用的 state / getters
+      ...mapState(dataStore, ["numTest", "caseEditId"]),
     },
     methods: {
         pwdflagTrue() {
@@ -45,88 +46,41 @@ export default {
         registerRouterPush() {
             router.push("/register_page")
         },
-
-    // // 上传pdf
-    // uploadPdf (event) {
-    //   console.log(event)
-    //   if (event.target.files[0].type != 'application/pdf') {
-    //     return this.$message.warning('请选择上传pdf文件')
-    //   }
-    //   // if (ie9()) {
-    //   //   this.$message.warning('iE9及以下版本IE浏览器暂不支持该功能，请升级IE浏览器或者用其他浏览器操作。')
-    //   //   retrun
-    //   // }
-    //   //iE9及以下版本IE浏览器暂不支持该功能，请升级IE浏览器或者用其他浏览器操作。
-    //   let inputDOM = event.target
-    //   let _this = this
-    //   var reader = new FileReader()
-    //   reader.readAsDataURL(event.target.files[0])//读取文件
-    //   reader.onload = function (e) {
-    //     _this.getPdfUrl(event.target.files[0])//将得到的blob传出读取
-    //     _this.pdfName = event.target.files[0].name
-    //     inputDOM.value = null //将input置空 否则上传相同文件无反应 (不过置空后28行的打印 就看不到 event.target.files 文件数据（可以先注释此行看下数据--就是pdf文件）   )
-    //   }
-    // },
-    // //通过读取pdf得到url
-    // getPdfUrl (file) {
-    //   let url = URL.createObjectURL(file) //将blob文件转化成url
-    //   this.pdfUrl = url  //赋值给url
-    //   console.log(url)  // blob:http://localhost:8080/f2049a9d-31a6-4bd9-8a94-23dee457218f
-    //   return url
-    // },
-    // // 打开pdf
-    // gotoPdf (pdfUrl) {
-    //   // window.location.href = pdfUrl
-    //   window.open(pdfUrl)
-    // },
-    // // 删除pdf
-    // delPdf () {
-    //   this.pdfName = ''
-    //   this.pdfUrl = ''
-    // }
-    // // 上传文件返回函数，为了得到后端返回的下载url，保存到数据库中
-    //   uploadFileSuccess(response, file, fileList) {
-    //       let filePath = response.data;
-    //       // 上传文件成功后的response参数已经是返回报文中的data部分，不需要使用response.data.data
-    //       alert(response.data);
-    //       // 回调函数中的this指针就是当前页面vue对象
-    //       this.attachForm.downloadUrl = filePath;
-    //   },
-      update(e){
-        let file = e.target.files[0];
-        let uuid = this.uuid;
-        let param = new FormData(); //创建form对象
-        param.append('uuid',uuid);//通过append向form对象添加数据
-        param.append('file',file);//通过append向form对象添加数据
-        // console.log(param.get('uuid')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
-        // console.log(param.get('file')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
-        let config = {
-          headers:{'Content-Type':'multipart/form-data'}
-        }; //添加请求头
-        // this.$http.post('http://localhost:8080/api/pdf_upload',param,config)
-        // axios.post('http://localhost:8080/api/pdf_upload',param,config)
-        axios.post('http://localhost:8080/api/pdf_upload',param,config)
-          // .then(response=>{
-          //   console.log(response.data);
-          // })
-      },
-      download(){
-        let uuid = this.uuid;
+        searchUserByCaseId(){
+            console.log("01");
+        //   axios.get('http://localhost:8080/search_case/with_param?initiator=bdcd914c-43ce-42d3-983c-00acd5694fc4', {
+          // axios.get('http://localhost:8080/edit_case_page/search_user_by_caseid?caseId='+this.caseEditId+'&isAccepted=false'
+          axios.get('http://localhost:8080/edit_case_page/search_user_by_caseid?caseId='+this.caseEditId
+            // responseType: 'blob', // important
+          )
+          .then((response) => {
+            console.log("02");
+            console.log("response: "+response);
+            console.log("response.data.userInfoList: "+response.data.userInfoList);
+            this.responseLocal = response;
+            console.log("code: "+this.responseLocal.data.code);
+            console.log("message: "+this.responseLocal.data.message);
+            console.log("userInfoList: "+this.responseLocal.data.userInfoList);
+            
+            if(this.responseLocal.data.code === "200"){
+                
+            console.log("03");
+              this.localList = this.responseLocal.data.userInfoList;
+                console.log("localList: "+this.localList);
+                this.localList.forEach(item => {
+                    console.log("userName: "+item.user_name);
+                });
+            }
+          });
+        },
+        pdfDownload(uuid){
+        // let uuid = this.uuid;
         let param = new FormData(); //创建form对象
         param.append('uuid',uuid);//通过append向form对象添加数据
         axios.post('http://localhost:8080/api/pdf_download',param, {
             responseType: 'blob', // important
             timeout: 20000,
         }).then((response) => {
-          // fetch("http://localhost:8080/api/pdf_download",param,
-          // {
-          //     headers: {
-          //       'Accept': 'application/json',
-          //       'Content-Type': 'application/json'
-          //     },
-          //     method: "POST",
-          //     // body: JSON.stringify({uuid: "6f6fc182-7a40-4637-aa20-3e3d7bb38ce9"})
-          // }).then((response) => {
           // console.log("response(1)");
             // //返回的是一个错误
             // if(response.headers['content-type']==='application/json'){
@@ -163,53 +117,38 @@ export default {
             const link = document.createElement('a');
             link.href = url;
             // link.setAttribute('download', fileName);
-            link.setAttribute('download', this.uuid+".pdf");
+            link.setAttribute('download', uuid+".pdf");
             document.body.appendChild(link);
             link.click();
         });
-        
+        },
+
+      },
+      beforeMount() {
+        // this.getLocationInfo();
+
+        this.searchUserByCaseId();
+
+      },
+      mounted() {
+        // this.getLocationInfo();
+
+        this.searchUserByCaseId();
+
+      },
+      beforeUpdate() {
+        // this.getLocationInfo();
+
+        this.searchUserByCaseId();
+
+      },
+      update() {
+        // this.getLocationInfo();
+
+        this.searchUserByCaseId();
+
       },
       
-      // preview(){
-      //   let uuid = this.uuid;
-      //   let param = new FormData(); //创建form对象
-      //   param.append('uuid',uuid);//通过append向form对象添加数据
-      //   axios.post('http://localhost:8080/api/pdf_download',param, {
-      //       responseType: 'blob', // important
-      //       timeout: 20000,
-      //   })
-      //   .then((response) => {
-      //       //制作a标签并点击下载
-      //       const url = window.URL.createObjectURL(new Blob([response.data],
-      //           { type: 'application/octet-stream' }));
-      //       const link = document.createElement('a');
-      //       link.href = url;
-      //       // link.setAttribute('download', fileName);
-      //       link.setAttribute('http://localhost:5173/personal_info_upload/'+'this.uuid'+'.pdf', this.uuid+".pdf");
-      //       document.body.appendChild(link);
-      //       link.click();
-      //   });
-        
-      // },
-      // //通过读取pdf得到url
-      // getPdfUrl (file) {
-      //   let url = URL.createObjectURL(file) //将blob文件转化成url
-      //   this.pdfUrl = url  //赋值给url
-      //   console.log(url)  // blob:http://localhost:8080/f2049a9d-31a6-4bd9-8a94-23dee457218f
-      //   return url
-      // },
-      // // 打开pdf
-      // gotoPdf (pdfUrl) {
-      //   // window.location.href = pdfUrl
-      //   window.open(pdfUrl)
-      // },
-      // // 删除pdf
-      // delPdf () {
-      //   this.pdfName = ''
-      //   this.pdfUrl = ''
-      // }
-
-    }
 }
 
 </script>
@@ -219,28 +158,34 @@ export default {
   <!-- <h1>Speed接案網</h1> -->
   <!-- <p>Personal Info</p> -->
   
-  <!-- <h1>上傳履歷</h1> -->
-  <!-- <div class="frame"> -->
+  <p class="text-4xl w-96">案子的接案者編輯畫面</p>
   
-    <!-- <iframe style="width: 100%; height: 100%;" src="docment.pdf"></iframe> -->
+  <button @click="searchUserByCaseId">畫面更新</button>
 
-    <!-- <div class="content">
-      <input type="file" class="box-orc-input" @change="uploadPdf($event)" />
-
-      <span  v-if="pdfName" @click="gotoPdf(pdfUrl)">{{pdfName}} <span @click.stop.prevent="delPdf()">❌</span></span>
-    </div> -->
-
-  <!-- </div> -->
-
-  <input class="file" name="file" type="file" accept=".pdf" @change="update"/>
-
-  <button @click="download">下載</button>
-
-  <!-- <button @click="preview">預覽</button>
-
-  <div class="content">
-    <span  v-if="pdfName" @click="gotoPdf(pdfUrl)">{{pdfName}} <span @click.stop.prevent="delPdf()">❌</span></span>
-  </div> -->
+  <table class="table ml-10">
+        <thead>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="border-2 border-black">接案者評價</td>
+            <td class="border-2 border-black">接案者姓名</td>
+            <td class="border-2 border-black">履歷書下載</td>
+            <td class="border-2 border-black">接案邀請</td>
+        </tr>
+        <!-- <tr v-for="(item, key) in localList" :key="key"> -->
+            <!-- <td class="border-2 border-black">{{ item.rating }}</td> -->
+            <!-- <td class="border-2 border-black">{{ item.user_name }}</td> -->
+            <!-- <td class="border-2 border-black"><button class="border-2 border-black px-2 py-1 rounded-lg bg-blue-700 text-white" @click="pdfDownload(item.uuid)">下載</button></td> -->
+            <!-- <td class="border-2 border-black"><button @click="sendReceiveInvite(item.uuid)">未發送</button></td> -->
+        <!-- </tr> -->
+        <tr v-for="(item, key) in localList" :key="key">
+            <td class="border-2 border-black">{{ item.rating }}</td>
+            <td class="border-2 border-black">{{ item.user_name }}</td>
+            <td class="border-2 border-black"><button class="border-2 border-black px-2 py-1 rounded-lg bg-blue-700 text-white" @click="pdfDownload(item.uuid)">下載</button></td>
+            <!-- <td class="border-2 border-black"><button @click="sendReceiveInvite(item.uuid)">未發送</button></td> -->
+        </tr>
+        </tbody>
+    </table>
 
 </template>
 

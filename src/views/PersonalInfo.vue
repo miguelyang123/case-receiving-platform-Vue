@@ -23,7 +23,7 @@ export default {
   <div class="frame">
     <RouterLink class="custom-btn btn-5" to="/personalinfoedit"><span>編輯個人資料</span></RouterLink><br/>
     <button class="custom-btn btn-5"><a href="/personal_info_upload"><span>上傳履歷</span></a></button><br/>
-    <button class="custom-btn btn-5"><span>編輯發出的案子</span></button><br/>
+    <RouterLink class="custom-btn btn-5" to="/case_edit_search_page"><span>編輯發出的案子</span></RouterLink><br/>
     <button class="custom-btn btn-5"><span>編輯已接的案子</span></button><br/>
     <RouterLink class="custom-btn btn-4" to="/managerpage"><span>管理者頁面</span></RouterLink><br/>
     

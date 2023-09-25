@@ -1,12 +1,16 @@
 <script>
 import router from '../router';
+import { RouterLink, RouterView} from 'vue-router';
 import axios from 'axios';
-// // pinia 全域資料庫
-// import { mapState, mapActions } from "pinia";
-// // 匯入資料庫
-// import dataStore from "../store/dataStore";
+// pinia 全域資料庫
+import { mapState, mapActions } from "pinia";
+// 匯入資料庫
+import dataStore from "../store/dataStore";
 
 export default {  
+    components:{
+        RouterLink,
+    },
     data() {
         return {
             // pwdFlag: false, //密碼明碼
@@ -25,13 +29,19 @@ export default {
             // formData: new FormData() //因為我這邊沒有使用form，所以就自行new了一個FormData
       
             uuid: "bdcd914c-43ce-42d3-983c-00acd5694fc4",
+            initiator: "bdcd914c-43ce-42d3-983c-00acd5694fc4",
 
             caseName: null,
             caseBudget: null,
             caseDeadline: null,
+            createdDate: null,
             caseCategory: null,
             caseLocation: null,
             caseContent: null,
+            currentStatus: null,
+		    onShelf: null,
+
+            caseRating: null,
 
             responseLocal: null,
             localList: null,
@@ -48,15 +58,16 @@ export default {
 		          caseClass: null,
               initiator: null,
 		          onShelf: null,
+              caseRating: null, // 預定加入此參數
             },
             
 
       };
     },
-    // computed: {
-    //   //參數 1.資料庫 2.要取用的 state / getters
-    //   ...mapState(dataStore, ["numTest"]),
-    // },
+    computed: {
+      //參數 1.資料庫 2.要取用的 state / getters
+      ...mapState(dataStore, ["numTest", "caseEditId"]),
+    },
     methods: {
         pwdflagTrue() {
             this.pwdFlag = true;
@@ -67,71 +78,62 @@ export default {
         registerRouterPush() {
             router.push("/register_page")
         },
-        getOnSiteInfo(){
-          axios.get('http://localhost:8080/location_api/get_onsite', {
+        findCaseWithInput(){
+          console.log("========================");
+          console.log("this.caseEditId: "+this.caseEditId);
+          axios.get('http://localhost:8080/search_case/with_param?initiator='+this.initiator
             // responseType: 'blob', // important
-            timeout: 20000,
-          }).then((response) => {
+          )
+          .then((response) => {
             this.responseLocal = response;
             if(this.responseLocal.data.code === "200"){
-              this.localList = this.responseLocal.data.locationList;
+              this.localList = this.responseLocal.data.caseList;
+              console.log("localList: "+this.localList);
+              console.log("this.caseEditId: "+this.caseEditId);
+              this.localList.forEach(item => {
+                if(item.id === this.caseEditId){
+                  // console.log("id:"+item.id);
+                  console.log("caseName: "+item.caseName);
+                  this.caseName = item.caseName;
+                  console.log("budget: "+item.budget);
+                  this.caseBudget = item.budget;
+                  console.log("content: "+item.content);
+                  this.caseContent = item.content;
+                  console.log("deadline: "+item.deadline.substring(0, 10));
+                  this.caseDeadline = item.deadline.substring(0, 10);
+                  console.log("caseClass: "+item.caseClass);
+                  this.categoryKey = item.caseClass;
+                  if(this.categoryKey === "onsite"){
+                    this.categoryKey = "1";
+                    this.caseCategory = "1";
+                  }
+                  else{
+                    this.categoryKey = "2";
+                    this.caseCategory = "2";
+                  }
+                  // this.categoryChangeNew(this.categoryKey);
+                  // console.log("initiator: "+item.initiator);
+                  console.log("location: "+item.location);
+                  this.caseLocation = item.location;
+                  this.locationSelected = this.caseLocation;
+                  // this.locationChangeNew(this.locationSelected);
+                  console.log("onShelf: "+item.onShelf);
+                  this.onShelf = item.onShelf;
+                  console.log("currentStatus: "+item.currentStatus);
+                  this.currentStatus = item.currentStatus;
+                  // this.createdDate = item.createdDate;
+                  console.log("caseRating: "+item.caseRating);
+                
+                }});
+                
+
             }
           });
+        },
+        editCase(){
           
-        },
-        getRemoteInfo(){
-          axios.get('http://localhost:8080/location_api/get_remote', {
-            // responseType: 'blob', // important
-            timeout: 20000,
-          }).then((response) => {
-            this.responseLocal = response;
-            if(this.responseLocal.data.code === "200"){
-              this.localList = this.responseLocal.data.locationList;
-            }
-          });
-          
-        },
-        categoryChange(event) {
-            // console.log(event.target.value);
-            if(event.target.value === "1") {
-              this.getOnSiteInfo();
-            } else {
-              this.getRemoteInfo();
-            }
-            
-        },
-        locationChange(event) {
-            // console.log(event.target.value);
-            const pattern = /1/;
-            // if(event.target.value === "1") {
-            if(event.target.value.match(pattern)) {
-            // console.log("1");
-            // console.log(event.target.value);
-              this.getOnSiteInfo();
-              this.caseCategory = "1";
-              this.caseLocation = event.target.value;
-            } else {
-            // console.log("2");
-            // console.log(event.target.value);
-              this.getRemoteInfo();
-              this.caseCategory = "2";
-              this.caseLocation = event.target.value;
-            }
-            
-        },
-        checkAllValue(){
-          
-          console.log("caseName: "+this.caseName);
-          console.log("caseBudget: "+this.caseBudget);
-          console.log("caseDeadline: "+this.caseDeadline);
-          console.log("caseCategory: "+this.caseCategory);
-          console.log("caseLocation: "+this.caseLocation);
-          console.log("caseContent: "+this.caseContent);
-            
-        },
-        addCase(){
-          
-            this.postData.id = 0;
+            // this.postData.id = 0;
+            this.postData.id = this.caseEditId;
             this.postData.caseName = this.caseName;
             this.postData.budget = this.caseBudget;
             this.postData.location = this.caseLocation;
@@ -140,29 +142,65 @@ export default {
             this.postData.deadline = this.caseDeadline+"T00:00:00";
             // console.log("this.postData.deadline: "+this.postData.deadline);
             // this.postData.deadline = null;
+            this.postData.caseRating = this.caseRating;
+            this.postData.onShelf = this.onShelf;
             this.postData.initiator = "bdcd914c-43ce-42d3-983c-00acd5694fc4";
-
-            axios.post('http://localhost:8080/case_api/add_new_case', this.postData)
+            console.log("this.postData.id: "+this.postData.id);
+            console.log("this.postData.caseName: "+this.postData.caseName);
+            console.log("this.postData.budget: "+this.postData.budget);
+            console.log("this.postData.location: "+this.postData.location);
+            console.log("this.postData.content: "+this.postData.content);
+            console.log("this.postData.deadline: "+this.postData.deadline);
+            console.log("this.postData.initiator: "+this.postData.initiator);
+            axios.post('http://localhost:8080/case_api/edit_case', this.postData)
             .then((response) => {
               this.responseLocal = response;
               if(this.responseLocal.data.code === "200"){
                 // console.log("add case successed!");
                 // this.localList = this.responseLocal.data.locationList;
-                alert("案件新增成功!");
+                alert("案件編輯成功!");
                 router.push("/");
               }
               else{
-                console.log("add case failed!");
+                console.log("edit case failed!");
                 alert(this.responseLocal.data.message);
               }
             });
 
 
         },
+        finishCase(){
+          
+          this.findCaseWithInput();
+		      this.onShelf = false;
+          // this.postData.caseRating = this.caseRating; 預定加入此參數
+
+          this.editCase();
+
+          router.push("/case_edit_search_page");
+            
+        },
 
       },
       mounted() {
         // this.getLocationInfo();
+
+        console.log("id: "+this.caseEditId);
+
+        this.findCaseWithInput();
+
+        // 先給 假資料
+        // this.caseName = "123";
+        // this.caseBudget = 100;
+        // this.caseDeadline = "2023-09-24";
+        // this.categoryKey = "1";
+        // // this.categoryChangeNew(this.categoryKey);
+        // this.locationSelected = "1S";
+        // this.caseContent = "123";
+        // this.currentStatus = "Not Started";
+        // this.onShelf = true;
+        // this.caseRating = 0;
+
       },
       
 }
@@ -174,51 +212,12 @@ export default {
   <!-- <h1>Speed接案網</h1> -->
   <!-- <p>Personal Info</p> -->
   
-  <div class="flex m-4">
-    <p class="text-4xl">發案畫面</p>
-    <button class="custom-btn btn-5 relative left-2/3" @click="addCase">提交</button>
-    <!-- <button class="custom-btn btn-5 relative left-2/3" @click="checkAllValue">提交(確認用)</button> -->
-  </div>
+  <p class="text-4xl w-96">案子完成的確認畫面</p>
 
-  <div class="flex m-4">
-    <p>案子名稱: </p>
-    <input type="text" class="border-2 border-black" v-model="caseName">
-  </div>
-  <div class="flex">
-    <div class="flex flex-col">
-        <div class="flex m-4">
-            <p>案子預算: </p>
-            <input type="number" class="border-2 border-black" v-model="caseBudget">
-        </div>
-        <div class="flex m-4">
-            <p>案子期限: </p>
-            <input type="date" class="border-2 border-black" v-model="caseDeadline">
-        </div>
-    </div>
-    <div class="flex flex-col">
-        <div class="flex m-4">
-            <p>案子類型: </p>
-            <!-- <select v-model="caseCategory" name="" id=""> -->
-            <!-- <select @change="categoryChange()"> -->
-            <select name="LeaveType" @change="categoryChange($event)" class="form-control" v-model="categoryKey">
-              <option value="1">現場</option>
-              <option value="2">遠端</option>
-            </select>
-        </div>
-        <div class="flex m-4">
-            <p>案子地點: </p>
-            <select v-model="locationSelected" @change="locationChange($event)">
-              <option v-for="(item, index) in localList" :value=item.locationId :key="index">{{ item.locationName }}</option>
-            </select>
-          </div>
-    </div>
-  </div>
-  <div class="m-4">
-    <p>案子內文: </p>
-    <textarea class="w-2/3 h-screen border-2 border-black" v-model="caseContent" rows="1" cols="50" wrap="physical" name="comments">
+  案子評價:<input class="border-2 border-black" type="number" v-model="caseRating">
+  <button class="custom-btn btn-5 relative left-1/3" @click="finishCase">提交</button>
+    
 
-    </textarea>
-  </div>
 
 </template>
 
