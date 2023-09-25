@@ -43,19 +43,19 @@ export default {
             router.push("/register_page")
         },
         login() {
-            if(this.identifyCode !== this.inputIdentifyCode){
-                 alert("輸入的驗證碼錯誤!");
-                 return;
+            if (this.identifyCode !== this.inputIdentifyCode) {
+                alert("輸入的驗證碼錯誤!");
+                return;
             }
             axios.post('http://localhost:8080/api/login', this.postData, { withCredentials: true })
                 .then(response => {
                     this.responseData = response;
                     this.code = this.responseData.data.code;
                     this.message = this.responseData.data.message;
-                    const userInfo = this.responseData.data.userInfo;
-                    const userName = this.responseData.data.userInfo.user_name;
                     if (this.code === "200") {
                         alert(this.message);
+                        const userInfo = this.responseData.data.userInfo;
+                        const userName = this.responseData.data.userInfo.user_name;
                         this.setUserInfo(userInfo);  //設置 userInfo
                         this.setUserName(userName);
                         this.setIsLoginTrue();
@@ -131,7 +131,8 @@ export default {
                     <button type="button" @click="refreshCode" class="text-[#fff] bg-[#007bff] w-[42px] h-[42px]">
                         <i class="fa-solid fa-rotate-right fa-xl "></i>
                     </button>
-                    <input type="text" class="w-[150px] h-[42px] border-2 border-black text-[22px]" v-model="inputIdentifyCode">
+                    <input type="text" class="w-[150px] h-[42px] border-2 border-black text-[22px]"
+                        v-model="inputIdentifyCode">
                 </div>
             </div>
             <div class="h-[50px]  flex  justify-between px-[60px]">
