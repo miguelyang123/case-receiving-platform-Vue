@@ -58,6 +58,7 @@ export default {
             },
 
             "alreadyChoose": false,
+            "receiveCount": false,
 
       };
     },
@@ -103,6 +104,24 @@ export default {
                   this.searchUserByCaseId();
                 }
               });
+            }
+          });
+        },
+        searchUserByCaseIdCheck(){
+          axios.get('http://localhost:8080/edit_case_page/search_user_by_caseid?caseId='+this.caseEditId
+          )
+          .then((response) => {
+            this.responseLocal = response;
+            if(this.responseLocal.data.code === "200"){
+              this.localList = this.responseLocal.data.userInfoList;
+              
+              console.log("localList!");
+              this.localList.forEach(item => {
+                if(item != null){
+                  this.receiveCount = true;
+                }
+              });
+
             }
           });
         },
@@ -221,24 +240,10 @@ export default {
 
       },
       mounted() {
-        // this.getLocationInfo();
 
         this.searchUserByCaseIdTrue();
-        
-        // this.caseReceiveData.forEach(item => {
-        //   console.log("this.caseReceiveData: "+item);
-        //   console.log("this.caseReceiveData.rating: "+item.rating);
-        //   console.log("this.caseReceiveData.user_name: "+item.user_name);
-        //   console.log("this.caseReceiveData.resumePdfPath: "+item.resumePdfPath);
-        //   console.log("this.caseReceiveData.accepted: "+item.accepted);
-        // });
-        // this.caseReceiveData.forEach(item => {
-        //   console.log("this.caseReceiveData: "+item);
-        //   console.log("this.caseReceiveData.rating: "+item.rating);
-        //   console.log("this.caseReceiveData.user_name: "+item.user_name);
-        //   console.log("this.caseReceiveData.resumePdfPath: "+item.resumePdfPath);
-        //   console.log("this.caseReceiveData.accepted: "+item.accepted);
-        // });
+
+        this.searchUserByCaseIdCheck();
 
       },
       
@@ -251,11 +256,13 @@ export default {
   <!-- <h1>Speed接案網</h1> -->
   <!-- <p>Personal Info</p> -->
   
-  <p class="text-4xl w-96">案子的接案者編輯畫面</p>
+  <p class="text-5xl">案子的接案者編輯畫面</p>
 
   <button class="custom-btn btn-5" @click="backPage">返回</button>
 
-  <div v-if="alreadyChoose == false">
+  <p v-if="receiveCount == false" class="text-5xl text-red-600 ml-40">目前無人接案</p>
+
+  <div v-if="alreadyChoose == false && receiveCount == true">
   <button class="custom-btn btn-4" @click="chooseContractors">確認</button>
 
   <table class="table ml-10">

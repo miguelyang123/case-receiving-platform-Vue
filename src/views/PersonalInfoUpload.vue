@@ -185,55 +185,27 @@ export default {
           console.log(e); // "oh, no!"
           alert("pdf未上傳!");
         });
-            // } catch (e) {
-            //   alert("pdf未上傳!");
-            // }
-        // console.log("this.successFlag: "+this.successFlag);
-        // console.log("this.successFlag == false: "+this.successFlag == false);
-        // if(this.successFlag == false){
-        //       alert("pdf未上傳!");
-        // }
         
       },
-      
-      // preview(){
-      //   let uuid = this.uuid;
-      //   let param = new FormData(); //创建form对象
-      //   param.append('uuid',uuid);//通过append向form对象添加数据
-      //   axios.post('http://localhost:8080/api/pdf_download',param, {
-      //       responseType: 'blob', // important
-      //       timeout: 20000,
-      //   })
-      //   .then((response) => {
-      //       //制作a标签并点击下载
-      //       const url = window.URL.createObjectURL(new Blob([response.data],
-      //           { type: 'application/octet-stream' }));
-      //       const link = document.createElement('a');
-      //       link.href = url;
-      //       // link.setAttribute('download', fileName);
-      //       link.setAttribute('http://localhost:5173/personal_info_upload/'+'this.uuid'+'.pdf', this.uuid+".pdf");
-      //       document.body.appendChild(link);
-      //       link.click();
-      //   });
+      downloadCheck(){
+        this.successFlag = false;
+        let uuid = this.uuid;
+        let param = new FormData(); //创建form对象
+        param.append('uuid',uuid);//通过append向form对象添加数据
         
-      // },
-      // //通过读取pdf得到url
-      // getPdfUrl (file) {
-      //   let url = URL.createObjectURL(file) //将blob文件转化成url
-      //   this.pdfUrl = url  //赋值给url
-      //   console.log(url)  // blob:http://localhost:8080/f2049a9d-31a6-4bd9-8a94-23dee457218f
-      //   return url
-      // },
-      // // 打开pdf
-      // gotoPdf (pdfUrl) {
-      //   // window.location.href = pdfUrl
-      //   window.open(pdfUrl)
-      // },
-      // // 删除pdf
-      // delPdf () {
-      //   this.pdfName = ''
-      //   this.pdfUrl = ''
-      // }
+        // try {
+        axios.post('http://localhost:8080/api/pdf_download',param, {
+            responseType: 'blob', // important
+            timeout: 20000,
+        })
+        .then((response) => {
+        })
+        .catch(function (e) {
+          console.log(e); // "oh, no!"
+          alert("pdf未上傳!");
+        });
+        
+      },
       backPage(){
         router.push("/personal_info");
       },
@@ -242,6 +214,8 @@ export default {
     mounted() {
     
       this.uuid = this.userInfo.uuid;
+
+      this.downloadCheck();
 
     },
 }
@@ -266,9 +240,12 @@ export default {
 
   <!-- </div> -->
 
-  <button class="custom-btn btn-5" @click="backPage">返回</button>
+  <h1 class="text-5xl">上傳履歷</h1>
 
-  <input class="file" name="file" type="file" accept=".pdf" @change="update"/>
+  <button class="custom-btn btn-5" @click="backPage">返回</button><br/>
+  
+  <p class="ml-48 text-2xl">請選擇想上傳的履歷表</p>
+  <input class="file ml-48" name="file" type="file" accept=".pdf" @change="update"/>
 
   <button class="custom-btn btn-4" @click="download">下載</button>
 

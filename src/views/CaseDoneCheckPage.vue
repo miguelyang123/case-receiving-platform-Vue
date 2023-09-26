@@ -142,30 +142,39 @@ export default {
             this.postData.deadline = this.caseDeadline+"T00:00:00";
             // console.log("this.postData.deadline: "+this.postData.deadline);
             // this.postData.deadline = null;
-            this.postData.caseRating = this.caseRating;
-            this.postData.onShelf = this.onShelf;
-            this.postData.initiator = this.uuid;
-            console.log("this.postData.id: "+this.postData.id);
-            console.log("this.postData.caseName: "+this.postData.caseName);
-            console.log("this.postData.budget: "+this.postData.budget);
-            console.log("this.postData.location: "+this.postData.location);
-            console.log("this.postData.content: "+this.postData.content);
-            console.log("this.postData.deadline: "+this.postData.deadline);
-            console.log("this.postData.initiator: "+this.postData.initiator);
-            axios.post('http://localhost:8080/case_api/edit_case', this.postData)
-            .then((response) => {
-              this.responseLocal = response;
-              if(this.responseLocal.data.code === "200"){
-                // console.log("add case successed!");
-                // this.localList = this.responseLocal.data.locationList;
-                alert("案件編輯成功!");
-                router.push("/");
-              }
-              else{
-                console.log("edit case failed!");
-                alert(this.responseLocal.data.message);
-              }
-            });
+            if(this.caseRating > 5){
+              alert("輸入不能超過5!");
+              // router.push("/case_done_check_page");
+            }
+            else{
+              this.postData.caseRating = this.caseRating;
+              this.postData.onShelf = this.onShelf;
+              this.postData.initiator = this.uuid;
+              console.log("this.postData.id: "+this.postData.id);
+              console.log("this.postData.caseName: "+this.postData.caseName);
+              console.log("this.postData.budget: "+this.postData.budget);
+              console.log("this.postData.location: "+this.postData.location);
+              console.log("this.postData.content: "+this.postData.content);
+              console.log("this.postData.deadline: "+this.postData.deadline);
+              console.log("this.postData.initiator: "+this.postData.initiator);
+              axios.post('http://localhost:8080/case_api/edit_case', this.postData)
+              .then((response) => {
+                this.responseLocal = response;
+                if(this.responseLocal.data.code === "200"){
+                  // console.log("add case successed!");
+                  // this.localList = this.responseLocal.data.locationList;
+                  alert("案件編輯成功!");
+                  router.push("/");
+                }
+                else{
+                  console.log("edit case failed!");
+                  alert(this.responseLocal.data.message);
+                }
+              });
+              
+              router.push("/case_edit_search_page");
+              
+            }
 
 
         },
@@ -177,8 +186,6 @@ export default {
 
           this.editCase();
 
-          router.push("/case_edit_search_page");
-            
         },
         backPage(){
           router.push("/case_edit_search_page");
