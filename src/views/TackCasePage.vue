@@ -321,11 +321,11 @@ export default {
             <div class="flex">
                 <p class="text-red-600 font-bold text-lg">{{ item.budget }}</p>
                 <div class="flex items-center ml-4">
-                    <img src="../assets/img/TackCaseImg/location.png" alt="" width="15" class="h-[15px]">
+                    <Icon width="25" icon="mdi:map-marker" class="text-[#EF879A]" />
                     <p class="text-[#7F7F7F] ml-2 font-bold text-lg">{{ item.location }}</p>
                 </div>
                 <div class="flex items-center ml-4">
-                    <img src="../assets/img/TackCaseImg/date.png" alt="" width="15" class="h-[15px]">
+                    <Icon width="25" icon="material-symbols:date-range" class="text-[#545454]" />
                     <p class="text-[#7F7F7F] ml-2 font-bold text-lg">{{  item.deadline.split("T")[0]}}</p> 
                     <!-- item.deadline.toLocaleDateString() -->
                 </div>
@@ -341,7 +341,7 @@ export default {
 
             <div class=" text-end py-3">
                 <RouterLink to="/">
-                    <button type="button" class=" text-white rounded-lg bg-[#FF6E6E] py-3 px-6 mr-12 text-2xl font-bold hover:scale-105 active:scale-95"> 我要接案</button>
+                    <button type="button" class=" text-white rounded-lg bg-[#FF6E6E] py-3 px-6 mr-12 text-2xl font-bold hover:scale-105 active:scale-95">詳細資訊</button>
                 </RouterLink>
             </div>
             <hr class="my-6 border-[#cecece]">

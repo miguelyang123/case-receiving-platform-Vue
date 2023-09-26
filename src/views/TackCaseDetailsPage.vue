@@ -53,7 +53,7 @@ export default {
                     </div>
                     <div>
                         <div v-for="(item,index,arr) in newArrList" class="flex items-center my-6">
-                            <img width="15" class="mr-3" v-if=" arr !== 0" :src="'/src/assets/img/TackCaseImg/' + ( arr===1 ? 'location.png' : 'date.png') " alt="">
+                            <Icon width="30" v-if="arr != 0" :icon="arr===1 ? 'mdi:map-marker' : 'material-symbols:date-range'" :class="'mr-3 '+(arr===1 ? 'text-[#EF879A]' : 'text-[#545454]')" />
                             <p>{{ index==="deadline" ? item.split('T')[0]+'　'+item.split('T')[1] : item }}</p>
                         </div>
                     </div>
@@ -82,7 +82,7 @@ export default {
                 <p>{{ item }}</p>
             </div>
             <div>
-                <p class="font-bold my-1 text-xl"><span class="bg-[#FF6E6E]">&nbsp;</span> 評價</p>
+                <p class="font-bold my-1 text-xl"><span class="bg-[#FF6E6E]">&nbsp;</span>案主評價</p>
                 <div class="ratings">
                     <div class="empty_star">★★★★★</div>
                     <div :class="'full_star'" :style="'width:'+caseUser[0].rating*20+'%'">★★★★★</div>
