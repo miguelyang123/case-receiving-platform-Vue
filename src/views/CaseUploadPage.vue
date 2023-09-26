@@ -1,10 +1,10 @@
 <script>
 import router from '../router';
 import axios from 'axios';
-// // pinia 全域資料庫
-// import { mapState, mapActions } from "pinia";
-// // 匯入資料庫
-// import dataStore from "../store/dataStore";
+// pinia 全域資料庫
+import { mapState, mapActions } from "pinia";
+// 匯入資料庫
+import dataStore from "../store/dataStore";
 
 export default {  
     data() {
@@ -53,10 +53,10 @@ export default {
 
       };
     },
-    // computed: {
-    //   //參數 1.資料庫 2.要取用的 state / getters
-    //   ...mapState(dataStore, ["numTest"]),
-    // },
+    computed: {
+      //參數 1.資料庫 2.要取用的 state / getters
+      ...mapState(dataStore, ["numTest", "userInfo"]),
+    },
     methods: {
         pwdflagTrue() {
             this.pwdFlag = true;
@@ -140,7 +140,7 @@ export default {
             this.postData.deadline = this.caseDeadline+"T00:00:00";
             // console.log("this.postData.deadline: "+this.postData.deadline);
             // this.postData.deadline = null;
-            this.postData.initiator = "bdcd914c-43ce-42d3-983c-00acd5694fc4";
+            this.postData.initiator = this.uuid;
 
             axios.post('http://localhost:8080/case_api/add_new_case', this.postData)
             .then((response) => {
@@ -163,6 +163,9 @@ export default {
       },
       mounted() {
         // this.getLocationInfo();
+
+        this.uuid = this.userInfo.uuid;
+
       },
       
 }

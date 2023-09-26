@@ -23,6 +23,8 @@ export default defineStore("dataStore", {
     caseUser:null,
     thisCase:null,
     caseEditId:null,
+    caseReceiveData:null,
+    caseTemp:null,
   }),
   //getters 類似 computed
   //沒有this
@@ -92,6 +94,14 @@ export default defineStore("dataStore", {
     setCaseEditId(id) {
       //設置 caseEditId
       this.caseEditId = id;
+    },
+    setCaseReceiveData(data) {
+      //設置 caseReceiveData
+      this.caseReceiveData = data;
+    },
+    setCaseTemp(data) {
+      //設置 caseTemp
+      this.caseTemp = data;
     },
   },
   persist: [

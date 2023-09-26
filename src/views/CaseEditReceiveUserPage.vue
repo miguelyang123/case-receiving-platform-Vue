@@ -28,13 +28,42 @@ export default {
 
             // formData: new FormData() //因為我這邊沒有使用form，所以就自行new了一個FormData
       
+            "caseId": -1,
+            "userIdList": [
+
+            ],
+            "isAccepted": true,
+
+            "postData": {
+              "caseId": null,
+              "userIdList": [
+
+              ],
+              "isAccepted": true,
+            },
             
+            "postData02": {
+              
+              id: null,
+              caseName: null,
+              budget: null,
+              location: null,
+              content: null,
+              deadline: null,
+		          createdDate: null,
+		          caseClass: null,
+              initiator: null,
+		          onShelf: null,
+              currentStatus: null,
+            },
+
+            "alreadyChoose": false,
 
       };
     },
     computed: {
       //參數 1.資料庫 2.要取用的 state / getters
-      ...mapState(dataStore, ["numTest", "caseEditId"]),
+      ...mapState(dataStore, ["numTest", "caseEditId", "caseReceiveData", "caseTemp"]),
     },
     methods: {
         pwdflagTrue() {
@@ -47,29 +76,33 @@ export default {
             router.push("/register_page")
         },
         searchUserByCaseId(){
-            console.log("01");
-        //   axios.get('http://localhost:8080/search_case/with_param?initiator=bdcd914c-43ce-42d3-983c-00acd5694fc4', {
-          // axios.get('http://localhost:8080/edit_case_page/search_user_by_caseid?caseId='+this.caseEditId+'&isAccepted=false'
           axios.get('http://localhost:8080/edit_case_page/search_user_by_caseid?caseId='+this.caseEditId
-            // responseType: 'blob', // important
           )
           .then((response) => {
-            console.log("02");
-            console.log("response: "+response);
-            console.log("response.data.userInfoList: "+response.data.userInfoList);
             this.responseLocal = response;
-            console.log("code: "+this.responseLocal.data.code);
-            console.log("message: "+this.responseLocal.data.message);
-            console.log("userInfoList: "+this.responseLocal.data.userInfoList);
-            
             if(this.responseLocal.data.code === "200"){
-                
-            console.log("03");
               this.localList = this.responseLocal.data.userInfoList;
-                console.log("localList: "+this.localList);
-                this.localList.forEach(item => {
-                    console.log("userName: "+item.user_name);
-                });
+            }
+          });
+        },
+        searchUserByCaseIdTrue(){
+          axios.get('http://localhost:8080/edit_case_page/search_user_by_caseid?caseId='+this.caseEditId+'&isAccepted=true'
+          )
+          .then((response) => {
+            this.responseLocal = response;
+            if(this.responseLocal.data.code === "200"){
+              this.localList = this.responseLocal.data.userInfoList;
+              // console.log("this.localList: "+this.localList);
+              this.localList.forEach(item => {
+                // console.log("item.uuid: "+item.uuid);
+                if(item.uuid != null){
+                  this.alreadyChoose = true;
+                }
+                // console.log("this.alreadyChoose: "+this.alreadyChoose);
+                if(!this.alreadyChoose){
+                  this.searchUserByCaseId();
+                }
+              });
             }
           });
         },
@@ -120,32 +153,92 @@ export default {
             link.setAttribute('download', uuid+".pdf");
             document.body.appendChild(link);
             link.click();
+        })
+        .catch(function (e) {
+          console.log(e); // "oh, no!"
+          alert("pdf未上傳!");
         });
         },
+        addContractors(uuid){
+          if(!this.userIdList.includes(uuid)){
+            this.userIdList.push(uuid);
+          }
+          this.chooseContractors();
+        },
+        chooseContractors(){
+          this.postData.caseId =  this.caseEditId;
+          this.postData.userIdList = this.userIdList;
+          axios.post('http://localhost:8080/edit_case_page/choose_contractors', this.postData
+          )
+          .then((response) => {
+            this.responseLocal = response;
+            if(this.responseLocal.data.code === "200"){
+                
+                  this.postData02.id = this.caseEditId;
+                  this.postData02.caseName = this.caseTemp.caseName;
+                  this.postData02.budget = this.caseTemp.budget;
+                  this.postData02.location = this.caseTemp.location;
+                  this.postData02.content = this.caseTemp.content;
+                  // this.postData.deadline = this.caseDeadline+"-00-00-00.00";
+                  this.postData02.deadline = this.caseTemp.deadline;
+                  // console.log("this.postData.deadline: "+this.postData.deadline);
+                  // this.postData.deadline = null;
+                  this.postData02.onShelf = this.caseTemp.onShelf;
+                  this.postData02.initiator = this.caseTemp.initiator;
+                  this.postData02.caseClass = this.caseTemp.caseClass;
+                  this.postData02.currentStatus = "In Progress";
+                  console.log("this.postData.id: "+this.postData02.id);
+                  console.log("this.postData.caseName: "+this.postData02.caseName);
+                  console.log("this.postData.budget: "+this.postData02.budget);
+                  console.log("this.postData.location: "+this.postData02.location);
+                  console.log("this.postData.content: "+this.postData02.content);
+                  console.log("this.postData.deadline: "+this.postData02.deadline+"T00:00:00");
+                  console.log("this.postData.initiator: "+this.postData02.initiator);
+                  console.log("this.postData.caseClass: "+this.postData02.caseClass);
+                  axios.post('http://localhost:8080/case_api/edit_case', this.postData02)
+                  .then((response) => {
+                    this.responseLocal = response;
+                    if(this.responseLocal.data.code === "200"){
+                      // console.log("add case successed!");
+                      // this.localList = this.responseLocal.data.locationList;
+                      alert("案件編輯成功!");
+                      router.push("/");
+                    }
+                    else{
+                      console.log("edit case failed!");
+                      alert(this.responseLocal.data.message);
+                    }
+                  });
 
-      },
-      beforeMount() {
-        // this.getLocationInfo();
+              router.push("/case_edit_page");
 
-        this.searchUserByCaseId();
+            }
+          });
+        },
+        backPage(){
+          router.push("/case_edit_page");
+        },
 
       },
       mounted() {
         // this.getLocationInfo();
 
-        this.searchUserByCaseId();
-
-      },
-      beforeUpdate() {
-        // this.getLocationInfo();
-
-        this.searchUserByCaseId();
-
-      },
-      update() {
-        // this.getLocationInfo();
-
-        this.searchUserByCaseId();
+        this.searchUserByCaseIdTrue();
+        
+        // this.caseReceiveData.forEach(item => {
+        //   console.log("this.caseReceiveData: "+item);
+        //   console.log("this.caseReceiveData.rating: "+item.rating);
+        //   console.log("this.caseReceiveData.user_name: "+item.user_name);
+        //   console.log("this.caseReceiveData.resumePdfPath: "+item.resumePdfPath);
+        //   console.log("this.caseReceiveData.accepted: "+item.accepted);
+        // });
+        // this.caseReceiveData.forEach(item => {
+        //   console.log("this.caseReceiveData: "+item);
+        //   console.log("this.caseReceiveData.rating: "+item.rating);
+        //   console.log("this.caseReceiveData.user_name: "+item.user_name);
+        //   console.log("this.caseReceiveData.resumePdfPath: "+item.resumePdfPath);
+        //   console.log("this.caseReceiveData.accepted: "+item.accepted);
+        // });
 
       },
       
@@ -159,8 +252,11 @@ export default {
   <!-- <p>Personal Info</p> -->
   
   <p class="text-4xl w-96">案子的接案者編輯畫面</p>
-  
-  <button @click="searchUserByCaseId">畫面更新</button>
+
+  <button class="custom-btn btn-5" @click="backPage">返回</button>
+
+  <div v-if="alreadyChoose == false">
+  <button class="custom-btn btn-4" @click="chooseContractors">確認</button>
 
   <table class="table ml-10">
         <thead>
@@ -170,22 +266,46 @@ export default {
             <td class="border-2 border-black">接案者評價</td>
             <td class="border-2 border-black">接案者姓名</td>
             <td class="border-2 border-black">履歷書下載</td>
-            <td class="border-2 border-black">接案邀請</td>
+            <!-- <td class="border-2 border-black">接案邀請</td> -->
+            <td class="border-2 border-black">選擇接案者</td>
         </tr>
-        <!-- <tr v-for="(item, key) in localList" :key="key"> -->
-            <!-- <td class="border-2 border-black">{{ item.rating }}</td> -->
-            <!-- <td class="border-2 border-black">{{ item.user_name }}</td> -->
-            <!-- <td class="border-2 border-black"><button class="border-2 border-black px-2 py-1 rounded-lg bg-blue-700 text-white" @click="pdfDownload(item.uuid)">下載</button></td> -->
-            <!-- <td class="border-2 border-black"><button @click="sendReceiveInvite(item.uuid)">未發送</button></td> -->
-        <!-- </tr> -->
-        <tr v-for="(item, key) in localList" :key="key">
+        <tr v-for="(item, key) in caseReceiveData" :key="key">
             <td class="border-2 border-black">{{ item.rating }}</td>
             <td class="border-2 border-black">{{ item.user_name }}</td>
             <td class="border-2 border-black"><button class="border-2 border-black px-2 py-1 rounded-lg bg-blue-700 text-white" @click="pdfDownload(item.uuid)">下載</button></td>
             <!-- <td class="border-2 border-black"><button @click="sendReceiveInvite(item.uuid)">未發送</button></td> -->
+            <td class="border-2 border-black"><button @click="addContractors(item.uuid)">點擊以選擇</button></td>
         </tr>
         </tbody>
     </table>
+  </div>
+  <div v-if="alreadyChoose == true">
+
+  <table class="table ml-10">
+        <thead>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="border-2 border-black">接案者評價</td>
+            <td class="border-2 border-black">接案者姓名</td>
+            <td class="border-2 border-black">信箱</td>
+            <td class="border-2 border-black">手機</td>
+            <td class="border-2 border-black">履歷書下載</td>
+            <!-- <td class="border-2 border-black">接案邀請</td> -->
+            <!-- <td class="border-2 border-black">選擇接案者</td> -->
+        </tr>
+        <tr v-for="(item, key) in localList" :key="key">
+            <td class="border-2 border-black">{{ item.rating }}</td>
+            <td class="border-2 border-black">{{ item.user_name }}</td>
+            <td class="border-2 border-black">{{ item.email }}</td>
+            <td class="border-2 border-black">{{ item.phone }}</td>
+            <td class="border-2 border-black"><button class="border-2 border-black px-2 py-1 rounded-lg bg-blue-700 text-white" @click="pdfDownload(item.uuid)">下載</button></td>
+            <!-- <td class="border-2 border-black"><button @click="sendReceiveInvite(item.uuid)">未發送</button></td> -->
+            <!-- <td class="border-2 border-black"><button @click="addContractors(item.uuid)">點擊以選擇</button></td> -->
+        </tr>
+        </tbody>
+    </table>
+  </div>
 
 </template>
 

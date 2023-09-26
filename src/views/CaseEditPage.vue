@@ -28,8 +28,8 @@ export default {
 
             // formData: new FormData() //因為我這邊沒有使用form，所以就自行new了一個FormData
       
-            uuid: "bdcd914c-43ce-42d3-983c-00acd5694fc4",
-            initiator: "bdcd914c-43ce-42d3-983c-00acd5694fc4",
+            uuid: null,
+            // initiator: "bdcd914c-43ce-42d3-983c-00acd5694fc4",
 
             // caseName: null,
             // caseBudget: null,
@@ -73,9 +73,10 @@ export default {
     },
     computed: {
       //參數 1.資料庫 2.要取用的 state / getters
-      ...mapState(dataStore, ["numTest", "caseEditId"]),
+      ...mapState(dataStore, ["numTest", "caseEditId", "userInfo"]),
     },
     methods: {
+        ...mapActions(dataStore, ['setCaseReceiveData', 'setCaseTemp']),
         pwdflagTrue() {
             this.pwdFlag = true;
         },
@@ -173,16 +174,15 @@ export default {
             this.postData.deadline = this.caseDeadline+"T00:00:00";
             // console.log("this.postData.deadline: "+this.postData.deadline);
             // this.postData.deadline = null;
-            
             this.postData.onShelf = this.onShelf;
-            this.postData.initiator = "bdcd914c-43ce-42d3-983c-00acd5694fc4";
-            console.log("this.postData.id: "+this.postData.id);
-            console.log("this.postData.caseName: "+this.postData.caseName);
-            console.log("this.postData.budget: "+this.postData.budget);
-            console.log("this.postData.location: "+this.postData.location);
-            console.log("this.postData.content: "+this.postData.content);
-            console.log("this.postData.deadline: "+this.postData.deadline);
-            console.log("this.postData.initiator: "+this.postData.initiator);
+            this.postData.initiator = this.uuid;
+            // console.log("this.postData.id: "+this.postData.id);
+            // console.log("this.postData.caseName: "+this.postData.caseName);
+            // console.log("this.postData.budget: "+this.postData.budget);
+            // console.log("this.postData.location: "+this.postData.location);
+            // console.log("this.postData.content: "+this.postData.content);
+            // console.log("this.postData.deadline: "+this.postData.deadline);
+            // console.log("this.postData.initiator: "+this.postData.initiator);
             axios.post('http://localhost:8080/case_api/edit_case', this.postData)
             .then((response) => {
               this.responseLocal = response;
@@ -210,27 +210,28 @@ export default {
         findCaseWithInput(){
           console.log("========================");
           console.log("this.caseEditId: "+this.caseEditId);
-          axios.get('http://localhost:8080/search_case/with_param?initiator='+this.initiator
+          axios.get('http://localhost:8080/search_case/with_param?initiator='+this.uuid
             // responseType: 'blob', // important
           )
           .then((response) => {
             this.responseLocal = response;
             if(this.responseLocal.data.code === "200"){
               this.localList = this.responseLocal.data.caseList;
-              console.log("localList: "+this.localList);
+              // console.log("localList: "+this.localList);
 
               this.localList.forEach(item => {
                 if(item.id === this.caseEditId){
+                  this.setCaseTemp(item);
                   // console.log("id:"+item.id);
-                  console.log("caseName: "+item.caseName);
+                  // console.log("caseName: "+item.caseName);
                   this.caseName = item.caseName;
-                  console.log("budget: "+item.budget);
+                  // console.log("budget: "+item.budget);
                   this.caseBudget = item.budget;
-                  console.log("content: "+item.content);
+                  // console.log("content: "+item.content);
                   this.caseContent = item.content;
-                  console.log("deadline: "+item.deadline.substring(0, 10));
+                  // console.log("deadline: "+item.deadline.substring(0, 10));
                   this.caseDeadline = item.deadline.substring(0, 10);
-                  console.log("caseClass: "+item.caseClass);
+                  // console.log("caseClass: "+item.caseClass);
                   this.categoryKey = item.caseClass;
                   if(this.categoryKey === "onsite"){
                     this.categoryKey = "1";
@@ -242,13 +243,13 @@ export default {
                   }
                   this.categoryChangeNew(this.categoryKey);
                   // console.log("initiator: "+item.initiator);
-                  console.log("location: "+item.location);
+                  // console.log("location: "+item.location);
                   this.caseLocation = item.location;
                   this.locationSelected = this.caseLocation;
                   this.locationChangeNew(this.locationSelected);
-                  console.log("onShelf: "+item.onShelf);
+                  // console.log("onShelf: "+item.onShelf);
                   this.onShelf = item.onShelf;
-                  console.log("currentStatus: "+item.currentStatus);
+                  // console.log("currentStatus: "+item.currentStatus);
                   this.currentStatus = item.currentStatus;
                   // console.log("caseRating: "+item.caseRating);
                 
@@ -257,6 +258,38 @@ export default {
 
             }
           });
+        },
+        searchUserByCaseId(){
+            // console.log("01");
+        //   axios.get('http://localhost:8080/search_case/with_param?initiator=bdcd914c-43ce-42d3-983c-00acd5694fc4', {
+          // axios.get('http://localhost:8080/edit_case_page/search_user_by_caseid?caseId='+this.caseEditId+'&isAccepted=false'
+          axios.get('http://localhost:8080/edit_case_page/search_user_by_caseid?caseId='+this.caseEditId
+            // responseType: 'blob', // important
+          )
+          .then((response) => {
+            // console.log("02");
+            // console.log("response: "+response);
+            // console.log("response.data.userInfoList: "+response.data.userInfoList);
+            this.responseLocal = response;
+            // this.caseReceiveData = this.responseLocal;
+            // console.log("code: "+this.responseLocal.data.code);
+            // console.log("message: "+this.responseLocal.data.message);
+            // console.log("userInfoList: "+this.responseLocal.data.userInfoList);
+            this.setCaseReceiveData(this.responseLocal.data.userInfoList);
+            
+            if(this.responseLocal.data.code === "200"){
+                
+            // console.log("03");
+              this.localList = this.responseLocal.data.userInfoList;
+                // console.log("localList: "+this.localList);
+                // this.localList.forEach(item => {
+                //     console.log("userName: "+item.user_name);
+                // });
+            }
+          });
+        },
+        backPage(){
+          router.push("/case_edit_search_page");
         },
 
       },
@@ -282,7 +315,12 @@ export default {
         // this.currentStatus = "Not Started";
         // this.onShelf = true;
 
+
+        this.uuid = this.userInfo.uuid;
+        // console.log("this.uuid: "+this.uuid);
+
         this.findCaseWithInput();
+        this.searchUserByCaseId();
 
       },
       
@@ -295,6 +333,7 @@ export default {
   <!-- <h1>Speed接案網</h1> -->
   <!-- <p>Personal Info</p> -->
   <p class="text-4xl w-96">案子修改畫面</p>
+  <button class="custom-btn btn-5" @click="backPage">返回</button>
   <div class="flex m-4 absolute top-40 right-10">
     <div class="">
         <button class="custom-btn btn-5" @click="editCase">提交</button><br/>
