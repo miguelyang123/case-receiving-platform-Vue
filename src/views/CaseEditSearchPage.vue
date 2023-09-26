@@ -42,7 +42,7 @@ export default {
     },
     computed: {
       //參數 1.資料庫 2.要取用的 state / getters
-      ...mapState(dataStore, ["numTest", "caseEditId"]),
+      ...mapState(dataStore, ["numTest", "caseEditId", "userInfo"]),
     },
     methods: {
         ...mapActions(dataStore, ['setCaseEditId']),
@@ -58,7 +58,7 @@ export default {
         findCaseWithInput(){
             console.log("01");
         //   axios.get('http://localhost:8080/search_case/with_param?initiator=bdcd914c-43ce-42d3-983c-00acd5694fc4', {
-          axios.get('http://localhost:8080/search_case/with_param?initiator='+this.initiator
+          axios.get('http://localhost:8080/search_case/with_param?initiator='+this.caseEditId
             // responseType: 'blob', // important
           )
           .then((response) => {
@@ -93,6 +93,9 @@ export default {
           router.push("/case_edit_page");
 
         },
+        backPage(){
+          router.push("/personal_info");
+        },
 
       },
       // beforeCreate() {
@@ -104,11 +107,12 @@ export default {
 
       // },
       mounted() {
-        // this.getLocationInfo();
+        
+        console.log("this.userInfo: "+this.userInfo);
+        console.log("this.userInfo.uuid: "+this.userInfo.uuid);
+        this.setCaseEditId(this.userInfo.uuid);
 
         this.findCaseWithInput();
-
-        // this.countReceiveAccount();
 
       },
       // updated() {
@@ -126,6 +130,7 @@ export default {
   <!-- <p>Personal Info</p> -->
 
   <p>Case Edit Page</p>
+  <button @click="backPage">返回</button>
 
   <div id="app">
     <table class="table ml-10">

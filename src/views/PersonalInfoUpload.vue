@@ -1,13 +1,16 @@
 <script>
 import router from '../router';
+import { RouterLink, RouterView} from 'vue-router';
 import axios from 'axios';
-// import pdf from 'vue-pdf';
-// import ElementPlus from "element-plus";
+// pinia 全域資料庫
+import { mapState, mapActions } from "pinia";
+// 匯入資料庫
+import dataStore from "../store/dataStore";
 
-export default {  
-    // components: {
-    //   ElementPlus
-    // },
+export default { 
+    components:{
+        RouterLink,
+    },
     data() {
         return {
             // pwdFlag: false, //密碼明碼
@@ -25,15 +28,20 @@ export default {
 
             // formData: new FormData() //因為我這邊沒有使用form，所以就自行new了一個FormData
       
-              uuid: "bdcd914c-43ce-42d3-983c-00acd5694fc4",
+              uuid: null,
 
               code: 0,
               path: "pdfs",
 
               // pdfName: '',
               // pdfUrl: '',
+              successFlag: false,
 
       };
+    },
+    computed: {
+      //參數 1.資料庫 2.要取用的 state / getters
+      ...mapState(dataStore, ["userInfo"]),
     },
     methods: {
         pwdflagTrue() {
@@ -111,13 +119,17 @@ export default {
           // })
       },
       download(){
+        this.successFlag = false;
         let uuid = this.uuid;
         let param = new FormData(); //创建form对象
         param.append('uuid',uuid);//通过append向form对象添加数据
+        
+        // try {
         axios.post('http://localhost:8080/api/pdf_download',param, {
             responseType: 'blob', // important
             timeout: 20000,
-        }).then((response) => {
+        })
+        .then((response) => {
           // fetch("http://localhost:8080/api/pdf_download",param,
           // {
           //     headers: {
@@ -157,16 +169,30 @@ export default {
             //     }
             // }
             // console.log("response(6)");
-            //制作a标签并点击下载
-            const url = window.URL.createObjectURL(new Blob([response.data],
-                { type: 'application/octet-stream' }));
-            const link = document.createElement('a');
-            link.href = url;
-            // link.setAttribute('download', fileName);
-            link.setAttribute('download', this.uuid+".pdf");
-            document.body.appendChild(link);
-            link.click();
+              this.successFlag = true;
+              console.log("this.successFlag: "+this.successFlag);
+              //制作a标签并点击下载
+              const url = window.URL.createObjectURL(new Blob([response.data],
+                  { type: 'application/octet-stream' }));
+              const link = document.createElement('a');
+              link.href = url;
+              // link.setAttribute('download', fileName);
+              link.setAttribute('download', this.uuid+".pdf");
+              document.body.appendChild(link);
+              link.click();
+        })
+        .catch(function (e) {
+          console.log(e); // "oh, no!"
+          alert("pdf未上傳!");
         });
+            // } catch (e) {
+            //   alert("pdf未上傳!");
+            // }
+        // console.log("this.successFlag: "+this.successFlag);
+        // console.log("this.successFlag == false: "+this.successFlag == false);
+        // if(this.successFlag == false){
+        //       alert("pdf未上傳!");
+        // }
         
       },
       
@@ -208,8 +234,16 @@ export default {
       //   this.pdfName = ''
       //   this.pdfUrl = ''
       // }
+      backPage(){
+        router.push("/personal_info");
+      },
 
-    }
+    },
+    mounted() {
+    
+      this.uuid = this.userInfo.uuid;
+
+    },
 }
 
 </script>
@@ -231,6 +265,8 @@ export default {
     </div> -->
 
   <!-- </div> -->
+
+  <button @click="backPage">返回</button>
 
   <input class="file" name="file" type="file" accept=".pdf" @change="update"/>
 
