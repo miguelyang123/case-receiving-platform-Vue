@@ -266,11 +266,11 @@ export default {
 
   <!-- </div> -->
 
-  <button @click="backPage">返回</button>
+  <button class="custom-btn btn-5" @click="backPage">返回</button>
 
   <input class="file" name="file" type="file" accept=".pdf" @change="update"/>
 
-  <button @click="download">下載</button>
+  <button class="custom-btn btn-4" @click="download">下載</button>
 
   <!-- <button @click="preview">預覽</button>
 

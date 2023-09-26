@@ -161,6 +161,11 @@ const router = createRouter({
       name: "CaseDoneCheckPage",
       component: () => import("../views/CaseDoneCheckPage.vue"),
     },
+    {
+      path: "/case_only_search_page",
+      name: "CaseOnlySearchPage",
+      component: () => import("../views/CaseOnlySearchPage.vue"),
+    },
   ],
 });
 

@@ -12,7 +12,7 @@ export default {
 
             uuid: "bdcd914c-43ce-42d3-983c-00acd5694fc4",
             initiator: "bdcd914c-43ce-42d3-983c-00acd5694fc4",
-            // onShelf: false,
+
             // data: [
             //     {
             //         receiveCaseCount: 0,
@@ -130,7 +130,7 @@ export default {
   <!-- <p>Personal Info</p> -->
 
   <p>Case Edit Page</p>
-  <button class="custom-btn btn-5" @click="backPage">返回</button>
+  <button @click="backPage">返回</button>
 
   <div id="app">
     <table class="table ml-10">
@@ -139,19 +139,18 @@ export default {
         <tbody>
         <tr>
             <td class="border-2 border-black">操作</td>
-            <!-- <td class="border-2 border-black">接案人數</td> -->
+            <td class="border-2 border-black">接案人數</td>
             <td class="border-2 border-black">案子名稱</td>
             <td class="border-2 border-black">案子到期日</td>
             <td class="border-2 border-black">上/下架</td>
             <td class="border-2 border-black">接案狀態</td>
         </tr>
         <tr v-for="(item, key) in localList" :key="key">
-            <td class="border-2 border-black"><button class="custom-btn btn-4" @click="toEdit(item.id)">編輯</button></td>
-            <!-- <td class="border-2 border-black">?</td> -->
+            <td class="border-2 border-black"><button @click="toEdit(item.id)">編輯</button></td>
+            <td class="border-2 border-black">?</td>
             <td class="border-2 border-black">{{ item.caseName }}</td>
-            <td class="border-2 border-black">{{ item.deadline.substring(0, 10) }}</td>
-            <td v-if="item.onShelf === true" class="border-2 border-black">上架</td>
-            <td v-if="item.onShelf === false" class="border-2 border-black">下架</td>
+            <td class="border-2 border-black">{{ item.deadline }}</td>
+            <td class="border-2 border-black">{{ item.onShelf }}</td>
             <td class="border-2 border-black">{{ item.currentStatus }}</td>
         </tr>
         </tbody>

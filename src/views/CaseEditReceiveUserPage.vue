@@ -163,6 +163,7 @@ export default {
           if(!this.userIdList.includes(uuid)){
             this.userIdList.push(uuid);
           }
+          this.chooseContractors();
         },
         chooseContractors(){
           this.postData.caseId =  this.caseEditId;
@@ -252,10 +253,10 @@ export default {
   
   <p class="text-4xl w-96">案子的接案者編輯畫面</p>
 
-  <button @click="backPage">返回</button>
+  <button class="custom-btn btn-5" @click="backPage">返回</button>
 
   <div v-if="alreadyChoose == false">
-  <button @click="chooseContractors">確認</button>
+  <button class="custom-btn btn-4" @click="chooseContractors">確認</button>
 
   <table class="table ml-10">
         <thead>

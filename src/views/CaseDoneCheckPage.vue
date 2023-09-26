@@ -28,8 +28,8 @@ export default {
 
             // formData: new FormData() //因為我這邊沒有使用form，所以就自行new了一個FormData
       
-            uuid: "bdcd914c-43ce-42d3-983c-00acd5694fc4",
-            initiator: "bdcd914c-43ce-42d3-983c-00acd5694fc4",
+            uuid: null,
+            // initiator: "bdcd914c-43ce-42d3-983c-00acd5694fc4",
 
             caseName: null,
             caseBudget: null,
@@ -39,7 +39,7 @@ export default {
             caseLocation: null,
             caseContent: null,
             currentStatus: null,
-		    onShelf: null,
+		        onShelf: null,
 
             caseRating: null,
 
@@ -66,7 +66,7 @@ export default {
     },
     computed: {
       //參數 1.資料庫 2.要取用的 state / getters
-      ...mapState(dataStore, ["numTest", "caseEditId"]),
+      ...mapState(dataStore, ["numTest", "caseEditId", "userInfo"]),
     },
     methods: {
         pwdflagTrue() {
@@ -81,7 +81,7 @@ export default {
         findCaseWithInput(){
           console.log("========================");
           console.log("this.caseEditId: "+this.caseEditId);
-          axios.get('http://localhost:8080/search_case/with_param?initiator='+this.initiator
+          axios.get('http://localhost:8080/search_case/with_param?initiator='+this.uuid
             // responseType: 'blob', // important
           )
           .then((response) => {
@@ -144,7 +144,7 @@ export default {
             // this.postData.deadline = null;
             this.postData.caseRating = this.caseRating;
             this.postData.onShelf = this.onShelf;
-            this.postData.initiator = "bdcd914c-43ce-42d3-983c-00acd5694fc4";
+            this.postData.initiator = this.uuid;
             console.log("this.postData.id: "+this.postData.id);
             console.log("this.postData.caseName: "+this.postData.caseName);
             console.log("this.postData.budget: "+this.postData.budget);
@@ -180,10 +180,15 @@ export default {
           router.push("/case_edit_search_page");
             
         },
+        backPage(){
+          router.push("/case_edit_search_page");
+        },
 
       },
       mounted() {
         // this.getLocationInfo();
+
+        this.uuid = this.userInfo.uuid;
 
         console.log("id: "+this.caseEditId);
 
@@ -213,7 +218,8 @@ export default {
   <!-- <p>Personal Info</p> -->
   
   <p class="text-4xl w-96">案子完成的確認畫面</p>
-
+  <button class="custom-btn btn-5" @click="backPage">返回</button>
+  
   案子評價:<input class="border-2 border-black" type="number" v-model="caseRating">
   <button class="custom-btn btn-5 relative left-1/3" @click="finishCase">提交</button>
     
