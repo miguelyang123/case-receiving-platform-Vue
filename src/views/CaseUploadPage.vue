@@ -155,6 +155,10 @@ export default {
                 console.log("add case failed!");
                 alert(this.responseLocal.data.message);
               }
+            })
+            .catch(function (e) {
+              console.log(e); // "oh, no!"
+              alert("資料填寫有誤!");
             });
 
 
@@ -183,41 +187,61 @@ export default {
     <!-- <button class="custom-btn btn-5 relative left-2/3" @click="checkAllValue">提交(確認用)</button> -->
   </div>
 
-  <div class="flex m-4">
-    <p>案子名稱: </p>
-    <input type="text" class="border-2 border-black" v-model="caseName">
+  <div class="flex mx-4">
+    <p class="mr-2">案子名稱 : </p>
+    <div>
+      <input type="text" class="border-2 border-black" v-model="caseName">
+      <p v-if="caseName == '' || caseName == null" class="text-red-600">案子名稱格式錯誤</p>
+      <p v-else class="text-white">ok</p>
+    </div>
   </div>
   <div class="flex">
     <div class="flex flex-col">
         <div class="flex m-4">
-            <p>案子預算: </p>
-            <input type="number" class="border-2 border-black" v-model="caseBudget">
+            <p class="mr-2">案子預算 : </p>
+            <div>
+              <input type="number" class="border-2 border-black" v-model="caseBudget">
+              <p v-if="!(caseBudget > 0)" class="text-red-600">案子預算格式錯誤</p>
+              <p v-else class="text-white">ok</p>
+            </div>
         </div>
         <div class="flex m-4">
-            <p>案子期限: </p>
-            <input type="date" class="border-2 border-black" v-model="caseDeadline">
+            <p class="mr-2">案子期限 : </p>
+            <div>
+              <input type="date" class="border-2 border-black" v-model="caseDeadline">
+              <p v-if="caseDeadline == null" class="text-red-600">案子期限格式錯誤</p>
+              <p v-else class="text-white">ok</p>
+            </div>
         </div>
     </div>
     <div class="flex flex-col">
         <div class="flex m-4">
-            <p>案子類型: </p>
+            <p class="mr-2">案子類型 : </p>
             <!-- <select v-model="caseCategory" name="" id=""> -->
             <!-- <select @change="categoryChange()"> -->
-            <select name="LeaveType" @change="categoryChange($event)" class="form-control" v-model="categoryKey">
-              <option value="1">現場</option>
-              <option value="2">遠端</option>
-            </select>
+            <div>
+              <select name="LeaveType" @change="categoryChange($event)" class="form-control border-2 border-black" v-model="categoryKey">
+                <option value="1">現場</option>
+                <option value="2">遠端</option>
+              </select>
+              <p v-if="categoryKey == null" class="text-red-600">案子類型格式錯誤</p>
+              <p v-else class="text-white">ok</p>
+            </div>
         </div>
         <div class="flex m-4">
-            <p>案子地點: </p>
-            <select v-model="locationSelected" @change="locationChange($event)">
-              <option v-for="(item, index) in localList" :value=item.locationId :key="index">{{ item.locationName }}</option>
-            </select>
+            <p class="mr-2">案子地點 : </p>
+            <div>
+              <select class="border-2 border-black" v-model="locationSelected" @change="locationChange($event)">
+                <option v-for="(item, index) in localList" :value=item.locationId :key="index">{{ item.locationName }}</option>
+              </select>
+              <p v-if="locationSelected == null" class="text-red-600">案子地點格式錯誤</p>
+              <p v-else class="text-white">ok</p>
+            </div>
           </div>
     </div>
   </div>
   <div class="m-4">
-    <p>案子內文: </p>
+    <p>案子內文 : </p>
     <textarea class="w-2/3 h-screen border-2 border-black" v-model="caseContent" rows="1" cols="50" wrap="physical" name="comments">
 
     </textarea>

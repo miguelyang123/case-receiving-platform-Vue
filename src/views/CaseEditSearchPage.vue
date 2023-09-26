@@ -129,11 +129,11 @@ export default {
   <!-- <h1>Speed接案網</h1> -->
   <!-- <p>Personal Info</p> -->
 
-  <p>Case Edit Page</p>
+  <p class="text-5xl">編輯發出的案子</p>
   <button class="custom-btn btn-5" @click="backPage">返回</button>
 
   <div id="app">
-    <table class="table ml-10">
+    <table class="table ml-48">
         <thead>
         </thead>
         <tbody>
