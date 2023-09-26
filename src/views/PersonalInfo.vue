@@ -19,13 +19,13 @@ export default {
   <!-- <h1>Speed接案網</h1> -->
   <!-- <p>Personal Info</p> -->
   
-  <h1>Personal Info</h1>
+  <h1 class="text-5xl">我的帳號</h1>
   <div class="frame">
-    <RouterLink class="custom-btn btn-5" to="/personalinfoedit"><span>編輯個人資料</span></RouterLink><br/>
-    <button class="custom-btn btn-5"><a href="/personal_info_upload"><span>上傳履歷</span></a></button><br/>
-    <RouterLink class="custom-btn btn-5" to="/case_edit_search_page"><span>編輯發出的案子</span></RouterLink><br/>
-    <RouterLink class="custom-btn btn-5" to="/case_only_search_page"><span>查看已接的案子</span></RouterLink><br/>
-    <RouterLink class="custom-btn btn-4" to="/managerpage"><span>管理者頁面</span></RouterLink><br/>
+    <RouterLink class="custom-btn btn-5 mb-4" to="/personalinfoedit"><span>編輯個人資料</span></RouterLink><br/>
+    <RouterLink class="custom-btn btn-5 mb-4" to="/personal_info_upload"><span>上傳履歷</span></RouterLink><br/>
+    <RouterLink class="custom-btn btn-5 mb-4" to="/case_edit_search_page"><span>編輯發出的案子</span></RouterLink><br/>
+    <RouterLink class="custom-btn btn-5 mb-4" to="/case_only_search_page"><span>查看已接的案子</span></RouterLink><br/>
+    <RouterLink class="custom-btn btn-4 mb-4" to="/managerpage"><span>管理者頁面</span></RouterLink><br/>
     
   </div>  
 </template>

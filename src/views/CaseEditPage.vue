@@ -332,15 +332,15 @@ export default {
 <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
   <!-- <h1>Speed接案網</h1> -->
   <!-- <p>Personal Info</p> -->
-  <p class="text-4xl w-96">案子修改畫面</p>
+  <p class="text-5xl">案子修改畫面</p>
   <button class="custom-btn btn-5" @click="backPage">返回</button>
   <div class="flex m-4 absolute top-40 right-10">
-    <div class="">
+    <div class="flex flex-col justify-center items-center text-center">
         <button class="custom-btn btn-5" @click="editCase">提交</button><br/>
         <!-- <button class="custom-btn btn-4"><a href="/case_edit_receive_user_page">接案人資訊</a></button><br/> -->
-        <RouterLink class="custom-btn btn-4" to="/case_edit_receive_user_page"><span>接案人資訊</span></RouterLink><br/>
+        <RouterLink class="custom-btn btn-4" to="/case_edit_receive_user_page"><span>接案人資訊</span></RouterLink>
         <p class="text-red-600">{{ currentStatus }}</p>
-        <p class="">案子上/下架</p>
+        <p class="mt-4">案子上/下架</p>
         <button v-if="onShelf === true" class="custom-btn btn-4" @click="onShelfChange" type="button">上架</button><br v-if="onShelf === true"/>
         <button v-if="onShelf === false" class="custom-btn btn-4" @click="onShelfChange" type="button">下架</button><br v-if="onShelf === false"/>
         <p class="">案子完成確認</p>
@@ -348,45 +348,61 @@ export default {
         <RouterLink class="custom-btn btn-4" to="/case_done_check_page"><span>確認</span></RouterLink><br/>
     </div>
   </div>
-  <div class="flex m-4">
-    <p>案子名稱: </p>
-    <input type="text" class="border-2 border-black" v-model="caseName">
+  <div class="flex mx-4">
+    <p class="mr-2">案子名稱 : </p>
+    <div>
+      <input type="text" class="border-2 border-black" v-model="caseName">
+      <p v-if="caseName == ''" class="text-red-600">案子名稱格式錯誤</p>
+      <p v-else class="text-white">ok</p>
+    </div>
   </div>
   <div class="flex">
     <div class="flex flex-col">
-        <!-- <div class="flex m-4"> -->
         <div class="flex m-4">
-            <p>案子預算: </p>
-            <input type="number" class="border-2 border-black" v-model="caseBudget">
+            <p class="mr-2">案子預算 : </p>
+            <div>
+              <input type="number" class="border-2 border-black" v-model="caseBudget">
+              <p v-if="!(caseBudget > 0)" class="text-red-600">案子預算格式錯誤</p>
+              <p v-else class="text-white">ok</p>
+            </div>
         </div>
         <div class="flex m-4">
-            <p>案子期限: </p>
-            <input type="date" class="border-2 border-black" v-model="caseDeadline">
+            <p class="mr-2">案子期限 : </p>
+            <div>
+              <input type="date" class="border-2 border-black" v-model="caseDeadline">
+              <p v-if="caseDeadline == null" class="text-red-600">案子期限格式錯誤</p>
+              <p v-else class="text-white">ok</p>
+            </div>
         </div>
     </div>
     <div class="flex flex-col">
         <div class="flex m-4">
-            <p>案子類型: </p>
+            <p class="mr-2">案子類型 : </p>
             <!-- <select v-model="caseCategory" name="" id=""> -->
             <!-- <select @change="categoryChange()"> -->
-            <select name="LeaveType" @change="categoryChange($event)" class="form-control border-2 border-black" v-model="categoryKey">
-              <option value="1">現場</option>
-              <option value="2">遠端</option>
-            </select>
+            <div>
+              <select name="LeaveType" @change="categoryChange($event)" class="form-control border-2 border-black" v-model="categoryKey">
+                <option value="1">現場</option>
+                <option value="2">遠端</option>
+              </select>
+              <p v-if="categoryKey == null" class="text-red-600">案子類型格式錯誤</p>
+              <p v-else class="text-white">ok</p>
+            </div>
         </div>
         <div class="flex m-4">
-            <p>案子地點: </p>
-            <select class="border-2 border-black" v-model="locationSelected" @change="locationChange($event)">
-              <option v-for="(item, index) in localList" :value=item.locationId :key="index">{{ item.locationName }}</option>
-            </select>
-        </div>
+            <p class="mr-2">案子地點 : </p>
+            <div>
+              <select class="border-2 border-black" v-model="locationSelected" @change="locationChange($event)">
+                <option v-for="(item, index) in localList" :value=item.locationId :key="index">{{ item.locationName }}</option>
+              </select>
+              <p v-if="locationSelected == null" class="text-red-600">案子地點格式錯誤</p>
+              <p v-else class="text-white">ok</p>
+            </div>
+          </div>
     </div>
-
-  <!-- <div class="flex m-4 absolute top-40 left-10"> -->
-    
   </div>
   <div class="m-4">
-    <p>案子內文: </p>
+    <p>案子內文 : </p>
     <textarea class="w-2/3 h-screen border-2 border-black" v-model="caseContent" rows="1" cols="50" wrap="physical" name="comments">
 
     </textarea>
