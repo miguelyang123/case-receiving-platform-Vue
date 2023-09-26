@@ -13,6 +13,7 @@ export default {
         return {
             
             user:{
+                uuid:"",
                 email:"",
                 pwd:"**********",
                 user_name:"",
@@ -51,7 +52,7 @@ export default {
                 return false;
             }
             axios.post("http://localhost:8080/api/edit_user",{
-                uuid:this.userData.uuid,
+                uuid:this.user.uuid,
                 email:this.user.email,
                 user_name:this.user.user_name,
                 phone:this.user.phone
@@ -62,10 +63,10 @@ export default {
                     this.setUserInfo(data.data.userInfo);
                     this.userData = this.getUserInfo();
                     this.user={
-                        email:this.userData.email,
+                        email:this.user.email,
                         pwd:"**********",
-                        user_name:this.userData.user_name,
-                        phone:this.userData.phone
+                        user_name:this.user.user_name,
+                        phone:this.user.phone
                     }
                 }else{
                     alert(data.data.message);
@@ -125,6 +126,7 @@ export default {
             console.log(res);
             if(res.data.code==="200"){
                 this.user={
+                    uuid:res.data.userInfo.uuid,
                     email:res.data.userInfo.email,
                     pwd:"**********",
                     user_name:res.data.userInfo.user_name,
@@ -230,7 +232,7 @@ export default {
         <h1 class="text-center text-3xl font-bold my-3">{{ editStatus.text }}</h1>
         <p class="text-center text-3xl my-3 text-[red]">{{ editStatus.meesage }}</p>
         <Icon :icon="editStatus.icon" :class="'my-6 mx-auto '+ editStatus.icon_style" width="120" />
-        <button v-if="editStatus.text==='修改失敗'" type="button" class="block mx-auto my-3 py-3 px-6 bg-[#FF6E6E] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="editPwdCheck=false">確定</button>
+        <button v-if="editStatus.text==='修改失敗'" type="button" class="block mx-auto my-3 py-3 px-6 bg-[#FF6E6E] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="editPwdCheck=false,bgc=false">確定</button>
     </div>
 
     <!-- 背景 -->

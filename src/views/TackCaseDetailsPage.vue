@@ -15,11 +15,51 @@ export default {
             // cassUser:JSON.parse(this.$route.query.thisUser),
 
             arrList:defineStore().thisCase,
-            caseUser:defineStore().caseUser
+            caseUser:defineStore().caseUser,
+
+            bgc:false,
+            tackCaseWindow:false,  // 確認接案視窗
+            tackCaseWindowCheck:false,  // 接案失敗
+            tackCaseWindowMessage:""
         }
     },
     methods:{
         ...mapActions(defineStore,["getCassUser"]),
+
+        tackCase(){
+            axios.get("http://localhost:8080/search_user/with_Input",{
+                params:{
+                    uuid:defineStore().userInfo.uuid
+                }
+            })
+            .then(data =>{
+                console.log(data.data);
+
+                if(data.data.code === "200"){
+                    if(!data.data.userInfoList[0].resumePdfPath){
+                        alert("未上傳履歷書，請先上傳履歷書才能接案子");
+                    }else{
+                        this.tackCaseWindow=true;
+                        this.bgc=true;
+                    }
+                }else{
+                    alert("請先登入");
+                    this.$router.push("/login_page");
+                }
+            })
+            .catch(err =>{
+                console.log(err);
+            })
+        },
+
+        tackCasePair(){
+            axios.post("http://localhost:8080/case_api/contractor_accept_case",{
+                params:{
+                    caseId:this.arrList.id,
+                    contractorUid:defineStore().userInfo.uuid
+                }
+            })
+        },
     },
     computed:{
         newArrList(){
@@ -65,9 +105,7 @@ export default {
                     {{ arrList.content }}
                 </div>
                 <div class=" text-center py-3">
-                    <RouterLink to="/">
-                        <button type="button" class=" text-white rounded-lg bg-[#FF6E6E] py-3 px-6 text-2xl font-bold hover:scale-105 active:scale-95"> 我要接案</button>
-                    </RouterLink>
+                    <button type="button" class=" text-white rounded-lg bg-[#FF6E6E] py-3 px-6 text-2xl font-bold hover:scale-105 active:scale-95" @click="tackCase"> 我要接案</button>
                 </div>
             </div>
         </div>
@@ -90,6 +128,24 @@ export default {
             </div>
         </div>
     </div>
+
+    <!-- 配對案子 -->   
+    <div v-if="tackCaseWindow" class="fixed top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 bg-[#FFFFFF] border-[black] border py-6 rounded-2xl z-10">
+        <h1 class="text-center text-3xl font-bold my-3 mx-32">是否要接案</h1>
+        <div class="flex justify-evenly mt-6">
+            <button type="button" class="py-3 px-6 bg-[#7e7e7e] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="bgc=false,tackCaseWindow=false">取消</button>
+            <button type="button" class="py-3 px-6 bg-[#FF6E6E] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="">確定</button>
+        </div>
+    </div>
+    <!-- 配對案子失敗 -->
+    <div v-if="tackCaseWindowCheck" class="fixed top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 bg-[#FFFFFF] border-[black] border py-6 px-32 rounded-2xl z-10">
+        <h1 class="text-center text-3xl font-bold my-3">接案失敗</h1>
+        <p class="text-center text-3xl my-3 text-[red]">{{ tackCaseWindowMessage }}</p>
+        <Icon icon="fluent-mdl2:status-error-full" class="my-6 mx-auto text-[red]" width="120" />
+        <button type="button" class="block mx-auto my-3 py-3 px-6 bg-[#FF6E6E] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="tackCaseWindowCheck=false,bgc=false">確定</button>
+    </div>
+    <!-- 背景 -->
+    <div v-if="bgc" class="fixed top-0 left-0 w-full h-[100vh] bg-[#00000083] z-0" @click="bgc=false,tackCaseWindowCheck=false,tackCaseWindow=false"></div>
 </template>
 
 <style lang="scss" scoped>
