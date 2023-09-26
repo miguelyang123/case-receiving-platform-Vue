@@ -20,7 +20,12 @@ export default {
             bgc:false,
             tackCaseWindow:false,  // 確認接案視窗
             tackCaseWindowCheck:false,  // 接案失敗
-            tackCaseWindowMessage:""
+            pairStatus:{
+                text:"",
+                icon:"icon-park-solid:check-one",
+                icon_style:"",
+                tackCaseWindowMessage:""
+            },
         }
     },
     methods:{
@@ -54,15 +59,43 @@ export default {
 
         tackCasePair(){
             axios.post("http://localhost:8080/case_api/contractor_accept_case",{
-                params:{
-                    caseId:this.arrList.id,
-                    contractorUid:defineStore().userInfo.uuid
+                caseId:this.arrList.id,
+                contractorUid:defineStore().userInfo.uuid
+            })
+            .then(data =>{
+                console.log(data.data);
+                this.tackCaseWindowCheck=true;
+                this.tackCaseWindow=false;
+
+                if(data.data.code==="200"){
+                    this.pairStatus = {
+                        text:"接案成功",
+                        icon:"icon-park-solid:check-one",
+                        icon_style:"text-[green]",
+                        tackCaseWindowMessage:""
+                    }
+
+                    setTimeout(()=>{
+                        this.tackCaseWindowCheck=false;
+                        this.bgc=false;
+                    },"2000");
+
+                }else{
+                    this.pairStatus = {
+                        text:"接案失敗",
+                        icon:"fluent-mdl2:status-error-full",
+                        icon_style:"text-[red]",
+                        tackCaseWindowMessage:data.data.message
+                    }
                 }
+            })
+            .catch(err =>{
+                console.log(err);
             })
         },
     },
     computed:{
-        newArrList(){
+         newArrList(){
             let arr = {};
 
             Object.entries(this.arrList).forEach((item,index) =>{
@@ -134,15 +167,15 @@ export default {
         <h1 class="text-center text-3xl font-bold my-3 mx-32">是否要接案</h1>
         <div class="flex justify-evenly mt-6">
             <button type="button" class="py-3 px-6 bg-[#7e7e7e] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="bgc=false,tackCaseWindow=false">取消</button>
-            <button type="button" class="py-3 px-6 bg-[#FF6E6E] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="">確定</button>
+            <button type="button" class="py-3 px-6 bg-[#FF6E6E] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="tackCasePair">確定</button>
         </div>
     </div>
     <!-- 配對案子失敗 -->
     <div v-if="tackCaseWindowCheck" class="fixed top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 bg-[#FFFFFF] border-[black] border py-6 px-32 rounded-2xl z-10">
-        <h1 class="text-center text-3xl font-bold my-3">接案失敗</h1>
-        <p class="text-center text-3xl my-3 text-[red]">{{ tackCaseWindowMessage }}</p>
-        <Icon icon="fluent-mdl2:status-error-full" class="my-6 mx-auto text-[red]" width="120" />
-        <button type="button" class="block mx-auto my-3 py-3 px-6 bg-[#FF6E6E] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="tackCaseWindowCheck=false,bgc=false">確定</button>
+        <h1 class="text-center text-3xl font-bold my-3">{{ pairStatus.text }}</h1>
+        <p class="text-center text-3xl my-3 text-[red]">{{ pairStatus.tackCaseWindowMessage }}</p>
+        <Icon :icon="pairStatus.icon" :class="'my-6 mx-auto '+ pairStatus.icon_style" width="120" />
+        <button v-if="pairStatus.text==='接案失敗'" type="button" class="block mx-auto my-3 py-3 px-6 bg-[#FF6E6E] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="tackCaseWindowCheck=false,bgc=false">確定</button>
     </div>
     <!-- 背景 -->
     <div v-if="bgc" class="fixed top-0 left-0 w-full h-[100vh] bg-[#00000083] z-0" @click="bgc=false,tackCaseWindowCheck=false,tackCaseWindow=false"></div>
