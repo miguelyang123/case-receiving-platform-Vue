@@ -5,175 +5,285 @@ import axios from 'axios';
 import { mapState, mapActions } from "pinia";
 // 匯入資料庫
 import dataStore from "../store/dataStore";
+import { Icon } from '@iconify/vue';
 
-export default {  
-    data() {
-        return {
+export default {
+	components: {
+		Icon,
+	},
+	data() {
+		return {
 
-            uuid: "bdcd914c-43ce-42d3-983c-00acd5694fc4",
-            initiator: "bdcd914c-43ce-42d3-983c-00acd5694fc4",
+			mapSelect:{
+                mapShow: false,
+                showAllMap: [],
+                thisMap: "地區不限",
+                thisMapId:"",
 
-            // data: [
-            //     {
-            //         receiveCaseCount: 0,
-            //         caseName: "漆油漆",
-            //         caseDeadLine: "2023-09-23 00:00:00",
-            //         onShelf: true,
-            //         receiveCaseStatus: 0
-            //     },
-            //     {
-            //         receiveCaseCount: 2,
-            //         caseName: "寫程式",
-            //         caseDeadLine: "2023-09-23 00:00:00",
-            //         onShelf: true,
-            //         receiveCaseStatus: 0
-            //     },
-            // ],
-            localList: null,
-            receiveAccountList: [
-              {
-                id: "bdcd914d-43ce-42d3-983c-00acd5694fc4",
-              },
-              {
-                id: "bdcd914e-43ce-42d3-983c-00acd5694fc4",
-              },
-            ]
-      };
-    },
-    computed: {
-      //參數 1.資料庫 2.要取用的 state / getters
-      ...mapState(dataStore, ["numTest", "caseEditId", "userInfo"]),
-    },
-    methods: {
-        ...mapActions(dataStore, ['setCaseEditId']),
-        pwdflagTrue() {
-            this.pwdFlag = true;
-        },
-        pwdflagFalse() {
-            this.pwdFlag = false;
-        },
-        registerRouterPush() {
-            router.push("/register_page")
-        },
-        findCaseWithInput(){
-            console.log("01");
-        //   axios.get('http://localhost:8080/search_case/with_param?initiator=bdcd914c-43ce-42d3-983c-00acd5694fc4', {
-          axios.get('http://localhost:8080/search_case/with_param?initiator='+this.caseEditId
-            // responseType: 'blob', // important
-          )
-          .then((response) => {
-            console.log("02");
-            console.log("response: "+response);
-            console.log("response.data.caseList: "+response.data.caseList);
-            this.responseLocal = response;
-            console.log("code: "+this.responseLocal.data.code);
-            console.log("message: "+this.responseLocal.data.message);
-            console.log("caseList: "+this.responseLocal.data.caseList);
-            
-            if(this.responseLocal.data.code === "200"){
-                
-            console.log("03");
-              this.localList = this.responseLocal.data.caseList;
-                console.log("localList: "+this.localList);
+                onsite:"",
+                remote:""
+            },
+
+			// 找到的資訊
+			allUsers: [],
+			pageAllUsers: [],
+
+			showPage: 10,  // 顯示幾筆
+			page: 1,      // 當前頁數
+			allPage: 2,  // 總頁數
+			pageNum: 5    // 分頁數量
+		};
+	},
+	methods: {
+		...mapActions(dataStore, ["setCassUser"]),
+
+		thisCase(item) {
+			axios.get("http://localhost:8080/search_user/with_Input", {
+				params: {
+					uuid: item.initiator
+				}
+			})
+			.then(data => {
+				console.log(data);
+
+				if (data.data.code === "200") {
+
+					// this.$router.push({
+					//     path:'tackcasedetailspage',
+					//     query:{
+					//         thisList:JSON.stringify(item),
+					//         thisUser:JSON.stringify(data.data.userInfoList)
+					//     }
+					// })
+
+					this.setCassUser(data.data.userInfoList, item);
+					this.$router.push("/case_only_search_page/case_only_search_details_page");
+				}
+			})
+			// this.setCaseThisData(JSON.stringify(item));
+		},
+
+		// 上一頁
+        pageBlank() {
+            if (this.page !== 1) {
+                this.page -= 1;
+                this.content();
             }
-          });
         },
-        // countReceiveAccount(){
-
-        //   this.localList.
-
-        // },
-        toEdit(id){
-
-          // console.log("id: "+id);
-          // 用pinia存?(變數不能在這改(請用 pinia的方法帶變數(做回傳)))
-          // this.caseEditId = id;
-          // console.log("this.caseEditId: "+this.caseEditId);
-          this.setCaseEditId(id);
-          router.push("/case_edit_page");
-
-        },
-        backPage(){
-          router.push("/personal_info");
+        //下一頁
+        pageNext() {
+            if (this.page !== this.allPage) {
+                this.page += 1;
+                this.content();
+            }
         },
 
-      },
-      // beforeCreate() {
-      //   this.findCaseWithInput();
-  
-      // },
-      // created() {
-      //   this.findCaseWithInput();
+        // 製作分頁內容
+        content(){
+            let pageArrList = [];
+            
+            for(let i=(this.page-1)*this.showPage;i<this.allUsers.length;i++){
+                if (pageArrList.length>=this.showPage) {
+                    break;
+                }
+                pageArrList.push(this.allUsers[i]);
+            }
+            // this.$emit("pageArr",pageArrList);
+            this.pageAllUsers = pageArrList;
+        },
 
-      // },
-      mounted() {
+		// 抓取篩選與全部內容
+        searchAllData(){
+            // 所有案子變例
+            axios.get("http://localhost:8080/search_case/with_user_id",{
+                params:{
+                    userId:dataStore().userInfo.uuid
+                }
+            })
+            .then(data =>{
+                this.allUsers = data.data.caseList;
+
+                // Object.values(this.allUsers).forEach(item1 =>{
+                //     Object.values(this.mapSelect.showAllMap).forEach(item2 =>{
+                //         if(item1.location === item2.locationId){
+                //             item1.location=item2.locationName;
+                //         }
+                //     })
+                // })
+
+                this.allUsers.map(item1 =>{
+                    Object.values(this.mapSelect.showAllMap).forEach(item2 =>{
+                        if(item1.location === item2.locationId){
+                           return item1.location=item2.locationName;
+                        }
+                    })
+                })
+
+                console.log(data.data.caseList);
+                console.log(this.mapSelect.showAllMap);
+
+                this.allPage = Math.ceil((this.allUsers.length)/this.showPage); 
+                this.content();
+                
+            })
+            .catch(err =>{
+                console.log(err);
+            })
+        },
+
+		backPage(){
+			router.push("/personal_info");
+		},
+	},
+
+	computed:{
+		pageNumCheck() {
+
+			let fistPage, endPage;  // 分頁開始, 分頁結束
+			let arr = [];
+
+			if (this.allPage <= this.pageNum) {  // 當總頁數小於設定頁數
+				fistPage = 1;
+				endPage = this.allPage;
+			} else if (this.page <= Math.floor(this.pageNum / 2) + 1) {   // 當前頁數 <= 設定頁數/2 +1
+				fistPage = 1;
+				endPage = this.pageNum;
+			} else if (this.page + Math.floor(this.pageNum / 2) >= this.allPage) {  // 當前頁數 + 設定頁數/2 >= 總頁數
+				endPage = this.allPage;
+				fistPage = this.allPage - this.pageNum + 1;
+			} else {
+				fistPage = this.page - Math.floor(this.pageNum / 2);
+				endPage = this.page + Math.floor(this.pageNum / 2);
+			}
+
+			for (let i = fistPage; i <= endPage; i++) {
+				arr.push(i);
+			}
+
+			this.content();
+
+			return arr;
+		},
+	},
+
+	created(){
+		// 所有城市變例
+        let locationAPI = ["onsite","remote"];
         
-        console.log("this.userInfo: "+this.userInfo);
-        console.log("this.userInfo.uuid: "+this.userInfo.uuid);
-        this.setCaseEditId(this.userInfo.uuid);
+        locationAPI.forEach(item =>{
+            axios.get("http://localhost:8080/location_api/get_"+item)
+            .then(data =>{
+                let arr=[];
+                if(data.data.code==="200"){
 
-        this.findCaseWithInput();
+                    Object.values(data.data.locationList).forEach(item => {
+                        arr.push(item);
+                    })
 
-      },
-      // updated() {
-      //   this.findCaseWithInput();
+                    if(item==="onsite"){
+                        this.mapSelect.onsite =arr;
+                        this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(this.mapSelect.onsite);
+                    }else{
+                        this.mapSelect.remote = arr;
+                        this.mapSelect.showAllMap = this.mapSelect.showAllMap.concat(this.mapSelect.remote);
+                    }
 
-      // },
-      
+                    console.log(arr);
+                }
+            })
+            .catch(err =>{
+                console.log(err);
+            })
+        });
+
+		this.searchAllData();
+	},
 }
-
 </script>
 
 <template>
-<link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
-  <!-- <h1>Speed接案網</h1> -->
-  <!-- <p>Personal Info</p> -->
+	<div class="w-[85%] mx-auto py-6 mb-[10rem]">
 
-  <p>Case Edit Page</p>
-  <button @click="backPage">返回</button>
+		<button class="custom-btn btn-5" @click="backPage">返回</button>
 
-  <div id="app">
-    <table class="table ml-10">
-        <thead>
-        </thead>
-        <tbody>
-        <tr>
-            <td class="border-2 border-black">操作</td>
-            <td class="border-2 border-black">接案人數</td>
-            <td class="border-2 border-black">案子名稱</td>
-            <td class="border-2 border-black">案子到期日</td>
-            <td class="border-2 border-black">上/下架</td>
-            <td class="border-2 border-black">接案狀態</td>
-        </tr>
-        <tr v-for="(item, key) in localList" :key="key">
-            <td class="border-2 border-black"><button @click="toEdit(item.id)">編輯</button></td>
-            <td class="border-2 border-black">?</td>
-            <td class="border-2 border-black">{{ item.caseName }}</td>
-            <td class="border-2 border-black">{{ item.deadline }}</td>
-            <td class="border-2 border-black">{{ item.onShelf }}</td>
-            <td class="border-2 border-black">{{ item.currentStatus }}</td>
-        </tr>
-        </tbody>
-    </table>
-  </div>
+		<h1 class="text-3xl font-bold" style="margin-block: 2rem 3rem;writing-mode: horizontal-tb;">已接的案子</h1>
+		<div class=" relative cursor-pointer" @click="thisCase(item)" v-for="(item, index) in pageAllUsers">
+			<h1 class=" font-bold text-xl">{{ item.caseName }}</h1>
+			<div class="flex">
+				<p class="text-red-600 font-bold text-lg">{{ item.budget }}</p>
+				<div class="flex items-center ml-4">
+					<Icon width="25" icon="mdi:map-marker" class="text-[#EF879A]" />
+					<p class="text-[#7F7F7F] ml-2 font-bold text-lg">{{ item.location }}</p>
+				</div>
+				<div class="flex items-center ml-4">
+					<Icon width="25" icon="material-symbols:date-range" class="text-[#545454]" />
+					<p class="text-[#7F7F7F] ml-2 font-bold text-lg">{{ item.deadline.split("T")[0] }}</p>
+					<!-- item.deadline.toLocaleDateString() -->
+				</div>
+			</div>
 
+			<!-- truncate 多行文本溢出省略顯示 -->
+			<!-- CSS
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+          -->
+			<p class=" text-xl font-bold py-6 pl-6 pr-12 whitespace-nowrap truncate">{{ item.content }}</p>
+
+			<div class=" text-end py-3">
+				<RouterLink to="/">
+					<button type="button"
+						class=" text-white rounded-lg bg-[#FF6E6E] py-3 px-6 mr-12 text-2xl font-bold hover:scale-105 active:scale-95">詳細資訊</button>
+				</RouterLink>
+			</div>
+			<hr class="my-6 border-[#cecece]">
+		</div>
+
+		<div v-if="pageAllUsers.length <= 0" class="text-center">
+			<h1 class="text-2xl font-bold my-6">未搜尋到你想找的案子</h1>
+			<p class="text-xl">你可以嘗試更換你的篩選條件或關鍵字</p>
+		</div>
+
+		<div v-if="pageAllUsers.length > 0" class="flex justify-end items-end">
+			<button v-if="page !== 1" type="button" class="pageBtn" @click="pageBlank()">上一頁</button>
+
+			<button v-if="page > Math.floor(this.pageNum / 2) + 1" type="button" class="pageBtn"
+				@click="page = 1">1</button>
+			<div v-if="page > Math.floor(this.pageNum / 2) + 2" type="button" class="mx-3 text-lg font-bold">...</div>
+
+			<button type="button" :class="{ 'pageBtn': true, 'bg-[#ffc8d1] text-[#E12D4A]': index === page }"
+				v-for="(index) in pageNumCheck" @click="page = index">{{ index }}</button>
+
+			<div v-if="page + Math.floor(this.pageNum / 2) + 1 < allPage" type="button"
+				class="mx-3 text-[1.125rem] font-bold">
+				...</div>
+			<button v-if="page + Math.floor(this.pageNum / 2) < allPage" type="button" class="pageBtn"
+				@click="page = allPage">{{ allPage }}</button>
+
+			<button v-if="page !== allPage" type="button" class="pageBtn" @click="pageNext()">下一頁</button>
+		</div>
+	</div>
 </template>
 
 <style lang="scss" scoped>
-  body {
-  background: #e0e5ec;
+body {
+	background: #e0e5ec;
 }
 
-.frame {
-  width: 90%;
-  margin: 4px auto;
-  text-align: center;
-  // display: flex;
+// 分頁
+.pageBtn {
+    border: gray 2px solid;
+    padding: 0.75rem;
+    margin: 0 0.25rem;
+    font-size: 1.125rem;
+    line-height: 1.125rem;
+    font-weight: bold;
+
+    &:hover {
+        background: #ffc8d1;
+    }
 }
-button {
-  // margin: 20px;
-  margin: 4px;
-}
+
 .custom-btn {
   width: 130px;
   height: 40px;
@@ -191,77 +301,6 @@ button {
    7px 7px 20px 0px rgba(0,0,0,.1),
    4px 4px 5px 0px rgba(0,0,0,.1);
   outline: none;
-}
-
-/* 4 */
-.btn-4 {
-  background-color: #4dccc6;
-background-image: linear-gradient(315deg, #4dccc6 0%, #96e4df 74%);
-  line-height: 42px;
-  padding: 0;
-  border: none;
-}
-.btn-4:hover{
-  background-color: #89d8d3;
-background-image: linear-gradient(315deg, #89d8d3 0%, #03c8a8 74%);
-}
-.btn-4 span {
-  position: relative;
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-.btn-4:before,
-.btn-4:after {
-  position: absolute;
-  content: "";
-  right: 0;
-  top: 0;
-   box-shadow:  4px 4px 6px 0 rgba(255,255,255,.9),
-              -4px -4px 6px 0 rgba(116, 125, 136, .2), 
-    inset -4px -4px 6px 0 rgba(255,255,255,.9),
-    inset 4px 4px 6px 0 rgba(116, 125, 136, .3);
-  transition: all 0.3s ease;
-}
-.btn-4:before {
-  height: 0%;
-  width: .1px;
-}
-.btn-4:after {
-  width: 0%;
-  height: .1px;
-}
-.btn-4:hover:before {
-  height: 100%;
-}
-.btn-4:hover:after {
-  width: 100%;
-}
-.btn-4 span:before,
-.btn-4 span:after {
-  position: absolute;
-  content: "";
-  left: 0;
-  bottom: 0;
-  box-shadow:  4px 4px 6px 0 rgba(255,255,255,.9),
-              -4px -4px 6px 0 rgba(116, 125, 136, .2), 
-    inset -4px -4px 6px 0 rgba(255,255,255,.9),
-    inset 4px 4px 6px 0 rgba(116, 125, 136, .3);
-  transition: all 0.3s ease;
-}
-.btn-4 span:before {
-  width: .1px;
-  height: 0%;
-}
-.btn-4 span:after {
-  width: 0%;
-  height: .1px;
-}
-.btn-4 span:hover:before {
-  height: 100%;
-}
-.btn-4 span:hover:after {
-  width: 100%;
 }
 
 /* 5 */
@@ -305,38 +344,4 @@ background: linear-gradient(0deg, rgba(255,27,0,1) 0%, rgba(251,75,2,1) 100%);
   width:100%;
   transition:800ms ease all;
 }
-
-.uploader-example {
-    width: 880px;
-    padding: 15px;
-    margin: 40px auto 0;
-    font-size: 12px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .4);
-  }
-  .uploader-example .uploader-btn {
-    margin-right: 4px;
-  }
-  .uploader-example .uploader-list {
-    max-height: 440px;
-    overflow: auto;
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
-
-  .currentPage {
-    cursor: pointer;
-    color: #8c8e92;
-  }
-  .arrow{
-    position:fixed;
-    top: 0px;
-    left: 0px;
-    z-index: 2;
-    width: 100%;
-    background-color: #191919;
-    padding: 12px 0;
-    margin: 0;
-    text-align: center;
-  }
-
 </style>

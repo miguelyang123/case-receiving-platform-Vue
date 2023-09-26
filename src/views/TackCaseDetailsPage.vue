@@ -153,10 +153,13 @@ export default {
                 <p>{{ item }}</p>
             </div>
             <div>
-                <p class="font-bold my-1 text-xl"><span class="bg-[#FF6E6E]">&nbsp;</span>案主評價</p>
-                <div class="ratings">
-                    <div class="empty_star">★★★★★</div>
-                    <div :class="'full_star'" :style="'width:'+caseUser[0].rating*20+'%'">★★★★★</div>
+                <p class="font-bold my-1 text-xl"><span class="bg-[#FF6E6E]">&nbsp;</span> 案主評價</p>
+                <div class="flex items-center">
+                     <div class="ratings">
+                        <div class="empty_star">★★★★★</div>
+                        <div :class="'full_star'" :style="'width:'+caseUser[0].rating*20+'%'">★★★★★</div>
+                    </div>
+                    <p class="text-2xl mx-3 font-bold">{{ caseUser[0].rating }}</p>
                 </div>
             </div>
         </div>
