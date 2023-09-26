@@ -53,9 +53,9 @@ const router = createRouter({
         if (to.meta.isAuth) {
           axios.get('http://localhost:8080/api/get_balance', { withCredentials: true })
             .then(response => {
-              const logoutResponseData = response;
-              const logoutResponseDataCode = logoutResponseData.data.code;
-              if (logoutResponseDataCode === "200") {
+              const getBalanceResponseData = response;
+              const getBalanceResponseDataCode = getBalanceResponseData.data.code;
+              if (getBalanceResponseDataCode === "200") {
                 next();
               } else {
                 alert("請先登入!");
@@ -79,9 +79,9 @@ const router = createRouter({
         if (to.meta.isAuth) {
           axios.get('http://localhost:8080/api/get_balance', { withCredentials: true })
             .then(response => {
-              const logoutResponseData = response;
-              const logoutResponseDataCode = logoutResponseData.data.code;
-              if (logoutResponseDataCode === "200") {
+              const getBalanceResponseData = response;
+              const getBalanceResponseDataCode = getBalanceResponseData.data.code;
+              if (getBalanceResponseDataCode === "200") {
                 next();
               } else {
                 alert("請先登入!");
@@ -116,9 +116,9 @@ const router = createRouter({
         if (to.meta.isAuth) {
           axios.get('http://localhost:8080/api/get_balance', { withCredentials: true })
             .then(response => {
-              const logoutResponseData = response;
-              const logoutResponseDataCode = logoutResponseData.data.code;
-              if (logoutResponseDataCode === "200") {
+              const getBalanceResponseData = response;
+              const getBalanceResponseDataCode = getBalanceResponseData.data.code;
+              if (getBalanceResponseDataCode === "200") {
                 next();
               } else {
                 alert("請先登入!");
@@ -142,11 +142,11 @@ const router = createRouter({
         if (to.meta.isAuth) {
           axios.get('http://localhost:8080/api/get_balance', { withCredentials: true })
             .then(response => {
-              const logoutResponseData = response;
-              const logoutResponseDataCode = logoutResponseData.data.code;
-              if (logoutResponseDataCode === "200") {
-                const logoutResponseDataAdministrator = logoutResponseData.data.userInfo.administrator;
-                if (!logoutResponseDataAdministrator) {
+              const getBalanceResponseData = response;
+              const getBalanceResponseDataCode = getBalanceResponseData.data.code;
+              if (getBalanceResponseDataCode === "200") {
+                const getBalanceResponseDataAdministrator = getBalanceResponseData.data.userInfo.administrator;
+                if (!getBalanceResponseDataAdministrator) {
                   alert("檢測到非管理者身分，無法進入該網頁!");
                   next("/personal_info");
                 }
