@@ -175,7 +175,7 @@ export default {
         })
         .catch(function (e) {
           console.log(e); // "oh, no!"
-          alert("pdf未上傳!");
+          alert("履歷書未上傳!");
         });
         },
         addContractors(uuid){
@@ -221,7 +221,7 @@ export default {
                       // console.log("add case successed!");
                       // this.localList = this.responseLocal.data.locationList;
                       alert("案件編輯成功!");
-                      router.push("/");
+                      router.push("/case_edit_page");
                     }
                     else{
                       console.log("edit case failed!");
