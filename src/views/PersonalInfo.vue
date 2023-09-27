@@ -1,15 +1,27 @@
 <script>
 import { RouterLink, RouterView} from 'vue-router';
+import { mapState, mapActions } from "pinia";
+// 匯入資料庫
+import dataStore from "../store/dataStore";
 export default {
   components:{
     RouterLink,
   },
-
+  computed: {
+      //參數 1.資料庫 2.要取用的 state / getters
+      ...mapState(dataStore, ["userInfo"]),
+    },
   data() {
     return {
-      
+      isAdministrator :false
     }
   },
+  mounted() {
+    const {userInfo} = this;
+    if(userInfo){
+          this.isAdministrator = userInfo.administrator;
+    }
+  }
 };
 
 </script>
@@ -25,7 +37,7 @@ export default {
     <RouterLink class="custom-btn btn-5 mb-4" to="/personal_info_upload"><span>上傳履歷</span></RouterLink><br/>
     <RouterLink class="custom-btn btn-5 mb-4" to="/case_edit_search_page"><span>編輯發出的案子</span></RouterLink><br/>
     <RouterLink class="custom-btn btn-5 mb-4" to="/case_only_search_page"><span>查看已接的案子</span></RouterLink><br/>
-    <RouterLink class="custom-btn btn-4 mb-4" to="/managerpage"><span>管理者頁面</span></RouterLink><br/>
+    <RouterLink class="custom-btn btn-4 mb-4" to="/managerpage" v-show="isAdministrator"><span>管理者頁面</span></RouterLink><br/>
     
   </div>  
 </template>

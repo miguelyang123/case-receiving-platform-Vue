@@ -16,6 +16,7 @@ export default {
 
             arrList:defineStore().thisCase,
             caseUser:defineStore().caseUser,
+            isLogin: false,
 
             bgc:false,
             tackCaseWindow:false,  // 確認接案視窗
@@ -108,9 +109,14 @@ export default {
             return arr;
         }
     },
-    // mounted(){
-    //     this.arrList = JSON.parse(this.getCaseThisData());
-    // }
+    mounted(){
+        // this.arrList = JSON.parse(this.getCaseThisData());
+
+        if(defineStore().userInfo){
+            this.isLogin = true;
+        }
+    }
+
 }
 </script>
 <template>
@@ -138,7 +144,12 @@ export default {
                     {{ arrList.content }}
                 </div>
                 <div class=" text-center py-3">
-                    <button type="button" class=" text-white rounded-lg bg-[#FF6E6E] py-3 px-6 text-2xl font-bold hover:scale-105 active:scale-95" @click="tackCase"> 我要接案</button>
+                    <!-- not login -->
+                    <p class=" text-red-500 " v-show="!isLogin" >請先登入</p>
+                    <button type="button" class=" text-white rounded-lg bg-[#929292] py-3 px-6 text-2xl font-bold   " v-show="!isLogin"> 我要接案</button>
+                    <!-- is login -->
+                    <button type="button" class=" text-white rounded-lg bg-[#FF6E6E] py-3 px-6 text-2xl font-bold hover:scale-105 active:scale-95" @click="tackCase" v-show="isLogin"> 我要接案</button>
+                    
                 </div>
             </div>
         </div>

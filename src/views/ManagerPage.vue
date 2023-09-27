@@ -1,6 +1,10 @@
 <script>
 // import PageVue from "../components/Page.vue";
-import { mapActions } from 'pinia';
+// import { mapActions } from 'pinia';
+// pinia 全域資料庫
+import { mapState, mapActions } from "pinia";
+// 匯入資料庫
+import dataStore from "../store/dataStore";
 import  defineStore  from '../store/dataStore';
 import { Icon } from '@iconify/vue';
 import axios from 'axios';
@@ -214,8 +218,20 @@ export default {
         })
         .then( data => {
             console.log(data);
-            this.dataUser = data.userInfoList;
+            // this.dataUser = data.userInfoList;
             
+            data.userInfoList.forEach(item => {
+                // ?
+                // console.log(item.uuid);
+                // console.log(this.userInfo.uuid);
+                if(item.uuid != this.userInfo.uuid){
+                    // console.log("push!");
+                    this.dataUser.push(item);
+                }
+                data.userInfoList = this.dataUser;
+
+            });
+
             if(data.code==="200"){
                 this.showContent(data);   
             }
@@ -226,26 +242,9 @@ export default {
             console.log(errorTest);
         })  
     },
-    created(){
-        // 檢測登入狀態
-        axios.get("http://localhost:8080/api/get_balance",{ withCredentials: true })
-        .then(res => {
-            console.log(res);
-            if(res.data.code==="200"){
-                if(!res.data.userInfo.administrator){
-                    alert("檢測到非管理者身分，無法進入該網頁");
-                    router.push("/");
-                }
-            }else{
-                router.push("/login_page");
-            }
-        })
-        .catch(err => {
-            console.log(err);
-        })
-    },
-
     computed: {
+        ...mapState(dataStore, ["userInfo"]),
+    
         pageNumCheck() {
 
             let fistPage, endPage;  // 分頁開始, 分頁結束

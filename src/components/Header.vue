@@ -13,6 +13,10 @@ export default {
             logoutResponseData: null,
             logoutResponseDataCode: "",
             logoutResponseDataMessage: "",
+            //get_balance 後端回傳資料
+            getBalanceResponseData: null,
+            getBalanceResponseDataCode: "",
+            getBalanceResponseDataMessage: "",
         }
     },
     comments: {
@@ -22,7 +26,7 @@ export default {
         ...mapState(dataStore, ["isLogin", "userName"]),
     },
     methods: {
-        ...mapActions(dataStore, ["setIsLoginTrue", "setIsLoginFalse", "clearPersist"]),
+        ...mapActions(dataStore, ["setIsLoginTrue", "setIsLoginFalse", "clearPersist","setUserName","setUserInfo"]),
         login() {
             router.push("/login_page");
         },
@@ -37,8 +41,6 @@ export default {
                         this.setIsLoginFalse();
                         this.clearPersist();
                         router.push("/");
-                    } else {
-                        alert(this.logoutResponseDataMessage);
                     }
                 })
                 .catch(error => {
@@ -52,6 +54,25 @@ export default {
             router.push("/register_page");
         }
     },
+    mounted() {
+        axios.get('http://localhost:8080/api/get_balance', { withCredentials: true })
+            .then(response => {
+                this.getBalanceResponseData = response;
+                this.getBalanceResponseDataCode = this.getBalanceResponseData.data.code;
+                this.getBalanceResponseDataMessage = this.getBalanceResponseData.data.message;
+                if (this.getBalanceResponseDataCode === "400") {
+                    this.setIsLoginFalse();
+                    this.clearPersist();
+                } else {
+                    this.setUserInfo(userInfo);  //設置 userInfo
+                    this.setUserName(userName);
+                    this.setIsLoginTrue();
+                }
+            })
+            .catch(error => {
+               
+            });
+    },
 }
 </script>
 
@@ -61,7 +82,7 @@ export default {
             <div class=" flex items-baseline">
                 <h1 class="text-4xl font-bold">Speed接案網</h1>
                 <h2 class="mx-6 font-bold">你的專案，我的專長</h2>
-            </div> 
+            </div>
             <RouterLink class="headerBtn" to="/case_upload_page">我要發案</RouterLink>
         </div>
         <div class="flex px-16 py-3 bg-[#FF6E6E] justify-between">
