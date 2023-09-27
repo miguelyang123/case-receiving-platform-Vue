@@ -6,7 +6,7 @@ import { Icon } from '@iconify/vue';
 import axios from 'axios';
 // import PageVue from "../components/Page.vue";
 export default {
-    props:["searchTypeAll"],
+
     components: {
         RouterLink,Icon,
     },
@@ -95,6 +95,7 @@ export default {
                     this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(this.mapSelect.remote);
                 }
             }
+            this.searchAllData(this.searchAPI());
         },
 
         changeMap(index1) {
@@ -185,7 +186,13 @@ export default {
             .catch(err =>{
                 console.log(err);
             })
-        }
+        },
+
+        searchAPI(){
+            let searchTypeAll = JSON.parse(this.$route.query.searchTypeAll);
+            this.thisKeyWord = searchTypeAll.searchKeyword;
+            return searchTypeAll.locationId;
+        },
     },
 
     computed: {
@@ -247,7 +254,7 @@ export default {
             })
         });
 
-        this.searchAllData("");
+        this.searchAllData(this.searchAPI());
     }
 }
 </script>
