@@ -168,6 +168,27 @@ const router = createRouter({
       path: "/case_upload_page",
       name: "CaseUploadPage",
       component: () => import("../views/CaseUploadPage.vue"),
+      meta: {
+        isAuth: true,
+      },
+      beforeEnter: (to, from, next) => {
+        if (to.meta.isAuth) {
+          axios.get('http://localhost:8080/api/get_balance', { withCredentials: true })
+            .then(response => {
+              const getBalanceResponseData = response;
+              const getBalanceResponseDataCode = getBalanceResponseData.data.code;
+              if (getBalanceResponseDataCode === "200") {
+                next();
+              } else {
+                alert("請先登入!");
+                next("/login_page");
+              }
+            })
+            .catch(error => {
+              alert(error);
+            });
+        }
+      }
     },
     {
       path: "/case_edit_search_page",
