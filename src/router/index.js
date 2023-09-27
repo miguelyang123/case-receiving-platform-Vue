@@ -7,7 +7,7 @@ import LoginPage from "../views/LoginPage.vue";
 import IdentityAuthentication from "../views/IdentityAuthentication.vue";
 import ResetPassword from "../views/ResetPassword.vue";
 import FinishResetPassword from "../views/FinishResetPassword.vue";
-import axios from 'axios';
+import axios from "axios";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -49,24 +49,6 @@ const router = createRouter({
       meta: {
         isAuth: true,
       },
-      beforeEnter: (to, from, next) => {
-        if (to.meta.isAuth) {
-          axios.get('http://localhost:8080/api/get_balance', { withCredentials: true })
-            .then(response => {
-              const logoutResponseData = response;
-              const logoutResponseDataCode = logoutResponseData.data.code;
-              if (logoutResponseDataCode === "200") {
-                next();
-              } else {
-                alert("請先登入!");
-                next("/login_page");
-              }
-            })
-            .catch(error => {
-              alert(error);
-            });
-        }
-      }
     },
     {
       path: "/personal_info_upload",
@@ -75,24 +57,6 @@ const router = createRouter({
       meta: {
         isAuth: true,
       },
-      beforeEnter: (to, from, next) => {
-        if (to.meta.isAuth) {
-          axios.get('http://localhost:8080/api/get_balance', { withCredentials: true })
-            .then(response => {
-              const logoutResponseData = response;
-              const logoutResponseDataCode = logoutResponseData.data.code;
-              if (logoutResponseDataCode === "200") {
-                next();
-              } else {
-                alert("請先登入!");
-                next("/login_page");
-              }
-            })
-            .catch(error => {
-              alert(error);
-            });
-        }
-      }
     },
     {
       path: "/tackcasepage",
@@ -112,24 +76,6 @@ const router = createRouter({
       meta: {
         isAuth: true,
       },
-      beforeEnter: (to, from, next) => {
-        if (to.meta.isAuth) {
-          axios.get('http://localhost:8080/api/get_balance', { withCredentials: true })
-            .then(response => {
-              const logoutResponseData = response;
-              const logoutResponseDataCode = logoutResponseData.data.code;
-              if (logoutResponseDataCode === "200") {
-                next();
-              } else {
-                alert("請先登入!");
-                next("/login_page");
-              }
-            })
-            .catch(error => {
-              alert(error);
-            });
-        }
-      }
     },
     {
       path: "/managerpage",
@@ -140,6 +86,9 @@ const router = createRouter({
       path: "/case_upload_page",
       name: "CaseUploadPage",
       component: () => import("../views/CaseUploadPage.vue"),
+      meta: {
+        isAuth: true,
+      },
     },
     {
       path: "/case_edit_search_page",
@@ -172,6 +121,28 @@ const router = createRouter({
       component: () => import("../views/CaseOnlySearchDetailsPage.vue"),
     },
   ],
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.isAuth) {
+    axios
+      .get("http://localhost:8080/api/get_balance", { withCredentials: true })
+      .then((response) => {
+        const getBalanceResponseData = response;
+        const getBalanceResponseDataCode = getBalanceResponseData.data.code;
+        if (getBalanceResponseDataCode !== "200") {
+          alert("請先登入!");
+          next({ name: "LoginPage" });
+        } else {
+          next();
+        }
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  } else {
+    next();
+  }
 });
 
 export default router;
