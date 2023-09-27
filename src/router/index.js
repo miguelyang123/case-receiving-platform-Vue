@@ -149,6 +149,8 @@ const router = createRouter({
                 if (!getBalanceResponseDataAdministrator) {
                   alert("檢測到非管理者身分，無法進入該網頁!");
                   next("/personal_info");
+                } else {
+                  next();
                 }
 
               } else {
