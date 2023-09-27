@@ -123,7 +123,7 @@ export default {
 
 <template>
 	<form @submit.prevent="searchType">
-		<div class="flex items-center">
+		<div class="flex items-center justify-evenly bg-white p-3 border border-[#787878] rounded-xl">
 			<input type="search" id="search"
 				class="block p-4 text-2xl text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
 				placeholder="搜尋案子" v-model="searchText" />

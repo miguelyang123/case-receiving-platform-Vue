@@ -96,15 +96,15 @@ export default {
                 }
             }
             // this.searchAllData(this.searchAPI());
-            this.searchType(this.mapSelect.thisMapId);
+            this.searchAllData(this.mapSelect.thisMapId);
         },
 
         changeMap(index1) {
             this.mapSelect.thisMap = index1.locationName;
-            // this.mapSelect.thisMapId = 
+            this.mapSelect.thisMapId = index1.locationId;
             this.mapSelect.mapShow = false;
             // this.searchAllData(index1.locationId);
-            this.searchType(this.mapSelect.thisMapId);
+            this.searchAllData(this.mapSelect.thisMapId);
         },
 
         changePrice(index1) {
@@ -184,6 +184,8 @@ export default {
 
                 this.allPage = Math.ceil((this.allUsers.length)/this.showPage); 
                 this.content();
+
+                this.searchType(lo_id)
                 
             })
             .catch(err =>{
@@ -203,7 +205,7 @@ export default {
                 return searchTypeAll.locationId;
             }
             
-            return "";
+            return this.mapSelect.thisMapId;
         },
 
         searchType(lo_id){
@@ -312,7 +314,7 @@ export default {
                 console.log(err);
             });
         // });
-    }
+    },
 }
 </script>
 <template>
