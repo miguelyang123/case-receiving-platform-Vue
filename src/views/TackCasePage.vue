@@ -6,6 +6,7 @@ import { Icon } from '@iconify/vue';
 import axios from 'axios';
 // import PageVue from "../components/Page.vue";
 export default {
+    props:["searchTypeAll"],
     components: {
         RouterLink,Icon,
     },
@@ -146,11 +147,11 @@ export default {
                     minBudget:this.price.minPrice,   // 最小(等於)預算
                     maxBudget:this.price.maxPrice,  // 最大(等於)預算
                     location:lo_id,   //  地點(location_id)
-                    deadlineFrom:"", // 結案日從輸入日期
-                    deadlineTo:"",  // 結案日到輸入日期
+                    deadlineFrom:null, // 結案日從輸入日期
+                    deadlineTo:null,  // 結案日到輸入日期
                     caseClass:this.thisType[1],  // onsite (現場)| remote (遠端) 
-                    initiator:"",  // 搜尋發案者(id)
-                    onShelf:"",  // 搜尋上下架
+                    initiator:null,  // 搜尋發案者(id)
+                    onShelf:null,  // 搜尋上下架
                     currentStatus:null,  // 目前案子狀態
                     caseRating:null  // 案子完成評價
                 }
