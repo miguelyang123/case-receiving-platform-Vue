@@ -30,8 +30,8 @@ export default {
             // thisPrice: "案件金額",
 
             price:{
-                minPrice:'',
-                maxPrice:''
+                minPrice:null,
+                maxPrice:null
             },
 
             thisKeyWord: "",  // 關鍵字
@@ -79,29 +79,32 @@ export default {
         // 顯示點選哪個類別
         thisType1(index) {
             if (index === 0) {
-                if (this.thisType[1] === 'onsite') { 
+                if (this.thisType[1] === 'remote') { 
                     this.thisType[1] = '';
                     this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(this.mapSelect.onsite.concat(this.mapSelect.remote));
                 } else { 
-                    this.thisType[1] = 'onsite'; 
+                    this.thisType[1] = 'remote'; 
                     this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(this.mapSelect.onsite);
                 }
             } else {
-                if (this.thisType[1] === 'remote') { 
+                if (this.thisType[1] === 'onsite') { 
                     this.thisType[1] = '' ;
                     this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(this.mapSelect.onsite.concat(this.mapSelect.remote));
                 } else { 
-                    this.thisType[1] = 'remote' ;
+                    this.thisType[1] = 'onsite' ;
                     this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(this.mapSelect.remote);
                 }
             }
-            this.searchAllData(this.searchAPI());
+            // this.searchAllData(this.searchAPI());
+            this.searchType(this.mapSelect.thisMapId);
         },
 
         changeMap(index1) {
             this.mapSelect.thisMap = index1.locationName;
+            // this.mapSelect.thisMapId = 
             this.mapSelect.mapShow = false;
-            this.searchAllData(index1.locationId);
+            // this.searchAllData(index1.locationId);
+            this.searchType(this.mapSelect.thisMapId);
         },
 
         changePrice(index1) {
@@ -189,10 +192,37 @@ export default {
         },
 
         searchAPI(){
-            let searchTypeAll = JSON.parse(this.$route.query.searchTypeAll);
-            this.thisKeyWord = searchTypeAll.searchKeyword;
-            return searchTypeAll.locationId;
+            if(this.$route.query.searchTypeAll){
+                let searchTypeAll = JSON.parse(this.$route.query.searchTypeAll);
+                this.thisKeyWord = searchTypeAll.searchKeyword;
+                this.thisType[1] = searchTypeAll.caseClass;
+                this.mapSelect.thisMap = searchTypeAll.locationName;
+                this.price = searchTypeAll.price;
+
+                this.mapSelect.thisMapId = searchTypeAll.locationId;
+                return searchTypeAll.locationId;
+            }
+            
+            return "";
         },
+
+        searchType(lo_id){
+			let search = {
+				locationName:this.mapSelect.thisMap,
+				locationId: lo_id,
+				caseClass: this.thisType[1],
+				searchKeyword: this.thisKeyWord,
+				price:this.price
+			};
+			console.log(search.locationId);
+
+			this.$router.push({
+				path:"/tackcasepage",
+				query:{
+					searchTypeAll:JSON.stringify(search)
+				}
+			});
+		},
     },
 
     computed: {
@@ -257,13 +287,12 @@ export default {
                             });
                             this.mapSelect.onsite =arr2;
                             this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(arr3);
-                    
-                            console.log(arr);
                         }
                         // console.log("this.mapSelect.remote: "+this.mapSelect.remote);
                         // console.log("this.mapSelect.onsite: "+this.mapSelect.onsite);
                         // console.log("this.mapSelect.showAllMap: "+this.mapSelect.showAllMap);
-                        
+
+                        this.searchAllData(this.searchAPI());   
                     })
                     .catch(err2 =>{
                         console.log(err2);
@@ -277,16 +306,12 @@ export default {
                     //     this.mapSelect.remote = arr;
                     //     this.mapSelect.showAllMap = this.mapSelect.showAllMap.concat(this.mapSelect.remote);
                     // }
-
-                    console.log(arr);
                 }
             })
             .catch(err =>{
                 console.log(err);
             });
         // });
-
-        this.searchAllData(this.searchAPI());
     }
 }
 </script>
@@ -295,14 +320,14 @@ export default {
         <h1 class="text-3xl font-bold">找案件</h1>
         <div class="flex my-6">
             <button class="findCaseType group" @click="thisType1(0)">
-                <Icon icon="fluent-mdl2:join-online-meeting" :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === 'onsite' }"
+                <Icon icon="fluent-mdl2:join-online-meeting" :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === 'remote' }"
                     width="65"></Icon>
-                <p :class="{ 'group-hover:text-red-600 ':true, 'text-red-600': thisType[1] === 'onsite' }">遠端</p>
+                <p :class="{ 'group-hover:text-red-600 ':true, 'text-red-600': thisType[1] === 'remote' }">遠端</p>
             </button>
             <button class="findCaseType group" @click="thisType1(1)">
-                <Icon icon="healthicons:domestic-worker" :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === 'remote' }"
+                <Icon icon="healthicons:domestic-worker" :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === 'onsite' }"
                     width="65"></Icon>
-                <p :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === 'remote' }">現場</p>
+                <p :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === 'onsite' }">現場</p>
             </button>
         </div>
         <div class="flex ">
@@ -395,15 +420,15 @@ export default {
         <div v-if="pageAllUsers.length>0" class="flex justify-end items-end">
             <button v-if="page !== 1" type="button" class="pageBtn" @click="pageBlank()">上一頁</button>
 
-            <button v-if="page > Math.floor(this.pageNum / 2) + 1" type="button" class="pageBtn" @click="page = 1">1</button>
-            <div v-if="page > Math.floor(this.pageNum / 2) + 2" type="button" class="mx-3 text-lg font-bold">...</div>
+            <button v-if="page > Math.floor(this.pageNum / 2) + 1  && allPage!==pageNum" type="button" class="pageBtn" @click="page = 1">1</button>
+            <div v-if="page > Math.floor(this.pageNum / 2) + 2  && allPage!==pageNum && allPage!==(pageNum+1)" type="button" class="mx-3 text-lg font-bold">...</div>
 
             <button type="button" :class="{ 'pageBtn': true, 'bg-[#ffc8d1] text-[#E12D4A]': index === page }"
                 v-for="(index) in pageNumCheck" @click="page = index">{{ index }}</button>
 
-            <div v-if="page + Math.floor(this.pageNum / 2) + 1 < allPage" type="button" class="mx-3 text-[1.125rem] font-bold">
+            <div v-if="page + Math.floor(this.pageNum / 2) + 1 < allPage  && allPage!==pageNum && allPage!==(pageNum+1)" type="button" class="mx-3 text-[1.125rem] font-bold">
                 ...</div>
-            <button v-if="page + Math.floor(this.pageNum / 2) < allPage" type="button" class="pageBtn"
+            <button v-if="page + Math.floor(this.pageNum / 2) < allPage  && allPage!==pageNum" type="button" class="pageBtn"
                 @click="page = allPage">{{ allPage }}</button>
 
             <button v-if="page !== allPage" type="button" class="pageBtn" @click="pageNext()">下一頁</button>

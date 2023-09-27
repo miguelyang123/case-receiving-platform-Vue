@@ -335,15 +335,15 @@ export default {
                     <div v-if="pageAllUsers.length>0" class="flex justify-end items-end">
                         <button v-if="page !== 1" type="button" class="pageBtn" @click="pageBlank()">上一頁</button>
 
-                        <button v-if="page > Math.floor(this.pageNum / 2) + 1" type="button" class="pageBtn" @click="page = 1">1</button>
-                        <div v-if="page > Math.floor(this.pageNum / 2) + 2" type="button" class="mx-3 text-lg font-bold">...</div>
+                        <button v-if="page > Math.floor(this.pageNum / 2) + 1 && allPage!==pageNum" type="button" class="pageBtn" @click="page = 1">1</button>
+                        <div v-if="page > Math.floor(this.pageNum / 2) + 2  && allPage!==pageNum && allPage!==(pageNum+1)" type="button" class="mx-3 text-lg font-bold">...</div>
 
                         <button type="button" :class="{ 'pageBtn': true, 'bg-[#ffc8d1] text-[#E12D4A]': index === page }"
                             v-for="(index) in pageNumCheck" @click="page = index">{{ index }}</button>
 
-                        <div v-if="page + Math.floor(this.pageNum / 2) + 1 < allPage" type="button" class="mx-3 text-[1.125rem] font-bold">
+                        <div v-if="page + Math.floor(this.pageNum / 2) + 1 < allPage  && allPage!==pageNum && allPage!==(pageNum+1)" type="button" class="mx-3 text-[1.125rem] font-bold">
                             ...</div>
-                        <button v-if="page + Math.floor(this.pageNum / 2) < allPage" type="button" class="pageBtn"
+                        <button v-if="page + Math.floor(this.pageNum / 2) < allPage && allPage!==pageNum" type="button" class="pageBtn"
                             @click="page = allPage">{{ allPage }}</button>
 
                         <button v-if="page !== allPage" type="button" class="pageBtn" @click="pageNext()">下一頁</button>

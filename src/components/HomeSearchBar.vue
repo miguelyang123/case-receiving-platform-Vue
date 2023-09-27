@@ -15,12 +15,17 @@ export default {
 			mapSelect: {
 				mapShow: false,
 				showAllMap: [],
-				jobArea: "地區",
+				jobArea: "地區不限",
 				thisMapId: "",
 
 				onsite: "",
 				remote: ""
 			},
+
+			price:{
+                minPrice:null,
+                maxPrice:null
+            },
 		};
 	},
 	methods:{
@@ -43,10 +48,13 @@ export default {
 
 		searchType(){
 			let search = {
+				locationName:this.mapSelect.jobArea,
 				locationId: this.mapSelect.thisMapId,
 				caseClass: this.jobClass,
-				searchKeyword: this.searchText
+				searchKeyword: this.searchText,
+				price:this.price
 			};
+			console.log(search.locationId);
 
 			this.$router.push({
 				path:"/tackcasepage",
@@ -58,33 +66,57 @@ export default {
 			return false;
 		},
 	},
-	created(){
+	mounted(){
 		// 所有城市變例
-        let locationAPI = ["onsite","remote"];
-        
-        locationAPI.forEach(item =>{
-            axios.get("http://localhost:8080/location_api/get_"+item)
+        axios.get("http://localhost:8080/location_api/get_"+"onsite")
             .then(data =>{
-                let arr=[];
+                let arr1=[];
+                let arr2=[];
+                let arr3=[];
                 if(data.data.code==="200"){
 
                     Object.values(data.data.locationList).forEach(item => {
-                        arr.push(item);
-                    })
+                        arr1.push(item);
+                        arr3.push(item);
+                    });
+                    // arr2 = arr;
+                    this.mapSelect.remote = arr1;
+                    // this.mapSelect.showAllMap = this.mapSelect.showAllMap.concat(this.mapSelect.remote);
+                    
+                    axios.get("http://localhost:8080/location_api/get_"+"remote")
+                    
+                    .then(data2 =>{
+                        if(data2.data.code==="200"){
 
-                    if(item==="onsite"){
-                        this.mapSelect.onsite =arr;
-                        this.mapSelect.showAllMap = [{locationId:"",locationName:"地區"}].concat(this.mapSelect.onsite);
-                    }else{
-                        this.mapSelect.remote = arr;
-                        this.mapSelect.showAllMap = this.mapSelect.showAllMap.concat(this.mapSelect.remote);
-                    }
+                            Object.values(data2.data.locationList).forEach(item => {
+                                arr2.push(item);
+                                arr3.push(item);
+                            });
+                            this.mapSelect.onsite =arr2;
+                            this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(arr3);
+                        }
+                        // console.log("this.mapSelect.remote: "+this.mapSelect.remote);
+                        // console.log("this.mapSelect.onsite: "+this.mapSelect.onsite);
+                        // console.log("this.mapSelect.showAllMap: "+this.mapSelect.showAllMap);
+                        
+                    })
+                    .catch(err2 =>{
+                        console.log(err2);
+                    });
+
+
+                    // if(item==="onsite"){
+                        // this.mapSelect.onsite =arr;
+                        // this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(this.mapSelect.onsite);
+                    // }else{
+                    //     this.mapSelect.remote = arr;
+                    //     this.mapSelect.showAllMap = this.mapSelect.showAllMap.concat(this.mapSelect.remote);
+                    // }
                 }
             })
             .catch(err =>{
                 console.log(err);
-            })
-        });
+            });
 	}
 };
 </script>
