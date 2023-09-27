@@ -202,7 +202,7 @@ export default {
         })
         .catch(function (e) {
           console.log(e); // "oh, no!"
-          alert("pdf未上傳!");
+          alert("履歷書未上傳!");
         });
         
       },

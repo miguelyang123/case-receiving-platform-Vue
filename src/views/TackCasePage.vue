@@ -6,6 +6,7 @@ import { Icon } from '@iconify/vue';
 import axios from 'axios';
 // import PageVue from "../components/Page.vue";
 export default {
+
     components: {
         RouterLink,Icon,
     },
@@ -94,6 +95,7 @@ export default {
                     this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(this.mapSelect.remote);
                 }
             }
+            this.searchAllData(this.searchAPI());
         },
 
         changeMap(index1) {
@@ -146,11 +148,11 @@ export default {
                     minBudget:this.price.minPrice,   // 最小(等於)預算
                     maxBudget:this.price.maxPrice,  // 最大(等於)預算
                     location:lo_id,   //  地點(location_id)
-                    deadlineFrom:"", // 結案日從輸入日期
-                    deadlineTo:"",  // 結案日到輸入日期
+                    deadlineFrom:null, // 結案日從輸入日期
+                    deadlineTo:null,  // 結案日到輸入日期
                     caseClass:this.thisType[1],  // onsite (現場)| remote (遠端) 
-                    initiator:"",  // 搜尋發案者(id)
-                    onShelf:"",  // 搜尋上下架
+                    initiator:null,  // 搜尋發案者(id)
+                    onShelf:null,  // 搜尋上下架
                     currentStatus:null,  // 目前案子狀態
                     caseRating:null  // 案子完成評價
                 }
@@ -184,7 +186,13 @@ export default {
             .catch(err =>{
                 console.log(err);
             })
-        }
+        },
+
+        searchAPI(){
+            let searchTypeAll = JSON.parse(this.$route.query.searchTypeAll);
+            this.thisKeyWord = searchTypeAll.searchKeyword;
+            return searchTypeAll.locationId;
+        },
     },
 
     computed: {
@@ -216,37 +224,69 @@ export default {
             return arr;
         },
     },
-    created(){
+    // created(){
+    mounted(){
         // 所有城市變例
-        let locationAPI = ["onsite","remote"];
+        // let locationAPI = ["onsite","remote"];
         
-        locationAPI.forEach(item =>{
-            axios.get("http://localhost:8080/location_api/get_"+item)
+        // locationAPI.forEach(item =>{
+            // axios.get("http://localhost:8080/location_api/get_"+item)
+            axios.get("http://localhost:8080/location_api/get_"+"onsite")
             .then(data =>{
-                let arr=[];
+                let arr1=[];
+                let arr2=[];
+                let arr3=[];
                 if(data.data.code==="200"){
 
                     Object.values(data.data.locationList).forEach(item => {
-                        arr.push(item);
-                    })
+                        arr1.push(item);
+                        arr3.push(item);
+                    });
+                    // arr2 = arr;
+                    this.mapSelect.remote = arr1;
+                    // this.mapSelect.showAllMap = this.mapSelect.showAllMap.concat(this.mapSelect.remote);
+                    
+                    axios.get("http://localhost:8080/location_api/get_"+"remote")
+                    
+                    .then(data2 =>{
+                        if(data2.data.code==="200"){
 
-                    if(item==="onsite"){
-                        this.mapSelect.onsite =arr;
-                        this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(this.mapSelect.onsite);
-                    }else{
-                        this.mapSelect.remote = arr;
-                        this.mapSelect.showAllMap = this.mapSelect.showAllMap.concat(this.mapSelect.remote);
-                    }
+                            Object.values(data2.data.locationList).forEach(item => {
+                                arr2.push(item);
+                                arr3.push(item);
+                            });
+                            this.mapSelect.onsite =arr2;
+                            this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(arr3);
+                    
+                            console.log(arr);
+                        }
+                        // console.log("this.mapSelect.remote: "+this.mapSelect.remote);
+                        // console.log("this.mapSelect.onsite: "+this.mapSelect.onsite);
+                        // console.log("this.mapSelect.showAllMap: "+this.mapSelect.showAllMap);
+                        
+                    })
+                    .catch(err2 =>{
+                        console.log(err2);
+                    });
+
+
+                    // if(item==="onsite"){
+                        // this.mapSelect.onsite =arr;
+                        // this.mapSelect.showAllMap = [{locationId:"",locationName:"地區不限"}].concat(this.mapSelect.onsite);
+                    // }else{
+                    //     this.mapSelect.remote = arr;
+                    //     this.mapSelect.showAllMap = this.mapSelect.showAllMap.concat(this.mapSelect.remote);
+                    // }
 
                     console.log(arr);
                 }
             })
             .catch(err =>{
                 console.log(err);
-            })
-        });
+            });
+        // });
 
-        this.searchAllData("");
+        this.searchAllData(this.searchAPI());
     }
 }
 </script>
@@ -262,7 +302,7 @@ export default {
             <button class="findCaseType group" @click="thisType1(1)">
                 <Icon icon="healthicons:domestic-worker" :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === 'remote' }"
                     width="65"></Icon>
-                <p :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === 'remote' }">線場</p>
+                <p :class="{ 'group-hover:text-red-600 ':true,  'text-red-600': thisType[1] === 'remote' }">現場</p>
             </button>
         </div>
         <div class="flex ">

@@ -1,5 +1,6 @@
 <script>
 import HomeSearchBar from "../components/HomeSearchBar.vue";
+import { RouterLink,RouterView } from "vue-router";
 
 // pinia 全域資料庫
 import { mapState, mapActions } from "pinia";
@@ -12,7 +13,7 @@ export default {
     ...mapState(dataStore, ["numTest"]),
   },
   components: {
-    HomeSearchBar,
+    HomeSearchBar,RouterLink,
   },
 };
 </script>
@@ -25,12 +26,12 @@ export default {
       <div class="w-1/2">
         <!-- main button area -->
         <div class="mb-20 flex justify-center">
-          <button
-            type="button"
+          <RouterLink
+            to="/tackcasepage"
             class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-4xl px-10 py-5"
           >
             我要接案
-          </button>
+          </RouterLink>
         </div>
         <!-- search area -->
         <HomeSearchBar />
