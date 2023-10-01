@@ -11,14 +11,28 @@ export default {
     },
     data() {
         return {
-            
+
+            /** @param {boolean} userBtn 更改可編輯用戶表單 */
+            userBtn:false, 
+            /** @param {object} oldUser 用戶資料 */
+            oldUser:{
+                uuid:"",
+                email:"adada",
+                pwd:"**********",
+                user_name:"",
+                phone:"",
+                rating:0
+            },
+           /**  @param {object} user 修改用戶資料時要存的站存檔 */ 
             user:{
                 uuid:"",
                 email:"",
                 pwd:"**********",
                 user_name:"",
-                phone:""
-            },    
+                phone:"",
+                rating:0
+            },   
+            
 
            trueEmail: new RegExp("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"),
            truePhone: new RegExp("^0[\\d]{1}[\\d]{4}[\\d]{4}$"),
@@ -60,14 +74,18 @@ export default {
             .then(data =>{
                 if(data.data.code==="200"){
                     alert(data.data.message);
-                    this.setUserInfo(data.data.userInfo);
-                    this.userData = this.getUserInfo();
-                    this.user={
-                        email:this.user.email,
-                        pwd:"**********",
-                        user_name:this.user.user_name,
-                        phone:this.user.phone
-                    }
+                    // this.setUserInfo(data.data.userInfo);
+                    // this.userData = this.getUserInfo();
+                    // this.user={
+                    //     email:this.user.email,
+                    //     pwd:"**********",
+                    //     user_name:this.user.user_name,
+                    //     phone:this.user.phone,
+                    //     rating:this.user.rating
+                    // }
+
+                    this.oldUser = JSON.parse(JSON.stringify(this.user));
+                    this.userBtn = false;
                 }else{
                     alert(data.data.message);
                 }
@@ -125,12 +143,23 @@ export default {
         .then(res => {
             console.log(res);
             if(res.data.code==="200"){
+                const userData = res.data.userInfo;
                 this.user={
-                    uuid:res.data.userInfo.uuid,
-                    email:res.data.userInfo.email,
+                    uuid:userData.uuid,
+                    email:userData.email,
                     pwd:"**********",
-                    user_name:res.data.userInfo.user_name,
-                    phone:res.data.userInfo.phone
+                    user_name:userData.user_name,
+                    phone:userData.phone,
+                    rating: !userData.rating ? 0 : userData.rating
+                };
+
+                this.oldUser={
+                    uuid:userData.uuid,
+                    email:userData.email,
+                    pwd:"**********",
+                    user_name:userData.user_name,
+                    phone:userData.phone,
+                    rating: !userData.rating ? 0 : userData.rating
                 }
             }else{
                 router.push("/login_page");
@@ -155,43 +184,69 @@ export default {
                     <tbody>
                         <tr>
                             <th class="w-[30%]">E-mail</th>
-                            <td>
+                            <td v-if="userBtn">
                                 <div class="flex items-center">
                                     <input type="email" class="bg-[#f0eeee]" placeholder="E-mail" v-model="user.email" required>
-                                    <Icon v-if="trueEmail.test(user.email)" icon="ri:checkbox-circle-fill" class="text-[#0fa958] ml-3 text-2xl"></Icon>
-                                    <Icon v-if="!trueEmail.test(user.email)" icon="fluent-mdl2:status-error-full" class="text-[red] ml-3 text-xl"></Icon>
+                                    <Icon :icon="trueEmail.test(user.email) ? 'ri:checkbox-circle-fill' : 'fluent-mdl2:status-error-full'" :class="'ml-3 text-2xl '+ (trueEmail.test(user.email) ? 'text-[green]':'text-[red]')"></Icon>
                                 </div>
                                 <p v-if="!trueEmail.test(user.email)" class="text-[red]">請輸入正確的電子郵件格式</p>
+                            </td>
+                            <td v-else>
+                                <p>{{ oldUser.email }}</p>
                             </td>
                         </tr>
                         <tr>
                             <th>密碼</th>
-                            <td>
-                                <input type="password" class="bg-[#cfcfcf]" v-model="user.pwd" disabled>
+                            <td v-if="userBtn">
+                                <input type="password" class="bg-[#cfcfcf]" v-model="user.pwd" autocomplete="on" disabled>
                                 <button type="button" class="editPwd" @click="editPwd=true,bgc=true"> 修改</button>
+                            </td>
+                            <td v-else>
+                                <p>{{ oldUser.pwd }}</p>
                             </td>
                         </tr>
                         <tr>
                             <th>姓名</th>
-                            <td>
+                            <td v-if="userBtn">
                                 <input type="text" class="bg-[#f0eeee]" placeholder="姓名" v-model="user.user_name" required>
+                            </td>
+                            <td v-else>
+                                <p>{{ oldUser.user_name }}</p>
                             </td>
                         </tr>
                         <tr>
                             <th>手機</th>
-                            <td>
+                            <td v-if="userBtn">
                                 <div class="flex items-center">
                                     <input type="tel" class="bg-[#f0eeee]" placeholder="手機號碼" v-model="user.phone" required>
-                                    <Icon v-if="truePhone.test(user.phone)" icon="ri:checkbox-circle-fill" class="text-[#0fa958] ml-3 text-2xl"></Icon>
-                                    <Icon v-if="!truePhone.test(user.phone)" icon="fluent-mdl2:status-error-full" class="text-[red] ml-3 text-xl"></Icon>
+                                    <Icon :icon="truePhone.test(user.phone) ? 'ri:checkbox-circle-fill' : 'fluent-mdl2:status-error-full'" :class="'ml-3 text-2xl '+ (truePhone.test(user.phone) ? 'text-[green]':'text-[red]')"></Icon>
                                 </div>
-                                <p v-if="!truePhone.test(user.phone)" class="text-[red]">請輸入符合格式的手機號碼 (0xxxxxxxxx)</p>
+                                <p v-show="!truePhone.test(user.phone)" class="text-[red]">請輸入符合格式的手機號碼 (0xxxxxxxxx)</p>
+                            </td>
+                            <td v-else>
+                                <p>{{ oldUser.phone }}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>個人評價</th>
+                            <td>
+                                <div class="flex items-center">
+                                    <div class="ratings">
+                                        <div class="empty_star">★★★★★</div>
+                                        <div :class="'full_star'" :style="'width:'+user.rating*20+'%'">★★★★★</div>
+                                    </div>
+                                    <p class="text-2xl mx-3 font-bold">{{ user.rating }}</p>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <input type="submit" class=" flex text-white rounded-lg bg-[#FF6E6E] cursor-pointer py-3 px-12 mx-auto my-3 text-2xl font-bold hover:scale-105 active:scale-95" value="修改">
+            <div v-if="userBtn" class="flex justify-evenly">
+                <input type="button" class=" block text-white rounded-lg bg-[#a3a3a3] cursor-pointer py-3 px-6 mx-auto my-3 text-2xl font-bold hover:scale-105 active:scale-95" value="取消" @click="userBtn=!userBtn">
+                <input type="submit" class=" block text-white rounded-lg bg-[#FF6E6E] cursor-pointer py-3 px-6 mx-auto my-3 text-2xl font-bold hover:scale-105 active:scale-95" value="確定修改">      
+            </div>
+            <input v-else type="button" class=" flex text-white rounded-lg bg-[#FF6E6E] cursor-pointer py-3 px-6 mx-auto my-3 text-2xl font-bold hover:scale-105 active:scale-95" value="修改" @click="userBtn=!userBtn,user=JSON.parse(JSON.stringify(oldUser))">
         </form>
     </div>
 
@@ -250,6 +305,26 @@ export default {
                     padding: 0.25rem 0.75rem;
                     outline: none;
                     border-radius: 0.25rem;
+                }
+
+                .ratings {
+                    position: relative;
+                    vertical-align: middle;
+                    display: inline-block;
+                    color: #a2a2a2; /*背景星星顏色*/
+                    overflow: hidden;
+                    font-size: 1.5rem; /*調整字體大小可放大縮小星星*/
+                    text-shadow: 0px 1px 0 #999;
+
+                    .full_star {
+                        /*調整寬度可變更星等*/
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        color: #ff7300; /*前景星星顏色*/
+                    }
                 }
             }
         }
