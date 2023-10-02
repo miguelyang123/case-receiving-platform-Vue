@@ -242,9 +242,9 @@ export default {
                     </tbody>
                 </table>
             </div>
-            <div v-if="userBtn" class="flex justify-evenly">
-                <input type="button" class=" block text-white rounded-lg bg-[#a3a3a3] cursor-pointer py-3 px-6 mx-auto my-3 text-2xl font-bold hover:scale-105 active:scale-95" value="取消" @click="userBtn=!userBtn">
-                <input type="submit" class=" block text-white rounded-lg bg-[#FF6E6E] cursor-pointer py-3 px-6 mx-auto my-3 text-2xl font-bold hover:scale-105 active:scale-95" value="確定修改">      
+            <div v-if="userBtn" class="flex justify-center">
+                <input type="button" class=" block text-white rounded-lg bg-[#888888] cursor-pointer py-3 px-6 mx-3 my-6 text-2xl font-bold hover:scale-105 active:scale-95" value="取消" @click="userBtn=!userBtn">
+                <input type="submit" class=" block text-white rounded-lg bg-[#FF6E6E] cursor-pointer py-3 px-6 mx-3 my-6 text-2xl font-bold hover:scale-105 active:scale-95" value="確定修改">      
             </div>
             <input v-else type="button" class=" flex text-white rounded-lg bg-[#FF6E6E] cursor-pointer py-3 px-6 mx-auto my-3 text-2xl font-bold hover:scale-105 active:scale-95" value="修改" @click="userBtn=!userBtn,user=JSON.parse(JSON.stringify(oldUser))">
         </form>
@@ -275,8 +275,8 @@ export default {
                     </div>
                 </li>
             </ul>
-            <div class="flex justify-evenly">
-                <button type="button" class="py-3 px-6 bg-[#7e7e7e] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="bgc=false,editPwd=false">取消</button>
+            <div class="flex justify-center">
+                <button type="button" class="py-3 px-6 bg-[#949494] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95" @click="bgc=false,editPwd=false">取消</button>
                 <button type="submit" class="py-3 px-6 bg-[#FF6E6E] text-[#FFFFFF] font-bold rounded-lg hover:scale-105 active:scale-95">修改</button>
             </div>
         </form>
