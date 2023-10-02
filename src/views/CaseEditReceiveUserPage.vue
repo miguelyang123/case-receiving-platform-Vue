@@ -258,7 +258,7 @@ export default {
   
   <p class="text-5xl">案子的接案者編輯畫面</p>
 
-  <button class="custom-btn btn-5" @click="backPage">返回</button>
+  <button class="custom-btn btn-5 relative left-3/4" @click="backPage">返回</button>
 
   <p v-if="receiveCount == false" class="text-5xl text-red-600 ml-40">目前無人接案</p>
 

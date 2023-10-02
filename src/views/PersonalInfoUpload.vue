@@ -242,7 +242,7 @@ export default {
 
   <h1 class="text-5xl">上傳履歷</h1>
 
-  <button class="custom-btn btn-5" @click="backPage">返回</button><br/>
+  <button class="custom-btn btn-5 relative left-3/4" @click="backPage">返回</button><br/>
   
   <p class="ml-48 text-2xl">請選擇想上傳的履歷表</p>
   <input class="file ml-48" name="file" type="file" accept=".pdf" @change="update"/>

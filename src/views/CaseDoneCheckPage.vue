@@ -225,7 +225,7 @@ export default {
   <!-- <p>Personal Info</p> -->
   
   <p class="text-4xl w-96">案子完成的確認畫面</p>
-  <button class="custom-btn btn-5" @click="backPage">返回</button>
+  <button class="custom-btn btn-5 relative left-3/4" @click="backPage">返回</button>
   
   案子評價:<input class="border-2 border-black" type="number" v-model="caseRating">
   <button class="custom-btn btn-5 relative left-1/3" @click="finishCase">提交</button>

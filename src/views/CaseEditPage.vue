@@ -333,7 +333,7 @@ export default {
   <!-- <h1>Speed接案網</h1> -->
   <!-- <p>Personal Info</p> -->
   <p class="text-5xl">案子修改畫面</p>
-  <button class="custom-btn btn-5" @click="backPage">返回</button>
+  <button class="custom-btn btn-5 relative left-3/4" @click="backPage">返回</button>
   <div class="flex m-4 absolute top-40 right-10">
     <div class="flex flex-col justify-center items-center text-center">
         <button class="custom-btn btn-5" @click="editCase">提交</button><br/>

@@ -130,16 +130,15 @@ export default {
   <!-- <p>Personal Info</p> -->
 
   <p class="text-5xl">編輯發出的案子</p>
-  <button class="custom-btn btn-5" @click="backPage">返回</button>
+  <button class="custom-btn btn-5 relative left-3/4" @click="backPage">返回</button>
 
-  <div id="app">
+  <!-- <div id="app">
     <table class="table ml-48">
         <thead>
         </thead>
         <tbody>
         <tr>
             <td class="border-2 border-black">操作</td>
-            <!-- <td class="border-2 border-black">接案人數</td> -->
             <td class="border-2 border-black">案子名稱</td>
             <td class="border-2 border-black">案子到期日</td>
             <td class="border-2 border-black">上/下架</td>
@@ -147,7 +146,6 @@ export default {
         </tr>
         <tr v-for="(item, key) in localList" :key="key">
             <td class="border-2 border-black"><button class="custom-btn btn-4" @click="toEdit(item.id)">編輯</button></td>
-            <!-- <td class="border-2 border-black">?</td> -->
             <td class="border-2 border-black">{{ item.caseName }}</td>
             <td class="border-2 border-black">{{ item.deadline.substring(0, 10) }}</td>
             <td v-if="item.onShelf === true" class="border-2 border-black">上架</td>
@@ -156,7 +154,41 @@ export default {
         </tr>
         </tbody>
     </table>
-  </div>
+  </div> -->
+
+  <!-- <h1 class="text-3xl font-bold" style="margin-block: 2rem 3rem;writing-mode: horizontal-tb;">發出的案子</h1> -->
+		<div class=" relative" v-for="(item, index) in localList">
+			<h1 class=" font-bold text-xl">案子名稱:{{ item.caseName }}</h1>
+			<div class="flex">
+				<p class="text-red-600 font-bold text-lg">預算:{{ item.budget }}</p>
+				<!-- <div class="flex items-center ml-4">
+					<Icon width="25" icon="mdi:map-marker" class="text-[#EF879A]" />
+					<p class="text-[#7F7F7F] ml-2 font-bold text-lg">{{ item.location }}</p>
+				</div> -->
+				<div class="flex items-center ml-4">
+					<Icon width="25" icon="material-symbols:date-range" class="text-[#545454]" />
+					<p class="text-[#7F7F7F] ml-2 font-bold text-lg">到期日:{{ item.deadline.split("T")[0] }}</p>
+					<!-- item.deadline.toLocaleDateString() -->
+				</div>
+				<div class="flex items-center ml-4">
+					<Icon width="25" icon="material-symbols:date-range" class="text-[#545454]" />
+					<p v-if="item.onShelf === true" class="text-[#7F7F7F] ml-2 font-bold text-lg">上架</p>
+          <p v-if="item.onShelf === false" class="text-[#7F7F7F] ml-2 font-bold text-lg">下架</p>
+        </div>
+				<div class="flex items-center ml-4">
+					<Icon width="25" icon="material-symbols:date-range" class="text-[#545454]" />
+					<p class="text-[#7F7F7F] ml-2 font-bold text-lg">接案狀態:{{ item.currentStatus }}</p>
+				</div>
+			</div>
+
+			<p class=" text-xl font-bold py-6 pl-6 pr-12 whitespace-nowrap truncate">{{ item.content }}</p>
+
+			<div class=" text-end py-3">
+					<button type="button" @click="toEdit(item.id)"
+						class=" text-white rounded-lg bg-[#FF6E6E] py-3 px-6 mr-12 text-2xl font-bold hover:scale-105 active:scale-95">編輯</button>
+			</div>
+			<hr class="my-6 border-[#cecece]">
+		</div>
 
 </template>
 
